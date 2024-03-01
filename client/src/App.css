@@ -1,0 +1,18 @@
+#index-icon {
+  fill-opacity: 0;
+  stroke-dasharray: 2300;
+  stroke-dashoffset: 2300;
+  animation: dash 1s ease-in forwards;
+}
+
+@keyframes dash {
+  90% {
+    fill-opacity: 0;
+  }
+
+  100% {
+    fill-opacity: 100%;
+    stroke-dashoffset: 0;
+    stroke-width: 1px;
+  }
+}
