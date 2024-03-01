@@ -17,6 +17,11 @@ i18n
     resources: {
       en: {
         translation: {
+          home: {
+            description1: 'Manage your Scrum projects',
+            description2: 'faster than ever',
+            accessAccount: 'Log in or sign up!'
+          },
           404: {
             title: '404 - Page Not Found',
             link: "Go back to home 🏠"
@@ -25,6 +30,11 @@ i18n
       },
       es: {
         translation: {
+          home: {
+            description1: 'Gestiona tus proyectos de Scrum',
+            description2: 'más rápido que nunca',
+            accessAccount: '¡Inicia sesión o regístrate!'
+          },
           404: {
             title: '404 - Página no encontrada',
             link: "Volver a la página principal 🏠"
@@ -33,6 +43,11 @@ i18n
       },
       ca: {
         translation: {
+          home: {
+            description1: 'Gestiona els teus projectes de Scrum',
+            description2: 'més ràpid que mai',
+            accessAccount: 'Inicia sessió o registra\'t!'
+          },
           404: {
             title: '404 - Pàgina no trobada',
             link: "Tornar a la pàgina principal 🏠"

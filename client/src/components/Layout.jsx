@@ -1,4 +1,5 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
+import LanguageChanger from './LanguageChanger';
 
 const Layout = () => {
   const location = useLocation();
@@ -15,6 +16,8 @@ const Layout = () => {
               <Link to="/">Home</Link>
             </li>
           </ul>
+
+          <LanguageChanger />
         </nav>
       )}
 
