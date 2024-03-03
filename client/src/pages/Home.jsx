@@ -37,11 +37,13 @@ const Home = () => {
     <main 
       className="
         min-h-screen w-screen p-4 box-border font-body
-        bg-white dark:bg-[#100C12] text-black dark:text-white 
+        bg-gradient-to-t from-white to-indigo-50 text-black dark:from-black dark:to-[#100C12] dark:text-white
         grid grid-cols-[4fr_2fr] gap-4
       "
     >
-      <section className="bg-[#F3F3F3] dark:bg-[#251B28]/80 px-6 py-14 rounded-md flex flex-col items-center justify-center">
+      {/* <!--  bg-white text-black dark:bg-[#100C12] dark:text-white  --> */}
+       
+      <section className="bg-white dark:bg-[#251B28]/80 px-6 py-14 rounded-md flex flex-col items-center justify-center">
         
         { // Dark theme logo
           theme === 'dark' 
@@ -59,7 +61,7 @@ const Home = () => {
           { t("home.description2") }
         </div>
       </section>
-      <aside className="relative bg-[#F3F3F3] dark:bg-[#251B28]/80 px-6 py-14 rounded-md flex flex-col items-center justify-center">
+      <aside className="relative bg-white dark:bg-[#251B28]/80 px-6 py-14 rounded-md flex flex-col items-center justify-center">
         <button onClick={() => toggleTheme(theme)}> {theme === 'dark' ? THEME_ICONS.dark : THEME_ICONS.light} </button>
         <LanguageChanger props={true} />
         
