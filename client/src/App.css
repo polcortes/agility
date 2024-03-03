@@ -1,12 +1,12 @@
 #index-icon {
   fill-opacity: 0;
-  stroke-dasharray: 2300;
-  stroke-dashoffset: 2300;
+  stroke-dasharray: 4300;
+  stroke-dashoffset: 4300;
   animation: dash 1s ease-in forwards;
 }
 
 @keyframes dash {
-  90% {
+  40% {
     fill-opacity: 0;
   }
 
@@ -14,5 +14,22 @@
     fill-opacity: 100%;
     stroke-dashoffset: 0;
     stroke-width: 1px;
+  }
+}
+
+.home-animated-decoration {
+  text-decoration: 3px underline;
+  animation: fade-in .4s ease-in;
+  animation-delay: 1s;
+  animation-fill-mode: both;
+}
+
+@keyframes fade-in {
+  0% {
+    text-decoration-color: transparent;
+  }
+
+  100% {
+    text-decoration-color: rgb(79, 70, 229);
   }
 }
