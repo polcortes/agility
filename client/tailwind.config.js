@@ -5,7 +5,7 @@ export default {
   theme: {
     extend: {},
     fontFamily: {
-      'title': ['"Karla"'],
+      'title': ['"Barlow"'],
       'subtitle': ['"Source Sans 3"'],
       'body': ['"Montserrat"'],
     }
