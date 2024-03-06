@@ -44,23 +44,24 @@ const Home = () => {
       </Helmet>
       <main 
         className="
-          min-h-screen w-screen p-4 box-border font-body
+          min-h-screen w-screen xl:p-4 box-border font-body transition-[padding]
           bg-gradient-to-t from-indigo-50/80 to-indigo-50 text-black dark:from-black dark:to-[#100C12] dark:text-white
-          grid grid-cols-[4fr_2fr] gap-4
+          grid grid-cols-[1fr] grid-rows-[35%_65%] xl:grid-cols-[4fr_2fr] xl:grid-rows-[1fr] xl:gap-4
         "
       >
         {/* <!--  bg-white text-black dark:bg-[#100C12] dark:text-white  --> */}
         
-        <section className="bg-white dark:bg-[#251B28]/80 px-6 py-14 rounded-md flex flex-col items-center justify-center">
-          
+        <section className="relative bg-white dark:bg-[#251B28]/80 px-6 py-14 flex flex-col items-center justify-center rounded-none xl:rounded-md">
+          <LanguageChanger props={true} className={`flex absolute right-0 top-0 xl:hidden`} />
+
           { // Dark theme logo
             theme === 'dark' 
-              && <DarkIcon className="w-8 h-8" />
+              && <DarkIcon className={`w-[50vw] h-auto`} />
           }
 
           { // Light theme logo
             theme === 'light' 
-              && <LightIcon className="w-8 h-8" />
+              && <LightIcon className={`w-[50vw] h-auto`} />
           }
           <div className="text-2xl mt-5 font-subtitle font-medium tracking-wide">
             { t("home.description1") }
@@ -69,9 +70,9 @@ const Home = () => {
             { t("home.description2") }
           </div>
         </section>
-        <aside className="relative bg-white dark:bg-[#251B28]/80 px-6 py-14 rounded-md flex flex-col items-center justify-center">
+        <aside className="relative bg-white dark:bg-[#251B28]/80 px-6 py-14 flex flex-col items-center justify-center rounded-none xl:rounded-md">
           <button onClick={() => toggleTheme(theme)}> {theme === 'dark' ? THEME_ICONS.dark : THEME_ICONS.light} </button>
-          <LanguageChanger props={true} />
+          <LanguageChanger props={true} className={`hidden xl:flex`} />
           
           <h1 className='text-3xl font-bold font-subtitle'>{ t("home.accessAccount") }</h1>
           <button className='bg-indigo-600 text-white dark:bg-white py-2 px-4 mt-6 dark:text-black font-semibold cursor-pointer rounded-full hover:bg-indigo-800 dark:hover:bg-slate-100/70 transition-colors'>
