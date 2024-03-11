@@ -8,8 +8,8 @@ export default {
         'dark-primary-bg': '#0F0C11',
         'dark-secondary-bg': '#201822',
         'dark-tertiary-bg': '#47334D',
-        'light-primary-bg': '#D4E1E2',
-        'light-secondary-bg': '#EEF2FF',
+        'light-primary-bg': '#EEF2FF',
+        'light-secondary-bg': '#D4E1E2',
         'the-accent-color': '#E8F0F7'
       },
     },
