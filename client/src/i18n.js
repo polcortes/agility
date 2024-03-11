@@ -55,7 +55,8 @@ i18n
 
             description1: 'Gestiona els teus projectes de Scrum',
             description2: 'més ràpid que mai',
-            accessAccount: 'Inicia sessió o registra\'t!'
+            accessAccount: 'Inicia sessió o registra\'t!',
+            loginUsername: 'Nom d\'usuari o correu electrònic',
           },
           404: {
             title: '404 - Pàgina no trobada',
