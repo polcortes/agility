@@ -24,17 +24,18 @@ function generateToken(length) {
 // Iniciar servidors HTTP
 const app = express()
 
-
 // Use the session middleware
-app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}))
+app.use(session({ secret: 'mi romance con el chema', cookie: { maxAge: 1000 }}))
 
 // Access the session as req.session
 app.get('/', function(req, res, next) {
   if (req.session.views) {
+    console.log( req.session)
     req.session.views++
     res.setHeader('Content-Type', 'text/html')
+    res.write('<p>id: ' + req.session.id + '</p>')
     res.write('<p>views: ' + req.session.views + '</p>')
-    res.write(req.session.cookie)
+    res.write(JSON.stringify(req.session.cookie))
     res.write('<p>expires in: ' + (req.session.cookie.maxAge / 1000) + 's</p>')
     res.end()
   } else {
@@ -82,13 +83,52 @@ async function getUsers (req, res) {
     
     let collection = db.collection('users');
     
-    result = await collection.find().toArray();
+    result = {status:"OK", result: await collection.find().toArray()};
     await client.close();
   }
 
   res.writeHead(200, { 'Content-Type': 'application/json' })
   res.end(JSON.stringify(result))
 
+}
+
+app.post('/googleLogin', testGoogle)
+async function testGoogle (req, res) {
+  let receivedPOST = await post.getPostData(req)
+  let result = {};
+
+  if (receivedPOST) {
+    result = {}
+
+    await client.connect();
+    const db = client.db(databaseName);
+    
+    let collection = db.collection('users');
+
+    dbUser = await collection.findOne({email: {$eq: receivedPOST.email}});
+    console.log(dbUser)
+    if (dbUser) {
+      await collection.updateOne({email: {$eq: receivedPOST.email}}, { $set: { token: req.session.id } });
+      result = { status: "OK", result: "LOGIN", token: req.session.id}
+    } else {
+      userData = {
+        username: receivedPOST.name,
+        email: receivedPOST.email,
+        type: "google",
+        token: req.session.id
+      }
+      if (receivedPOST.picture) {
+        userData.picture = receivedPOST.picture
+      }
+      console.log(userData)
+      await collection.insertOne(userData);
+      result = { status: "OK", result: "REGISTER OK", token: req.session.id}
+    }
+    //console.log(receivedPOST)
+    await client.close()
+  }
+  res.writeHead(200, { 'Content-Type': 'application/json' })
+  res.end(JSON.stringify(result))
 }
 
 app.post('/login', login)
@@ -107,13 +147,18 @@ async function login (req, res) {
     let userData = await collection.findOne({email: {$eq: receivedPOST.email} });
 
     if (userData) {
-      if (userData.password != receivedPOST.password) {
-        result = { result: "La contrasenya és incorrecta"}
+      if (userData.type != "google") {
+        result = { status: "KO", result: "GOOGLE REGISTER"}
       } else {
-        result = { result: "LOGIN OK", token: generateToken(255)}
+        if (userData.password != receivedPOST.password) {
+          result = { status: "KO", result: "WRONG PASSWORD"}
+        } else {
+          await collection.updateOne({email: {$eq: receivedPOST.email}}, { $set: { token: req.session.id } });
+          result = { status: "OK", result: "LOGIN OK", token: req.session.id}
+        }
       }
     } else {
-      result = { result: "L'usuari no existeix"}
+      result = { status: "KO", result: "L'usuari no existeix"}
     }
 
     await client.close();
@@ -135,14 +180,15 @@ async function register (req, res) {
     const db = client.db(databaseName);
     
     let collection = db.collection('users');
-    let userData = await collection.findOne({email: {$eq: receivedPOST.email}});
-    console.log(userData)
+    let dbUser = await collection.findOne({email: {$eq: receivedPOST.email}});
 
-    if (userData) {
-      result = { result: "L'usuari ja existeix"}
+    if (dbUser) {
+      result = { status: "KO", result: "L'usuari ja existeix"}
     } else {
-      await collection.insertOne(receivedPOST);
-      result = { result: "Usuari registrat"}
+      let userData = receivedPOST;
+      receivedPOST.token = req.session.id;
+      await collection.insertOne(userData);
+      result = { status: "OK", result: "Usuari registrat", token: req.session.id}
     }
 
     await client.close();
@@ -152,8 +198,8 @@ async function register (req, res) {
   res.end(JSON.stringify(result))
 }
 
-app.post('/createProject', createProject)
-async function createProject (req, res) {
+app.post('/getProjects', getProjects)
+async function getProjects (req, res) {
   let receivedPOST = await post.getPostData(req)
   let result = {};
 
@@ -163,8 +209,53 @@ async function createProject (req, res) {
     await client.connect();
     const db = client.db(databaseName);
     
-    let creatorID = await db.collection('users').findOne({email: {$eq: receivedPOST.user}});
-    result = { result: "Projecte creat"}
+    let userCollection = db.collection('users');
+    let user = await userCollection.findOne({token: {$eq: receivedPOST.token}});
+    if (user) {
+      let projectCollection = db.collection('projects');
+      let projects = await projectCollection.find({creator: {$eq: user.email}}).toArray();
+      if (projects) {
+        result = { status: "OK", result: projects}
+      }
+    } else {
+      result = { status: "KO", result: "TOKEN EXPIRED"}
+    }
+
+    await client.close();
+  }
+
+  res.writeHead(200, { 'Content-Type': 'application/json' })
+  res.end(JSON.stringify(result))
+}
+
+
+app.post('/createProject', createProject)
+async function createProject (req, res) {
+  let receivedPOST = await post.getPostData(req)
+  let result = {};
+
+
+  if (receivedPOST) {
+    result = {}
+    
+    await client.connect();
+    const db = client.db(databaseName);
+    
+    let userCollection = db.collection('users');
+    let user = await userCollection.findOne({token: {$eq: receivedPOST.token}});
+    if (user) {
+      let projectCollection = db.collection('projects');
+      let project = {
+        creator: user.email,
+        name: receivedPOST.name,
+        description: receivedPOST.description,
+        date: new Date().now()
+      }
+      await projectCollection.insertOne(project);
+      result = { status: "OK", result: "PROJECT CREATED"}
+    } else {
+      result = { status: "KO", result: "TOKEN EXPIRED"}
+    }
 
     await client.close();
   }

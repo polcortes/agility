@@ -3,12 +3,16 @@ import LightIcon from '../assets/icons/light-agility'
 import { useTranslation } from 'react-i18next'
 import { useState, useEffect } from 'react'
 import LanguageChanger from '../components/LanguageChanger'
+import { useGoogleLogin } from '@react-oauth/google';
+import axios from 'axios';
 // import { useTheme } from '../custom-hooks/useTheme'
 
 const Home = () => {
   const { t } = useTranslation()
 
   const [theme, setTheme] = useState('dark')
+  const [ user, setUser ] = useState([]);
+  const [ profile, setProfile ] = useState([]);
 
   useEffect(() => {
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => setTheme(e.matches ? 'dark' : 'light'))
@@ -32,6 +36,49 @@ const Home = () => {
     dark: "Cambiar a tema claro",
     light: "Cambiar a tema oscuro"
   }
+
+  const responseMessage = (response) => {
+    console.log(response);
+  };
+  const errorMessage = (error) => {
+      console.log(error);
+  };
+
+  const login = useGoogleLogin({
+    onSuccess: (codeResponse) => setUser(codeResponse),
+    onError: (error) => console.log('Login Failed:', error)
+  });
+
+  const googleLoginCallback = (userData) => {
+    if (userData) {
+      axios
+        .post('http://localhost:3000/googleLogin', userData)
+        .then((res) => {
+          console.log(res.data);
+        })
+    }
+  }
+
+  useEffect(
+    () => {
+        if (user && user.access_token) {
+            axios
+                .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
+                    headers: {
+                        Authorization: `Bearer ${user.access_token}`,
+                        Accept: 'application/json'
+                    }
+                })
+                .then((res) => {
+                    googleLoginCallback(res.data)
+                    console.log(res.data);
+                })
+                .catch((err) => console.log(err));
+        }
+    },
+    [ user ]
+  );
+
 
   return (
     <main 
@@ -66,7 +113,7 @@ const Home = () => {
         <LanguageChanger props={true} />
         
         <h1 className='text-3xl font-bold font-subtitle'>{ t("home.accessAccount") }</h1>
-        <button className='bg-indigo-600 text-white dark:bg-white py-2 px-4 mt-6 dark:text-black font-semibold cursor-pointer rounded-full hover:bg-indigo-800 dark:hover:bg-slate-100/70 transition-colors'>
+        <button onClick={login} className='bg-indigo-600 text-white dark:bg-white py-2 px-4 mt-6 dark:text-black font-semibold cursor-pointer rounded-full hover:bg-indigo-800 dark:hover:bg-slate-100/70 transition-colors'>
           Google
         </button>
 
