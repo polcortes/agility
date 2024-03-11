@@ -15,7 +15,6 @@ const Home = () => {
 
   const [theme, setTheme] = useState('dark')
   const [ user, setUser ] = useState([]);
-  const [ profile, setProfile ] = useState([]);
 
   useEffect(() => {
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => setTheme(e.matches ? 'dark' : 'light'))
@@ -39,13 +38,6 @@ const Home = () => {
     dark: "Cambiar a tema claro",
     light: "Cambiar a tema oscuro"
   }
-
-  const responseMessage = (response) => {
-    console.log(response);
-  };
-  const errorMessage = (error) => {
-      console.log(error);
-  };
 
   const login = useGoogleLogin({
     onSuccess: (codeResponse) => setUser(codeResponse),
