@@ -8,9 +8,9 @@ export default {
         'dark-primary-bg': '#0F0C11',
         'dark-secondary-bg': '#201822',
         'dark-tertiary-bg': '#47334D',
-        'light-primary-bg': '#D7D7D7',
-        'light-secondary-bg': '#F2F2F2',
-        'the-accent-color': '#4F46E5'
+        'light-primary-bg': '#EEF2FF',
+        'light-secondary-bg': '#D4E1E2',
+        'the-accent-color': '#E8F0F7'
       },
     },
     fontFamily: {
