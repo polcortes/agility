@@ -9,7 +9,7 @@ export default {
         'dark-secondary-bg': '#201822',
         'dark-tertiary-bg': '#47334D',
         'light-primary-bg': '#D7D7D7',
-        'light-secondary-bg': '#F5F5F5',
+        'light-secondary-bg': '#F2F2F2',
         'the-accent-color': '#4F46E5'
       },
     },
