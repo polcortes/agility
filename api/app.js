@@ -9,7 +9,7 @@ const { MongoClient } = require('mongodb');
 const cors = require('cors')
 const session = require('express-session')
 
-function generateToken(length) {
+function generateInviteCode(length) {
   let result = '';
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   const charactersLength = characters.length;
@@ -247,9 +247,10 @@ async function createProject (req, res) {
       let projectCollection = db.collection('projects');
       let project = {
         creator: user.email,
-        name: receivedPOST.name,
+        title: receivedPOST.title,
         description: receivedPOST.description,
-        date: new Date().now()
+        inviteCode: generateInviteCode(32),
+        date: new Date().toDateString()
       }
       await projectCollection.insertOne(project);
       result = { status: "OK", result: "PROJECT CREATED"}
