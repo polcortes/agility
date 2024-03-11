@@ -18,6 +18,9 @@ i18n
       en: {
         translation: {
           home: {
+            seoTitle: 'Agility - Your Scrum projects manager',
+            seoDescription: 'Agility is a Scrum project manager that allows you to manage your projects faster than ever.',
+
             description1: 'Manage your Scrum projects',
             description2: 'faster than ever',
             accessAccount: 'Log in or sign up!'
@@ -31,6 +34,9 @@ i18n
       es: {
         translation: {
           home: {
+            seoTitle: 'Agility - Tu gestor de proyectos Scrum',
+            seoDescription: 'Agility es un gestor de proyectos Scrum que te permite gestionar tus proyectos más rápido que nunca.',
+
             description1: 'Gestiona tus proyectos de Scrum',
             description2: 'más rápido que nunca',
             accessAccount: '¡Inicia sesión o regístrate!'
@@ -44,6 +50,9 @@ i18n
       ca: {
         translation: {
           home: {
+            seoTitle: 'Agility - El teu gestor de projectes Scrum',
+            seoDescription: 'Agility és un gestor de projectes Scrum que et permet gestionar els teus projectes més ràpid que mai.',
+
             description1: 'Gestiona els teus projectes de Scrum',
             description2: 'més ràpid que mai',
             accessAccount: 'Inicia sessió o registra\'t!'
