@@ -90,7 +90,7 @@ const Home = () => {
       >
         {/* <!--  bg-white text-black dark:bg-[#100C12] dark:text-white  --> */}
         
-        <section className="relative bg-white dark:bg-[#251B28]/80 px-6 py-14 flex flex-col items-center justify-center rounded-none xl:rounded-md">
+        <section className="relative bg-white dark:bg-dark-secondary-bg/80 px-6 py-14 flex flex-col items-center justify-center rounded-none xl:rounded-md">
           <LanguageChanger props={true} className={`flex absolute right-0 top-0 xl:hidden`} />
 
           { // Dark theme logo

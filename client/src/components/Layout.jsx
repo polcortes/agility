@@ -1,11 +1,12 @@
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link/*, useLocation*/ } from 'react-router-dom';
 import LanguageChanger from './LanguageChanger';
 
 const Layout = () => {
-  const location = useLocation();
+  // const location = useLocation();
 
   // Verificar si la ubicación actual es diferente a la raíz ("/")
-  const shouldShowNav = location.pathname !== "/";
+  // const shouldShowNav = location.pathname !== "/";
+  const shouldShowNav = false;
 
   return (
     <>
