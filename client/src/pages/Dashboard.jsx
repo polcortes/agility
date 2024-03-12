@@ -201,28 +201,39 @@ const Dashboard = () => {
         className="
           grid grid-rows-[82px_1fr] overflow-hidden gap-4
           w-screen h-screen xl:p-4 box-border font-body transition-[padding]
-          bg-gradient-to-t from-indigo-50/80 to-indigo-50"
+          bg-gradient-to-t from-light-primary-bg/80 to-light-primary-bg"
       >
         <header 
           className='
             p-5 rounded-md 
             flex items-center justify-between
-            bg-white'
+            bg-light-secondary-bg'
         >
           <LightIcon className={`w-64 h-auto`} />
+
+          <button>
+            Crear projecte
+          </button>
+
+          <span className="flex">
+            <input type="search" name="search-in-projects" id="search-in-projects" placeholder='Search' />
+            <span className="bg-[#d7d7d7] size-12 flex items-center justify-center rounded-full overflow-hidden">
+              pfp<br />icon
+            </span>
+          </span>
         </header>
         <section 
           className="
             p-5 rounded-md overflow-y-scroll
             flex flex-col items-center
-            bg-white"
+            bg-light-secondary-bg"
         >
           <h1 className="font-title font-extrabold text-[] text-5xl mb-6">Projectes</h1>
           <section className='grid lg:grid-cols-3 gap-8 w-full md:px-24 px-6 sm:grid-cols-2 grid-cols-1'>
             {projects.map((project, index) => {
               return (
                 <article key={index} className="rounded-md shadow-lg">
-                  <a href={project.href} className='h-full w-full bg-indigo-50 hover:bg-indigo-100 grid grid-cols-[1fr_3fr] grid-rows-2 p-3 rounded-md'>
+                  <a href={project.href} className='h-full w-full bg-indigo-50 hover:bg-indigo-200/80 grid grid-cols-[1fr_3fr] grid-rows-2 p-3 rounded-md'>
                     <span className="size-16 mr-5 bg-black row-span-2 rounded-md"></span>
                     <h2 className="font-medium text-xl flex items-center">{project.title}</h2>
                     <span className="flex items-center">De: {project.author}</span>
