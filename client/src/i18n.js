@@ -57,6 +57,7 @@ i18n
             description2: 'més ràpid que mai',
             accessAccount: 'Inicia sessió o registra\'t!',
             loginUsername: 'Nom d\'usuari o correu electrònic',
+            loginPassword: 'Contrasenya'
           },
           404: {
             title: '404 - Pàgina no trobada',
