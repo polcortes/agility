@@ -11,7 +11,7 @@ export default {
         'light-primary-bg': '#EEF2FF',
         'light-secondary-bg': '#FFFFFF',
         'light-tertiary-bg': '#EAEAEA',
-        'the-accent-color': '#E8F0F7'
+        'the-accent-color': '#4F46E5'
       },
     },
     fontFamily: {
