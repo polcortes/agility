@@ -55,9 +55,21 @@ i18n
 
             description1: 'Gestiona els teus projectes de Scrum',
             description2: 'més ràpid que mai',
-            accessAccount: 'Inicia sessió o registra\'t!',
+            loginMessage: 'Inicia sessió',
             loginUsername: 'Nom d\'usuari o correu electrònic',
-            loginPassword: 'Contrasenya'
+            loginPassword: 'Contrasenya',
+            loginButton: 'Iniciar sessió',
+            registerLink: 'Crear un compte nou',
+
+            registerMessage: 'Registra\'t',
+            registerUsername: 'Nom d\'usuari',
+            registerEmail: 'Correu electrònic',
+            registerPassword: 'Contrasenya',
+            registerRepeatPassword: 'Confirma la teva contrasenya',
+            registerButton: 'Registrar-se',
+            loginLink: 'Inicia sessió',
+
+            googleButton: 'Entra amb Google',
           },
           404: {
             title: '404 - Pàgina no trobada',
