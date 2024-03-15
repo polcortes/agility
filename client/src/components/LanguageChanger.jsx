@@ -14,7 +14,7 @@ const LanguageChanger = ( props ) => {
   }
 
   return (
-    <div className={props ? "absolute top-6 right-6 flex gap-4" : "flex gap-4"}>
+    <div className="absolute top-6 right-6 flex gap-4">
       {Object.keys(langs).map((lng) => (
         <button className='px-3 py-2 hover:bg-gray-400/50 dark:hover:bg-slate-200/10 rounded-full transition-colors' key={lng} onClick={() => changeLanguage(lng)}>
           {langs[lng].nativeName}

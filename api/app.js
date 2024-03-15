@@ -5,20 +5,20 @@ const https = require('https')
 const url = require('url')
 const { v4: uuidv4 } = require('uuid')
 const post = require('./post.js')
-const { MongoClient } = require('mongodb');
+const { MongoClient } = require('mongodb')
 const cors = require('cors')
 const session = require('express-session')
 
 function generateInviteCode(length) {
-  let result = '';
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  const charactersLength = characters.length;
-  let counter = 0;
+  let result = ''
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  const charactersLength = characters.length
+  let counter = 0
   while (counter < length) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    counter ++;
+    result += characters.charAt(Math.floor(Math.random() * charactersLength))
+    counter ++
   }
-  return result;
+  return result
 }
 
 // Iniciar servidors HTTP
@@ -54,9 +54,9 @@ app.use(cors())
 
 // Activar el servidor HTTP
 const httpServer = app.listen(port, appListen)
-const uri = "mongodb://localhost:27017";
-const client = new MongoClient(uri);
-const databaseName = "Agility";
+const uri = "mongodb://localhost:27017"
+const client = new MongoClient(uri)
+const databaseName = "Agility"
 
 function appListen () {
   console.log(`Example app listening for HTTP queries on: ${port}`)
@@ -73,18 +73,18 @@ async function getIndex (req, res) {
 app.post('/getAllUsers', getUsers)
 async function getUsers (req, res) {
   let receivedPOST = await post.getPostData(req)
-  let result = {};
+  let result = {}
 
   if (receivedPOST) {
     result = {}
     
-    await client.connect();
-    const db = client.db(databaseName);
+    await client.connect()
+    const db = client.db(databaseName)
     
-    let collection = db.collection('users');
+    let collection = db.collection('users')
     
-    result = {status:"OK", result: await collection.find().toArray()};
-    await client.close();
+    result = {status:"OK", result: await collection.find().toArray()}
+    await client.close()
   }
 
   res.writeHead(200, { 'Content-Type': 'application/json' })
@@ -95,20 +95,19 @@ async function getUsers (req, res) {
 app.post('/googleLogin', testGoogle)
 async function testGoogle (req, res) {
   let receivedPOST = await post.getPostData(req)
-  let result = {};
+  let result = {}
 
   if (receivedPOST) {
     result = {}
 
-    await client.connect();
-    const db = client.db(databaseName);
+    await client.connect()
+    const db = client.db(databaseName)
     
-    let collection = db.collection('users');
+    let collection = db.collection('users')
 
-    dbUser = await collection.findOne({email: {$eq: receivedPOST.email}});
-    console.log(dbUser)
+    dbUser = await collection.findOne({email: {$eq: receivedPOST.email}})
     if (dbUser) {
-      await collection.updateOne({email: {$eq: receivedPOST.email}}, { $set: { token: req.session.id } });
+      await collection.updateOne({email: {$eq: receivedPOST.email}}, { $set: { token: req.session.id } })
       result = { status: "OK", result: "LOGIN", token: req.session.id}
     } else {
       userData = {
@@ -121,7 +120,7 @@ async function testGoogle (req, res) {
         userData.picture = receivedPOST.picture
       }
       console.log(userData)
-      await collection.insertOne(userData);
+      await collection.insertOne(userData)
       result = { status: "OK", result: "REGISTER OK", token: req.session.id}
     }
     //console.log(receivedPOST)
@@ -134,26 +133,26 @@ async function testGoogle (req, res) {
 app.post('/login', login)
 async function login (req, res) {
   let receivedPOST = await post.getPostData(req)
-  let result = {};
+  let result = {}
 
   if (receivedPOST) {
     result = {}
     
     await client.connect();
-    const db = client.db(databaseName);
+    const db = client.db(databaseName)
     
-    let collection = db.collection('users');
+    let collection = db.collection('users')
     
-    let userData = await collection.findOne({email: {$eq: receivedPOST.email} });
+    let userData = await collection.findOne({email: {$eq: receivedPOST.email} })
 
     if (userData) {
-      if (userData.type != "google") {
+      if (userData.type == "google") {
         result = { status: "KO", result: "GOOGLE REGISTER"}
       } else {
         if (userData.password != receivedPOST.password) {
           result = { status: "KO", result: "WRONG PASSWORD"}
         } else {
-          await collection.updateOne({email: {$eq: receivedPOST.email}}, { $set: { token: req.session.id } });
+          await collection.updateOne({email: {$eq: receivedPOST.email}}, { $set: { token: req.session.id } })
           result = { status: "OK", result: "LOGIN OK", token: req.session.id}
         }
       }
@@ -161,7 +160,7 @@ async function login (req, res) {
       result = { status: "KO", result: "L'usuari no existeix"}
     }
 
-    await client.close();
+    await client.close()
   }
 
   res.writeHead(200, { 'Content-Type': 'application/json' })
@@ -171,27 +170,27 @@ async function login (req, res) {
 app.post('/register', register)
 async function register (req, res) {
   let receivedPOST = await post.getPostData(req)
-  let result = {};
+  let result = {}
 
   if (receivedPOST) {
     result = {}
     
-    await client.connect();
-    const db = client.db(databaseName);
+    await client.connect()
+    const db = client.db(databaseName)
     
-    let collection = db.collection('users');
-    let dbUser = await collection.findOne({email: {$eq: receivedPOST.email}});
+    let collection = db.collection('users')
+    let dbUser = await collection.findOne({email: {$eq: receivedPOST.email}})
 
     if (dbUser) {
       result = { status: "KO", result: "L'usuari ja existeix"}
     } else {
-      let userData = receivedPOST;
-      receivedPOST.token = req.session.id;
-      await collection.insertOne(userData);
+      let userData = receivedPOST
+      receivedPOST.token = req.session.id
+      await collection.insertOne(userData)
       result = { status: "OK", result: "Usuari registrat", token: req.session.id}
     }
 
-    await client.close();
+    await client.close()
   }
 
   res.writeHead(200, { 'Content-Type': 'application/json' })
@@ -201,19 +200,19 @@ async function register (req, res) {
 app.post('/getProjects', getProjects)
 async function getProjects (req, res) {
   let receivedPOST = await post.getPostData(req)
-  let result = {};
+  let result = {}
 
   if (receivedPOST) {
     result = {}
     
-    await client.connect();
-    const db = client.db(databaseName);
+    await client.connect()
+    const db = client.db(databaseName)
     
-    let userCollection = db.collection('users');
-    let user = await userCollection.findOne({token: {$eq: receivedPOST.token}});
+    let userCollection = db.collection('users')
+    let user = await userCollection.findOne({token: {$eq: receivedPOST.token}})
     if (user) {
-      let projectCollection = db.collection('projects');
-      let projects = await projectCollection.find({creator: {$eq: user.email}}).toArray();
+      let projectCollection = db.collection('projects')
+      let projects = await projectCollection.find({creator: {$eq: user.email}}).toArray()
       if (projects) {
         result = { status: "OK", result: projects}
       }
@@ -221,7 +220,7 @@ async function getProjects (req, res) {
       result = { status: "KO", result: "TOKEN EXPIRED"}
     }
 
-    await client.close();
+    await client.close()
   }
 
   res.writeHead(200, { 'Content-Type': 'application/json' })
@@ -232,19 +231,19 @@ async function getProjects (req, res) {
 app.post('/createProject', createProject)
 async function createProject (req, res) {
   let receivedPOST = await post.getPostData(req)
-  let result = {};
+  let result = {}
 
 
   if (receivedPOST) {
     result = {}
     
-    await client.connect();
-    const db = client.db(databaseName);
+    await client.connect()
+    const db = client.db(databaseName)
     
-    let userCollection = db.collection('users');
-    let user = await userCollection.findOne({token: {$eq: receivedPOST.token}});
+    let userCollection = db.collection('users')
+    let user = await userCollection.findOne({token: {$eq: receivedPOST.token}})
     if (user) {
-      let projectCollection = db.collection('projects');
+      let projectCollection = db.collection('projects')
       let project = {
         creator: user.email,
         title: receivedPOST.title,
@@ -252,13 +251,13 @@ async function createProject (req, res) {
         inviteCode: generateInviteCode(32),
         date: new Date().toDateString()
       }
-      await projectCollection.insertOne(project);
+      await projectCollection.insertOne(project)
       result = { status: "OK", result: "PROJECT CREATED"}
     } else {
       result = { status: "KO", result: "TOKEN EXPIRED"}
     }
 
-    await client.close();
+    await client.close()
   }
 
   res.writeHead(200, { 'Content-Type': 'application/json' })
@@ -268,7 +267,7 @@ async function createProject (req, res) {
 app.post('/dades', getDades)
 async function getDades (req, res) {
   let receivedPOST = await post.getPostData(req)
-  let result = {};
+  let result = {}
 
   if (receivedPOST) {
     if (receivedPOST.type == "herois") {
