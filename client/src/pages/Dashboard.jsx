@@ -30,12 +30,19 @@ const Dashboard = () => {
   const [ projects, setProjects ] = useState([])
 
   useEffect(() => {
-    axios
-      .post('http://localhost:3000/getProjects')
-      .then(res => {
-        setProjects(res.result)
-      })
-  })
+    if (projects.length === 0) {
+      axios
+        .post('http://localhost:3000/getProjects', {
+          token: "WjGoEb_4VsUkC9vT3zPh6NmKJMl77ayn", // localStorage.getItem('token')
+        })
+        .then(res => {
+          res = res.data
+          console.log(res.result)
+          if (res.status === "OK")
+          setProjects(res.result)
+        })
+    }
+  }, [projects])
 
   const [ searchValue, setSearchValue ] = useState('')
 
@@ -104,7 +111,7 @@ const Dashboard = () => {
           <h1 className="font-title font-extrabold text-[] text-5xl mb-8">Projectes</h1>
 
           <section className='grid lg:grid-cols-3 w-full gap-8 md:px-24 px-6 sm:grid-cols-2 grid-cols-1'>
-            {projects && typeof projects === Array && projects.map((project, index) => {
+            {projects && projects.map((project, index) => {
               return (
                 <ProjectCard project={project} key={index} />
               )
