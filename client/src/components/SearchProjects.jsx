@@ -39,7 +39,7 @@ const SearchProjects = ({ onClose, projects }) => {
           && projects[0] !== "No s'han trobat resultats"
           && projects.map((project, index) => (
           <li key={index} className="mb-2 w-full hover:bg-light-tertiary-bg p-2 rounded-md">
-              <a href="" className='w-full'>
+              <a href={`/projects?id=${project._id}`} className='w-full'>
                   <h3 className="font-title text-xl">{project.title}</h3>
                   <p className="font-body text-lg">{project.author}</p>
               </a>
