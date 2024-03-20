@@ -35,7 +35,7 @@ class Obj {
                         let keys = Object.keys(objPost)
                         for (let cnt = 0; cnt < keys.length; cnt = cnt + 1) {
                             let value = objPost[keys[cnt]]
-                            let valueInt = parseInt(value)
+                            let valueInt = Number(value)
                             let valueFlt = parseFloat(value)
                             if (valueInt && valueFlt) {
                                 if (valueInt == valueFlt) objPost[keys[cnt]] = valueInt
