@@ -26,9 +26,9 @@ const SearchProjects = ({ onClose, projects }) => {
   }, [isOutsideClicked, onClose]);
 
   return (
-    <div id="search-projects-container" className="absolute top-28 bg-white right-32 p-5 flex flex-col border-2 border-black rounded-lg max-h-96 dark:bg-dark-primary-bg">
+    <div id="search-projects-container" className="absolute top-28 bg-white right-32 p-5 flex flex-col border-2 border-black rounded-lg max-h-96 dark:bg-dark-secondary-bg">
       <h2
-        className='font-subtitle text-2xl mb-5 '
+        className='font-subtitle text-2xl mb-5 text-black dark:text-white'
       >
         Resultats de la cerca:
       </h2>
@@ -38,10 +38,9 @@ const SearchProjects = ({ onClose, projects }) => {
           && projects.length !== 0 
           && projects[0] !== "No s'han trobat resultats"
           && projects.map((project, index) => (
-          <li key={index} className="mb-2 w-full hover:bg-light-tertiary-bg p-2 rounded-md">
-              <a href={`/projects?id=${project._id}`} className='w-full'>
-                  <h3 className="font-title text-xl">{project.title}</h3>
-                  <p className="font-body text-lg">{project.author}</p>
+          <li key={index} className="mb-2 w-full text-black dark:text-white hover:bg-light-tertiary-bg dark:hover:bg-dark-tertiary-bg rounded-md">
+              <a href={`/projects?id=${project._id}`} className='w-full h-full underline decoration-the-accent-color'>
+                  <h3 className="font-title text-xl p-2">{project.title}</h3>
               </a>
           </li>
           ))

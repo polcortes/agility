@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async'
 
 import axios from 'axios'
 
-// import DarkIcon from '../assets/icons/dark-agility'
+import DarkIcon from '../assets/icons/dark-agility'
 import LightIcon from '../assets/icons/light-agility'
 
 import ProjectCard from '../components/ProjectCard'
@@ -38,8 +38,7 @@ const Dashboard = () => {
         .then(res => {
           res = res.data
           console.log(res.result)
-          if (res.status === "OK")
-          setProjects(res.result)
+          if (res.status === "OK") setProjects(res.result)
         })
     }
   }, [projects])
@@ -66,15 +65,16 @@ const Dashboard = () => {
         className="
           grid grid-rows-[82px_1fr] overflow-hidden gap-4 relative
           w-screen h-screen xl:p-4 box-border font-body transition-[padding]
-          bg-gradient-to-t from-light-primary-bg/80 to-light-primary-bg"
+          bg-gradient-to-t from-light-primary-bg/80 to-light-primary-bg dark:from-black dark:to-dark-primary-bg"
       >
         <header 
           className='
             p-5 rounded-md relative 
             flex items-center justify-between
-            bg-light-secondary-bg'
+            bg-light-secondary-bg dark:bg-dark-secondary-bg'
         >
           <LightIcon className={`w-64 h-auto`} />
+          <DarkIcon className={`w-64 h-auto hidden`} />
 
           <button
             id="create-project-button"
@@ -96,7 +96,7 @@ const Dashboard = () => {
               id="search-in-projects" 
               placeholder='Search' 
             />
-            <div className='w-[1px] h-full border-l-2 border-black mx-6'></div>
+            <div className='w-[1px] h-full border-l-2 border-black dark:border-white/80 mx-6'></div>
             <span className="bg-[#d7d7d7] size-12 flex items-center justify-center rounded-full overflow-hidden">
               pfp<br />icon
             </span>
@@ -105,10 +105,9 @@ const Dashboard = () => {
         <section 
           className="
             p-5 rounded-md overflow-y-scroll
-            flex flex-col items-center
-            bg-light-secondary-bg"
+            flex flex-col items-center"
         >
-          <h1 className="font-title font-extrabold text-[] text-5xl mb-8">Projectes</h1>
+          <h1 className="font-title font-extrabold text-5xl mb-8 text-black dark:text-white">Projectes</h1>
 
           <section className='grid lg:grid-cols-3 w-full gap-8 md:px-24 px-6 sm:grid-cols-2 grid-cols-1'>
             {projects && projects.map((project, index) => {

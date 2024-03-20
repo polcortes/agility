@@ -37,16 +37,17 @@ const CreateProject = ({ onClose }) => {
   }
 
   return (
-    <div id="create-project-container" className="absolute top-28 bg-white left-1/2 -translate-x-1/2 p-10 flex flex-col border-2 border-black rounded-lg">
+    <div id="create-project-container" className="absolute top-28 bg-light-secondary-bg dark:bg-dark-secondary-bg left-1/2 -translate-x-1/2 p-10 flex flex-col border-2 border-black rounded-lg">
       <label 
         htmlFor="create-project-name"
+        className="text-black dark:text-white mb-1"
       >
         Títol del projecte
       </label>
 
       <input 
         ref={projectTitleRef}
-        className="w-full p-2 border-2 border-black dark:border-white rounded-md bg-transparent "
+        className="w-full p-2 border-2 text-black dark:text-white border-black dark:border-white rounded-md bg-transparent outline-none"
         type="text" 
         name="create-project-name" 
         id="create-project-name" 
