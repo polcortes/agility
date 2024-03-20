@@ -61,3 +61,62 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #3d36c1;
 }
+
+[type="search"]::-webkit-search-decoration,
+[type="search"]::-webkit-search-cancel-button,
+[type="search"]::-webkit-search-results-button,
+[type="search"]::-webkit-search-results-decoration,
+[type="search"] {
+  -webkit-appearance: none;
+}
+
+#dashboard-section {
+  display: grid;
+  grid-template-columns: 300px auto;
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  transition: grid-template-columns .2s linear;
+}
+
+#main-dashboard {
+  display: grid;
+  grid-template-rows: 100px auto;
+}
+
+.closed {
+  animation: hide-aside 1s linear;
+  padding: 0 !important;
+}
+
+@keyframes hide-aside {
+  90% {
+    display: none;
+  }
+}
+
+section:has(.closed) {
+  padding-left: 0;
+}
+
+aside.closed > *:not(#arrow) {
+  display: none;
+}
+
+.closed #arrow:hover {
+  right: -25px;
+}
+
+#dashboard-section:has(aside.closed) {
+  grid-template-columns: 0px auto;
+}
+
+.closed section,
+.closed ul {
+  display: none;
+}
+
+#main-project-container {
+  background: rgb(29,5,33);
+  background: linear-gradient(342deg, rgba(29,5,33,1) 13%, rgba(108,52,128,1) 100%);
+}
