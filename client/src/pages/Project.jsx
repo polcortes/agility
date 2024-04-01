@@ -1,6 +1,6 @@
 //TODO: 
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 import axios from 'axios'
 
@@ -33,13 +33,14 @@ const Project = () => {
       setProjectState("404")
     }
     else {
+      console.log(projectID)
       axios
-        .post('http://localhost:3000/getProject', { // Conseguiré el project con la id que tengo
-          token: 'token',
+        .post('http://localhost:3000/getProjects', { // Conseguiré el project con la id que tengo
+          token: 'WjGoEb_4VsUkC9vT3zPh6NmKJMl77ayn',
           projectID: projectID,
         })
-        .then(data => console.log(data)) // Comprobar si el usuario tiene permiso para acceder al proyecto.
-        .catch(() => {setProjectState("404")}) // tiene que ser 404
+        .then(data => {console.table(data); setProjectState("200");}) // Comprobar si el usuario tiene permiso para acceder al proyecto.
+        .catch(() => {setProjectState("404"); console.log("No s\'ha pogut carregar el projecte.")}) // tiene que ser 404
     }
   }
 
@@ -50,10 +51,10 @@ const Project = () => {
 
   const [ sprints, setSprints ] = useState([])
 
-  const getSprints = useCallback(() => {
+  const getSprints = () => {
     axios
-      .post('http://localhost:3000/getSprints', {
-        token: 'token',
+      .post('http://localhost:3000/getSprintBoards', {
+        token: 'WjGoEb_4VsUkC9vT3zPh6NmKJMl77ayn',
         projectID: projectID,
       })
       .then(res => {
@@ -64,14 +65,15 @@ const Project = () => {
           setSprints(reformattedRes)
         }
       })
-  }, [projectID])
-
-  useEffect(() => getSprints(), [sprints, getSprints]) //! Hacer que ocurra cada vez que se añade un sprint.
+      .catch(() => console.log('No s\'han pogut carregar els sprints'))
+  }
 
   const [ latestSprint, setLatestSprint ] = useState({})
 
-  const getLatestSprint = () => {
-    const dates = [new Date("2024-03-20T18:31:12.158+00:00")]
+  const getLatestSprint = () => { // TODO(Pol): test it.
+    // const dates = [new Date("2024-03-20T18:31:12.158+00:00")]
+    const dates = []
+    sprints.forEach(sprint => dates.push(new Date(sprint.date)))
 
     const max = new Date(Math.max.apply(null, dates))
 
@@ -84,10 +86,10 @@ const Project = () => {
 
   const getTasks = () => {
     axios
-      .post('http://localhost:3000/getTasks', {
-        token: 'token',
+      .post('http://localhost:3000/getTasksInSprint', {
+        token: 'WjGoEb_4VsUkC9vT3zPh6NmKJMl77ayn',
         projectID: projectID,
-        sprintID: latestSprint._id,
+        sprintName: latestSprint.name,
       })
         .then(res => {
           res = res.data
@@ -180,7 +182,7 @@ const Project = () => {
                   ref={newBoardTitleInputRef} 
                   type='text' 
                   className={`rounded-lg bg-light-secondary-bg border-2 border-black box-border transition-all ${isEditingTitle ? 'flex' : 'hidden'}`}
-                /> { /* Falta un useEffect etc... */ }
+                />
               </span>
 
               <span>
