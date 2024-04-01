@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+import axios from 'axios'
 import { useState, useEffect, useRef } from 'react'
 
 const CreateProject = ({ onClose }) => {
@@ -28,12 +28,30 @@ const CreateProject = ({ onClose }) => {
     }
   }, [isOutsideClicked, onClose]);
 
+  const handleCreateProject = () => {
+    axios
+      .post('http://localhost:3000/createProject', {
+        token: 'WjGoEb_4VsUkC9vT3zPh6NmKJMl77ayn',
+        title: projectTitleRef.current.value,
+        description: '',
+      })
+      .then(res => {
+        res = res.data
+        console.log(res.result)
+        if (res.status === "OK") {
+          // TODO(Erik y Pol): Que se pueda obtener el id de un proyecto y redirigir al proyecto creado.
+          console.log('Project created successfully')
+        }
+      })
+  }
+
   function insertNewProject(title) {
     if (title === '' || title === null) {
       setIsCreateErrorShown(true);
       return
     }
     setIsCreateErrorShown(false)
+    handleCreateProject()
   }
 
   return (
