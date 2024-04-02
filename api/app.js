@@ -196,7 +196,7 @@ async function register(req, res) {
     let dbUser = await collection.findOne({ email: { $eq: receivedPOST.email } })
 
     if (dbUser) {
-      result = { status: "KO", result: "L'usuari ja existeix" }
+      result = { status: "KO", result: "USER EXISTS" }
     } else {
       let userData = receivedPOST
       receivedPOST.token = req.session.id
@@ -241,6 +241,37 @@ async function getProjects(req, res) {
   res.end(JSON.stringify(result))
 }
 
+app.post('/getProject', getProjects)
+async function getProjects(req, res) {
+  let receivedPOST = await post.getPostData(req)
+  let result = {}
+
+  if (receivedPOST) {
+    result = {}
+    let client = new MongoClient(uri)
+    await client.connect()
+    const db = client.db(databaseName)
+
+    let userCollection = db.collection('users')
+    let user = await userCollection.findOne({ token: { $eq: receivedPOST.token } })
+    if (user) {
+      let projectCollection = db.collection('projects')
+      let project = await projectCollection.findOne({ _id: { $eq: new ObjectId(receivedPOST.projectID) } })
+      if (project) {
+        result = { status: "OK", result: project }
+      } else {
+        result = { status: "KO", result: "PROJECT NOT FOUND" }
+      }
+    } else {
+      result = { status: "KO", result: "TOKEN EXPIRED" }
+    }
+
+    await client.close()
+  }
+
+  res.writeHead(200, { 'Content-Type': 'application/json' })
+  res.end(JSON.stringify(result))
+}
 
 app.post('/createProject', createProject)
 async function createProject(req, res) {
