@@ -40,7 +40,7 @@ const Project = () => {
           projectID: projectID,
         })
         .then(data => {console.table(data); setProjectState("200");}) // Comprobar si el usuario tiene permiso para acceder al proyecto.
-        .catch(() => {setProjectState("404"); console.log("No s\'ha pogut carregar el projecte.")}) // tiene que ser 404
+        .catch(() => {setProjectState("404"); console.log("No s'ha pogut carregar el projecte.")}) // tiene que ser 404
     }
   }
 

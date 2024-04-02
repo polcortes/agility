@@ -219,7 +219,7 @@ async function getProjects(req, res) {
 
   if (receivedPOST) {
     result = {}
-
+    let client = new MongoClient(uri)
     await client.connect()
     const db = client.db(databaseName)
 
@@ -336,7 +336,7 @@ async function getSprintBoards(req, res) {
 
   if (receivedPOST) {
     result = {}
-
+    let client = new MongoClient(uri)
     await client.connect()
     const db = client.db(databaseName)
 
@@ -465,6 +465,7 @@ async function getTasksInSprint(req, res) {
   let result = {}
   if (receivedPOST) {
     result = {}
+    let client = new MongoClient(uri)
     await client.connect()
     const db = client.db(databaseName)
     let userCollection = db.collection('users')
