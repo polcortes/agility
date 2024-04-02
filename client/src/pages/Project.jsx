@@ -14,7 +14,7 @@ import ArrowIcon from '../assets/icons/arrow'
 import TaskCard from '../components/project/TaskCard'
 
 const Project = () => {
-  const { projectID } = useParams(undefined);
+  const { projectID } = useParams();
 
   // const { project, setProject } = useState({})
 
@@ -28,7 +28,7 @@ const Project = () => {
   }, [isAsideOpen])
 
   const getProject = () => {
-    if (projectID === undefined) {
+    if (!projectID) {
       console.log(projectID)
       setProjectState("404")
     }
@@ -59,10 +59,10 @@ const Project = () => {
       })
       .then(res => {
         res = res.data
-        console.log(res.result)
         if (res.status === "OK") {
-          let reformattedRes = res.result.map(({_id, projectID, name, date}) => ({ _id: _id, projectID: projectID, name: name, date: new Date(date)}))
-          setSprints(reformattedRes)
+          // let reformattedRes = res.result.map(([_id, projectID, name, date]) => ({ _id: _id, projectID: projectID, name: name, date: new Date(date)}))
+          console.log(res.result)
+          setSprints(res.result)
         }
       })
       .catch(() => console.log('No s\'han pogut carregar els sprints'))
@@ -71,6 +71,7 @@ const Project = () => {
   const [ latestSprint, setLatestSprint ] = useState({})
 
   const getLatestSprint = () => { // TODO(Pol): test it.
+    console.warn("He pasado por getLatestSprint")
     // const dates = [new Date("2024-03-20T18:31:12.158+00:00")]
     const dates = []
     sprints.forEach(sprint => dates.push(new Date(sprint.date)))
@@ -85,6 +86,7 @@ const Project = () => {
   const [ tasks, setTasks ] = useState([])
 
   const getTasks = () => {
+    console.warn("He pasado por getTasks")
     axios
       .post('http://localhost:3000/getTasksInSprint', {
         token: 'WjGoEb_4VsUkC9vT3zPh6NmKJMl77ayn',
@@ -123,7 +125,9 @@ const Project = () => {
     }
   }, [])
 
-
+  const createTask = () => {
+    
+  }
 
   return (
     <>
@@ -151,9 +155,9 @@ const Project = () => {
               <ul className='relative flex flex-col gap-3 box-border overflow-hidden overflow-y-scroll flex-1 mt-4 pr-4'>
                 {sprints.map((sprint, key) => (
                   <li className='w-full bg-light-tertiary-bg text-black rounded-lg' key={key}>
-                    <button className="w-full h-full text-left px-3 py-2 flex items-center gap-5">
+                    <button onClick={() => console.log(sprint._id)} className="w-full h-full text-left px-3 py-2 flex items-center gap-5">
                       <span className='grid size-[45px] rounded-full bg-white'></span>
-                        { sprint }
+                        { sprint.name }
                     </button>
                   </li>
                 ))}
@@ -198,6 +202,7 @@ const Project = () => {
                 <span className='flex justify-center border-t-2 border-black pt-4'>
                   <button
                     className='bg-the-accent-color flex items-center justify-center rounded-md px-3 py-2 text-white font-medium hover:scale-105 transition-all gap-2'
+                    onClick={() => createTask(0)}
                   >
                     <svg width="20" height="20" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.49991 0.876892C3.84222 0.876892 0.877075 3.84204 0.877075 7.49972C0.877075 11.1574 3.84222 14.1226 7.49991 14.1226C11.1576 14.1226 14.1227 11.1574 14.1227 7.49972C14.1227 3.84204 11.1576 0.876892 7.49991 0.876892ZM1.82707 7.49972C1.82707 4.36671 4.36689 1.82689 7.49991 1.82689C10.6329 1.82689 13.1727 4.36671 13.1727 7.49972C13.1727 10.6327 10.6329 13.1726 7.49991 13.1726C4.36689 13.1726 1.82707 10.6327 1.82707 7.49972ZM7.50003 4C7.77617 4 8.00003 4.22386 8.00003 4.5V7H10.5C10.7762 7 11 7.22386 11 7.5C11 7.77614 10.7762 8 10.5 8H8.00003V10.5C8.00003 10.7761 7.77617 11 7.50003 11C7.22389 11 7.00003 10.7761 7.00003 10.5V8H4.50003C4.22389 8 4.00003 7.77614 4.00003 7.5C4.00003 7.22386 4.22389 7 4.50003 7H7.00003V4.5C7.00003 4.22386 7.22389 4 7.50003 4Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path></svg>
                     Afegir tasca
@@ -213,6 +218,7 @@ const Project = () => {
                 <span className='flex justify-center border-t-2 border-black pt-4'>
                   <button
                     className='bg-the-accent-color flex items-center justify-center rounded-md px-3 py-2 text-white font-medium hover:scale-105 transition-all gap-2'
+                    onClick={() => createTask(1)}
                   >
                     <svg width="20" height="20" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.49991 0.876892C3.84222 0.876892 0.877075 3.84204 0.877075 7.49972C0.877075 11.1574 3.84222 14.1226 7.49991 14.1226C11.1576 14.1226 14.1227 11.1574 14.1227 7.49972C14.1227 3.84204 11.1576 0.876892 7.49991 0.876892ZM1.82707 7.49972C1.82707 4.36671 4.36689 1.82689 7.49991 1.82689C10.6329 1.82689 13.1727 4.36671 13.1727 7.49972C13.1727 10.6327 10.6329 13.1726 7.49991 13.1726C4.36689 13.1726 1.82707 10.6327 1.82707 7.49972ZM7.50003 4C7.77617 4 8.00003 4.22386 8.00003 4.5V7H10.5C10.7762 7 11 7.22386 11 7.5C11 7.77614 10.7762 8 10.5 8H8.00003V10.5C8.00003 10.7761 7.77617 11 7.50003 11C7.22389 11 7.00003 10.7761 7.00003 10.5V8H4.50003C4.22389 8 4.00003 7.77614 4.00003 7.5C4.00003 7.22386 4.22389 7 4.50003 7H7.00003V4.5C7.00003 4.22386 7.22389 4 7.50003 4Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path></svg>
                     Afegir tasca
@@ -228,6 +234,7 @@ const Project = () => {
                 <span className='flex justify-center border-t-2 border-black pt-4'>
                   <button
                     className='bg-the-accent-color flex items-center justify-center rounded-md px-3 py-2 text-white font-medium hover:scale-105 transition-all gap-2'
+                    onClick={() => createTask(2)}
                   >
                     <svg width="20" height="20" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.49991 0.876892C3.84222 0.876892 0.877075 3.84204 0.877075 7.49972C0.877075 11.1574 3.84222 14.1226 7.49991 14.1226C11.1576 14.1226 14.1227 11.1574 14.1227 7.49972C14.1227 3.84204 11.1576 0.876892 7.49991 0.876892ZM1.82707 7.49972C1.82707 4.36671 4.36689 1.82689 7.49991 1.82689C10.6329 1.82689 13.1727 4.36671 13.1727 7.49972C13.1727 10.6327 10.6329 13.1726 7.49991 13.1726C4.36689 13.1726 1.82707 10.6327 1.82707 7.49972ZM7.50003 4C7.77617 4 8.00003 4.22386 8.00003 4.5V7H10.5C10.7762 7 11 7.22386 11 7.5C11 7.77614 10.7762 8 10.5 8H8.00003V10.5C8.00003 10.7761 7.77617 11 7.50003 11C7.22389 11 7.00003 10.7761 7.00003 10.5V8H4.50003C4.22389 8 4.00003 7.77614 4.00003 7.5C4.00003 7.22386 4.22389 7 4.50003 7H7.00003V4.5C7.00003 4.22386 7.22389 4 7.50003 4Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path></svg>
                     Afegir tasca
@@ -240,14 +247,6 @@ const Project = () => {
                 <ul className='flex flex-col rounded-lg overflow-hidden h-full max-h-full pr-5 gap-5 flex-1 overflow-y-scroll'>
                   { tasks.map(task => <li key={task.key}><TaskCard text={task.text} /></li>) }
                 </ul>
-                <span className='flex justify-center border-t-2 border-black pt-4'>
-                  <button
-                    className='bg-the-accent-color flex items-center justify-center rounded-md px-3 py-2 text-white font-medium hover:scale-105 transition-all gap-2'
-                  >
-                    <svg width="20" height="20" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.49991 0.876892C3.84222 0.876892 0.877075 3.84204 0.877075 7.49972C0.877075 11.1574 3.84222 14.1226 7.49991 14.1226C11.1576 14.1226 14.1227 11.1574 14.1227 7.49972C14.1227 3.84204 11.1576 0.876892 7.49991 0.876892ZM1.82707 7.49972C1.82707 4.36671 4.36689 1.82689 7.49991 1.82689C10.6329 1.82689 13.1727 4.36671 13.1727 7.49972C13.1727 10.6327 10.6329 13.1726 7.49991 13.1726C4.36689 13.1726 1.82707 10.6327 1.82707 7.49972ZM7.50003 4C7.77617 4 8.00003 4.22386 8.00003 4.5V7H10.5C10.7762 7 11 7.22386 11 7.5C11 7.77614 10.7762 8 10.5 8H8.00003V10.5C8.00003 10.7761 7.77617 11 7.50003 11C7.22389 11 7.00003 10.7761 7.00003 10.5V8H4.50003C4.22389 8 4.00003 7.77614 4.00003 7.5C4.00003 7.22386 4.22389 7 4.50003 7H7.00003V4.5C7.00003 4.22386 7.22389 4 7.50003 4Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path></svg>
-                    Afegir tasca
-                  </button>
-                </span>
               </div>
             </section>
           </main>
