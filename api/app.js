@@ -70,7 +70,6 @@ app.use(cors())
 // Activar el servidor HTTP
 const httpServer = app.listen(port, appListen)
 const uri = "mongodb://localhost:27017"
-const client = new MongoClient(uri)
 const databaseName = "Agility"
 
 function appListen() {
@@ -92,7 +91,7 @@ async function getUsers(req, res) {
 
   if (receivedPOST) {
     result = {}
-
+    const client = new MongoClient(uri)
     await client.connect()
     const db = client.db(databaseName)
 
@@ -114,7 +113,7 @@ async function testGoogle(req, res) {
 
   if (receivedPOST) {
     result = {}
-
+    const client = new MongoClient(uri)
     await client.connect()
     const db = client.db(databaseName)
 
@@ -152,7 +151,7 @@ async function login(req, res) {
 
   if (receivedPOST) {
     result = {}
-
+    const client = new MongoClient(uri)
     await client.connect();
     const db = client.db(databaseName)
 
@@ -189,7 +188,7 @@ async function register(req, res) {
 
   if (receivedPOST) {
     result = {}
-
+    const client = new MongoClient(uri)
     await client.connect()
     const db = client.db(databaseName)
 
@@ -251,7 +250,7 @@ async function createProject(req, res) {
 
   if (receivedPOST) {
     result = {}
-
+    const client = new MongoClient(uri)
     await client.connect()
     const db = client.db(databaseName)
 
@@ -270,7 +269,7 @@ async function createProject(req, res) {
       insertedId = insertedObject.insertedId.toString()
       let sprintCollection = db.collection('sprintBoards')
       await insertSprintBoard(insertedId, "Backlog", sprintCollection)
-      result = { status: "OK", result: "PROJECT CREATED" }
+      result = { status: "OK", result: "PROJECT CREATED", projectID: insertedId }
     } else {
       result = { status: "KO", result: "TOKEN EXPIRED" }
     }
@@ -290,7 +289,7 @@ async function createSprintBoard(req, res) {
   if (receivedPOST) {
     console.log(receivedPOST)
     result = {}
-
+    const client = new MongoClient(uri)
     await client.connect()
     const db = client.db(databaseName)
 
@@ -367,7 +366,7 @@ async function editSprintBoard(req, res) {
 
   if (receivedPOST) {
     result = {}
-
+    const client = new MongoClient(uri)
     await client.connect()
     const db = client.db(databaseName)
 
@@ -398,7 +397,7 @@ async function deleteSprintBoard(req, res) {
 
   if (receivedPOST) {
     result = {}
-
+    const client = new MongoClient(uri)
     await client.connect()
     const db = client.db(databaseName)
 
@@ -423,6 +422,7 @@ async function createTask(req, res) {
   let result = {}
   if (receivedPOST) {
     result = {}
+    const client = new MongoClient(uri)
     await client.connect()
     const db = client.db(databaseName)
     let userCollection = db.collection('users')
@@ -496,6 +496,7 @@ async function getTasksInProject(req, res) {
   let result = {}
   if (receivedPOST) {
     result = {}
+    const client = new MongoClient(uri)
     await client.connect()
     const db = client.db(databaseName)
     let userCollection = db.collection('users')
@@ -530,6 +531,7 @@ async function editTask(req, res) {
   let result = {}
   if (receivedPOST) {
     result = {}
+    const client = new MongoClient(uri)
     await client.connect()
     const db = client.db(databaseName)
     let userCollection = db.collection('users')
@@ -584,6 +586,7 @@ async function deleteTask(req, res) {
   let result = {}
   if (receivedPOST) {
     result = {}
+    const client = new MongoClient(uri)
     await client.connect()
     const db = client.db(databaseName)
     let userCollection = db.collection('users')
