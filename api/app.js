@@ -241,8 +241,8 @@ async function getProjects(req, res) {
   res.end(JSON.stringify(result))
 }
 
-app.post('/getProject', getProjects)
-async function getProjects(req, res) {
+app.post('/getProject', getProject)
+async function getProject(req, res) {
   let receivedPOST = await post.getPostData(req)
   let result = {}
 
