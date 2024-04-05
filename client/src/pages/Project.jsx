@@ -70,19 +70,14 @@ const Project = () => {
       .then(res => {
         res = res.data
         if (res.status === "OK") {
-          // let reformattedRes = res.result.map(([_id, projectID, name, date]) => ({ _id: _id, projectID: projectID, name: name, date: new Date(date)}))
-          console.log("result",res.result)
-          // if 
           setSprints(res.result)
           setLatestSprint(sprints.at(-1))
           getTasks()
 
           renderCurrentSprint("latest")
-          console.log("Sprints en este momento es: ", sprints)
-
         }
       })
-      .catch(() => console.log('No s\'han pogut carregar els sprints'))
+      .catch(() => console.error('No s\'han pogut carregar els sprints'))
   }
 
   const [ latestSprint, setLatestSprint ] = useState({})
@@ -146,6 +141,10 @@ const Project = () => {
     }
   }, [sprints]);
 
+  useEffect(() => {
+    getTasks()
+  }, [latestSprint])
+
   const discardNewTitle = () => {
     setIsEditingTitle(false)
     newBoardTitleInputRef.current.value = ''
@@ -187,7 +186,6 @@ const Project = () => {
 
     if (targetSprint.length > 0) {
       setLatestSprint(targetSprint[0])
-      getTasks()
     }
   }
 
@@ -286,7 +284,7 @@ const Project = () => {
             <section id="main-project-container" className='bg-light-secondary-bg rounded-lg overflow-hidden grid max-h-full grid-cols-4 content-between p-5'>
               {
                 section === "SprintBoard" 
-                  && <SprintBoard tasks={ tasks } />
+                  && <SprintBoard projectID={ projectID } latestSprint={ latestSprint } tasks={ tasks } />
               }
             </section>
           </main>

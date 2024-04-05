@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 const TaskCard = ({ text, onDoubleClick, type }) => {
-  type = "doing"
+  // type = "doing"
 
   return (
     <article className="flex bg-light-tertiary-bg py-3 px-4 rounded-2xl items-center">
