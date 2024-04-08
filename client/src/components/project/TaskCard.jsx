@@ -1,9 +1,15 @@
 /* eslint-disable react/prop-types */
+import { useEffect } from 'react'
+
 const TaskCard = ({ text, onDoubleClick, type }) => {
   type = "doing"
 
+  useEffect(() => {
+    // $('.task').draggable({ handle: 'span.draggable-section' })
+  }, [])
+  
   return (
-    <article className="flex bg-light-tertiary-bg py-3 px-4 rounded-2xl items-center">
+    <article className="flex bg-light-tertiary-bg py-3 px-4 rounded-2xl items-center task">
       <span 
         className="
           draggable-section
