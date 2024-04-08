@@ -70,19 +70,14 @@ const Project = () => {
       .then(res => {
         res = res.data
         if (res.status === "OK") {
-          // let reformattedRes = res.result.map(([_id, projectID, name, date]) => ({ _id: _id, projectID: projectID, name: name, date: new Date(date)}))
-          console.log("result",res.result)
-          // if 
           setSprints(res.result)
           setLatestSprint(sprints.at(-1))
           getTasks()
 
           renderCurrentSprint("latest")
-          console.log("Sprints en este momento es: ", sprints)
-
         }
       })
-      .catch(() => console.log('No s\'han pogut carregar els sprints'))
+      .catch(() => console.error('No s\'han pogut carregar els sprints'))
   }
 
   const [ latestSprint, setLatestSprint ] = useState({})
@@ -97,7 +92,7 @@ const Project = () => {
 
     console.log("holaaaaaaaaaaaaaaaaaaa", sprints)
 
-    setLatestSprint(sprints.at(-1))
+    setLatestSprint([...sprints][sprints.length - 1])
   }
 
   const [ tasks, setTasks ] = useState([])
@@ -119,24 +114,36 @@ const Project = () => {
         })
   }
 
-  const [ currentSprint, setCurrentSprint ] = useState(null)
+  //const [ currentSprint, setLatestSprint ] = useState(null)
 
   const renderCurrentSprint = (sprintID) => {
     if (sprintID === "latest" || currentSprint === null) {
-      setCurrentSprint(latestSprint)
+      setLatestSprint(latestSprint)
     }
     else {
-      setCurrentSprint(sprints.find(sprint => sprint._id === sprint))
+      setLatestSprint(sprints.find(sprint => sprint._id === sprint))
     }
   }
 
   useEffect(() => {
     getProject();
+  }, []);
+  
+  useEffect(() => {
     if (projectState === "200") {
-      getSprints()
-      // getLatestSprint()
+      getSprints();
     }
-  }, [])
+  }, [projectState]);
+  
+  useEffect(() => {
+    if (sprints.length > 0) {
+      getLatestSprint();
+    }
+  }, [sprints]);
+
+  useEffect(() => {
+    getTasks()
+  }, [latestSprint])
 
   const discardNewTitle = () => {
     setIsEditingTitle(false)
@@ -174,10 +181,18 @@ const Project = () => {
     } // TODO: else que haga una notificación q no pde estar vacío.
   }
 
+  const changeBoard = (e) => {
+    const targetSprint = sprints.filter(sprint => sprint._id === e.target.dataset.id)
+
+    if (targetSprint.length > 0) {
+      setLatestSprint(targetSprint[0])
+    }
+  }
+
   return (
     <>
       <Helmet>
-          <title>Project name | Agility</title>
+          <title>{ currProject ? currProject.title : 'Cargando projecto...' } | Agility</title>
       </Helmet>
       { projectState === "404" && <PageNotFound /> }
       { projectState === "403" && <h1>403</h1> /* Hacer página de 403 y estilar la de 404!!! */ }
@@ -198,9 +213,9 @@ const Project = () => {
               </span>
 
               <ul className='relative flex flex-col gap-3 box-border overflow-hidden overflow-y-scroll flex-1 mt-4 pr-4'>
-                {sprints.map((sprint, key) => (
-                  <li className='w-full bg-light-tertiary-bg text-black rounded-lg' key={key}>
-                    <button onClick={() => console.log(sprint._id)} className="w-full h-full text-left px-3 py-2 flex items-center gap-5">
+                {sprints.map(sprint => (
+                  <li className='w-full bg-light-tertiary-bg text-black rounded-lg' key={sprint._id}>
+                    <button onClick={(e) => changeBoard(e)} className="w-full h-full text-left px-3 py-2 flex items-center gap-5" data-id={sprint._id}>
                       <span className='grid size-[45px] rounded-full bg-white'></span>
                         { sprint.name }
                     </button>
@@ -269,7 +284,7 @@ const Project = () => {
             <section id="main-project-container" className='bg-light-secondary-bg rounded-lg overflow-hidden grid max-h-full grid-cols-4 content-between p-5'>
               {
                 section === "SprintBoard" 
-                  && <SprintBoard tasks={ tasks } />
+                  && <SprintBoard projectID={ projectID } latestSprint={ latestSprint } tasks={ tasks } />
               }
             </section>
           </main>

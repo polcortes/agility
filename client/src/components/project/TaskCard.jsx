@@ -2,7 +2,7 @@
 import { useEffect } from 'react'
 
 const TaskCard = ({ text, onDoubleClick, type }) => {
-  type = "doing"
+  // type = "doing"
 
   useEffect(() => {
     // $('.task').draggable({ handle: 'span.draggable-section' })
