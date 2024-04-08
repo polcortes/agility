@@ -8,6 +8,33 @@ const post = require('./post.js')
 const { MongoClient, ObjectId } = require('mongodb')
 const cors = require('cors')
 const session = require('express-session')
+const nodemailer = require('nodemailer');
+
+const messageExpireTime = 2592000000 // 30 days in ms
+const sessionTokenExpireTime = 3000
+
+var transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'youremail@gmail.com',
+    pass: 'yourpassword'
+  }
+});
+
+var mailOptions = {
+  from: 'youremail@gmail.com',
+  to: 'myfriend@yahoo.com',
+  subject: 'Sending Email using Node.js',
+  text: 'That was easy!'
+};
+
+transporter.sendMail(mailOptions, function(error, info){
+  if (error) {
+    console.log(error);
+  } else {
+    console.log('Email sent: ' + info.response);
+  }
+});
 
 function generateInviteCode(length) {
   let result = ''
@@ -40,7 +67,7 @@ Number.prototype.toHexString = function () {
 const app = express()
 
 // Use the session middleware
-app.use(session({ secret: 'mi romance con el chema', cookie: { maxAge: 3000 } }))
+app.use(session({ secret: 'mi romance con el chema', cookie: { maxAge: sessionTokenExpireTime } }))
 
 // Access the session as req.session
 app.get('/', function (req, res, next) {
@@ -258,6 +285,13 @@ async function getProject(req, res) {
       let projectCollection = db.collection('projects')
       let project = await projectCollection.findOne({ _id: { $eq: new ObjectId(receivedPOST.projectID) } })
       if (project) {
+        chatHistory = project.chatHistory
+        let now = new Date();
+        for (let i = 0; i < chatHistory.length; i++) {
+          if (now - chatHistory[i].date > messageExpireTime) {
+            chatHistory.splice(i, 1)
+          }
+        }
         result = { status: "OK", result: project }
       } else {
         result = { status: "KO", result: "PROJECT NOT FOUND" }
@@ -310,6 +344,51 @@ async function createProject(req, res) {
 
   res.writeHead(200, { 'Content-Type': 'application/json' })
   res.end(JSON.stringify(result))
+}
+
+app.post('/inviteToProject', inviteToProject)
+async function inviteToProject(req, res) {
+  let receivedPOST = await post.getPostData(req)
+  let result = {}
+
+  if (receivedPOST) {
+    result = {}
+    const client = new MongoClient(uri)
+    await client.connect()
+    const db = client.db(databaseName)
+
+    let userCollection = db.collection('users')
+    let user = await userCollection.findOne({ token: { $eq: receivedPOST.token } })
+    if (user) {
+      let projectCollection = db.collection('projects')
+      let project = await projectCollection.findOne({ _id: { $eq: new ObjectId(receivedPOST.projectID) } })
+      if (project) {
+        let invitedUser = await userCollection.findOne({ email: { $eq: receivedPOST.email } })
+        if (invitedUser) {
+          let inviteCollection = db.collection('invites')
+          let invite = {
+            projectID: receivedPOST.projectID,
+            email: receivedPOST.email,
+            inviteCode: project.inviteCode
+          }
+          await inviteCollection.insertOne(invite)
+          result = { status: "OK", result: "INVITE SENT" }
+        } else {
+          result = { status: "KO", result: "USER NOT FOUND" }
+        }
+      } else {
+        result = { status: "KO", result: "PROJECT NOT FOUND" }
+      }
+    } else {
+      result = { status: "KO", result: "TOKEN EXPIRED" }
+    }
+
+    await client.close()
+  }
+
+  res.writeHead(200, { 'Content-Type': 'application/json' })
+  res.end(JSON.stringify(result))
+
 }
 
 app.post('/createSprintBoard', createSprintBoard)
