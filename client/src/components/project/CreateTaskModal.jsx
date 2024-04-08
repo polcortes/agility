@@ -21,7 +21,7 @@ const CreateTaskModal = ({ projectID, latestSprint, setIsCreateTaskOpen, isCreat
   const createTask = () => {
     axios
       .post(`http://localhost:3000/createTask/`, {
-        token: 'WjGoEb_4VsUkC9vT3zPh6NmKJMl77ayn',
+        token: localStorage.getItem("userToken"),
         projectID: projectID,
         sprintName: latestSprint.name,
         name: newTaskNameRef.current.value,

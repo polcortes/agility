@@ -27,7 +27,38 @@ const Project = () => {
   const [ projectState, setProjectState ] = useState("200")
 
   const [ isAsideOpen, setIsAsideOpen ] = useState(true)
+
+  const [ ws, setWs ] = useState(null)
   const asideRef = useRef(null)
+
+  const WS_URL = 'ws://localhost:3000'
+
+  useEffect(() => {
+    const ws = new WebSocket(WS_URL)
+    ws.onopen = () => {
+      setWs(ws)
+      ws.onmessage = messageCallbacks
+      // ws.send(JSON.stringify({ type: 'bounce', text: "AAAAAAAAAAAAAAAAAAAA" }))
+    }
+  }, [])
+
+  useEffect(() => {
+    if (ws) {
+      joinProject()
+    }
+  }, [ws])
+
+  function messageCallbacks(message) {
+    const data = JSON.parse(message.data)
+    console.log("DATA")
+    console.log(data)
+  }
+  const joinProject = () => {
+    ws.send(JSON.stringify({
+      type: 'joinProject',
+      projectID: projectID
+    }))
+  }
 
   useEffect(() => {
     asideRef.current.classList.toggle('closed')
@@ -170,7 +201,7 @@ const Project = () => {
     if (createSprintTitleRef.current.value !== '') {
       axios
         .post('http://localhost:3000/createSprintBoard', {
-          token: 'WjGoEb_4VsUkC9vT3zPh6NmKJMl77ayn',
+          token: localStorage.getItem("userToken"),
           projectID: projectID,
           name: createSprintTitleRef.current.value,
         })

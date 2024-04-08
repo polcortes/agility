@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from 'react';
 
 import TaskCard from '../project/TaskCard'
 import CreateTaskModal from '../project/CreateTaskModal'
-import { dragAndDrop } from '@formkit/drag-and-drop/react'
+// import { dragAndDrop } from '@formkit/drag-and-drop/react'
 
 const SprintBoard = ({ projectID, latestSprint, tasks }) => {
   const [ isCreateTaskOpen, setIsCreateTaskOpen ] = useState(false)
