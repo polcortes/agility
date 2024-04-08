@@ -120,3 +120,17 @@ aside.closed > *:not(#arrow) {
   background: rgb(29,5,33);
   background: linear-gradient(342deg, rgba(29,5,33,1) 13%, rgba(108,52,128,1) 100%);
 }
+
+:root {
+  --backdrop-bg: transparent;
+}
+
+dialog {
+  opacity: 0;
+  transition: opacity .2s ease-in-out, background .2s ease-in-out;
+}
+
+dialog::backdrop {
+  background: var(--backdrop-bg);
+  transition: background .2s ease-in-out;
+}
