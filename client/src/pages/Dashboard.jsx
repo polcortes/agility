@@ -33,7 +33,7 @@ const Dashboard = () => {
     if (projects.length === 0) {
       axios
         .post('http://localhost:3000/getProjects', {
-          token: "WjGoEb_4VsUkC9vT3zPh6NmKJMl77ayn", // localStorage.getItem('token')
+          token: localStorage.getItem("userToken"), // localStorage.getItem('token')
         })
         .then(res => {
           res = res.data
