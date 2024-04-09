@@ -25,17 +25,39 @@ const SprintBoard = ({ projectID, latestSprint, tasks }) => {
       else if (task.status === 'DOING') newOrganizedTasks.doing.push(task)
       else if (task.status === 'TESTING') newOrganizedTasks.testing.push(task)
       else if (task.status === 'DONE') newOrganizedTasks.done.push(task)
-    
     })
 
     setOrganizedTasks(newOrganizedTasks)
   }, [tasks])
 
+
+
+  useEffect(() => {
+    // $('.kanban-column').sortable({
+    //   containment: 'parent',
+    //   handle: '.item-container',
+    //   tolerance: 'pointer',
+    //   helper: 'clone',
+    // })
+
+    $('.kanban-column').droppable({
+      accept: '.task',
+      drop: function(ev, ui) {
+        console.log('dropable activado', this)
+        console.log('El draggable que lo activó:', ui)
+      }
+    })
+
+    $('.kanban-column').sortable({
+      
+    })
+  }, [])
+
   return (
     <>
       <div className='flex flex-col align-center justify-center p-5 bg-light-secondary-bg max-w-[330px] rounded-lg'>
         <h3 className='font-subtitle font-bold text-2xl mb-5'>To-do</h3>
-        <ul className='flex flex-col rounded-lg overflow-hidden h-full max-h-full pr-5 gap-5 flex-1 overflow-y-scroll'>
+        <ul className='kanban-column flex flex-col rounded-lg overflow-hidden h-full max-h-full pr-5 gap-5 flex-1 overflow-y-scroll'>
           { 
             organizedTasks.todo
               ? (organizedTasks.todo.map(task => <li key={task._id}><TaskCard text={task.name} /></li>))
@@ -55,7 +77,7 @@ const SprintBoard = ({ projectID, latestSprint, tasks }) => {
 
       <div className='flex flex-col align-center justify-center p-5 bg-light-secondary-bg max-w-[330px] rounded-lg'>
         <h3 className='font-subtitle font-bold text-2xl mb-5'>Doing</h3>
-        <ul className='flex flex-col rounded-lg overflow-hidden h-full max-h-full pr-5 gap-5 flex-1 overflow-y-scroll'>
+        <ul className='kanban-column flex flex-col rounded-lg overflow-hidden h-full max-h-full pr-5 gap-5 flex-1 overflow-y-scroll'>
           { 
             organizedTasks.doing
               ? (organizedTasks.doing.map(task => <li key={task._id}><TaskCard text={task.name} /></li>))
@@ -66,7 +88,7 @@ const SprintBoard = ({ projectID, latestSprint, tasks }) => {
 
       <div className='flex flex-col align-center justify-center p-5 bg-light-secondary-bg max-w-[330px] rounded-lg'>
         <h3 className='font-subtitle font-bold text-2xl mb-5'>Testing</h3>
-        <ul className='flex flex-col rounded-lg overflow-hidden h-full max-h-full pr-5 gap-5 flex-1 overflow-y-scroll'>
+        <ul className='kanban-column flex flex-col rounded-lg overflow-hidden h-full max-h-full pr-5 gap-5 flex-1 overflow-y-scroll'>
           { 
             organizedTasks.testing
               ? (organizedTasks.testing.map(task => <li key={task._id}><TaskCard text={task.name} /></li>) )
@@ -77,7 +99,7 @@ const SprintBoard = ({ projectID, latestSprint, tasks }) => {
 
       <div className='flex flex-col align-center justify-center p-5 bg-light-secondary-bg max-w-[330px] rounded-lg'>
         <h3 className='font-subtitle font-bold text-2xl mb-5'>Done</h3>
-        <ul className='flex flex-col rounded-lg overflow-hidden h-full max-h-full pr-5 gap-5 flex-1 overflow-y-scroll'>
+        <ul className='kanban-column flex flex-col rounded-lg overflow-hidden h-full max-h-full pr-5 gap-5 flex-1 overflow-y-scroll'>
           { 
             organizedTasks.done
               ? (organizedTasks.done.map(task => <li key={task._id}><TaskCard text={task.name} /></li>) )

@@ -152,7 +152,7 @@ const Project = () => {
   //const [ currentSprint, setLatestSprint ] = useState(null)
 
   const renderCurrentSprint = (sprintID) => {
-    if (sprintID === "latest" || currentSprint === null) {
+    if (sprintID === "latest" || latestSprint === null) {
       setLatestSprint(latestSprint)
     }
     else {
