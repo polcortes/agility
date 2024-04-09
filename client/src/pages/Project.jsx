@@ -11,7 +11,11 @@ import PageNotFound from '../pages/404'
 
 import ArrowIcon from '../assets/icons/arrow'
 
+import TableIcon from '../assets/icons/table'
+
 import SprintBoard from '../components/project/SprintBoard'
+
+import TaskTable from '../components/project/TaskTable'
 
 const Project = () => {
   const { projectID } = useParams();
@@ -23,7 +27,38 @@ const Project = () => {
   const [ projectState, setProjectState ] = useState("200")
 
   const [ isAsideOpen, setIsAsideOpen ] = useState(true)
+
+  const [ ws, setWs ] = useState(null)
   const asideRef = useRef(null)
+
+  const WS_URL = 'ws://localhost:3000'
+
+  useEffect(() => {
+    const ws = new WebSocket(WS_URL)
+    ws.onopen = () => {
+      setWs(ws)
+      ws.onmessage = messageCallbacks
+      // ws.send(JSON.stringify({ type: 'bounce', text: "AAAAAAAAAAAAAAAAAAAA" }))
+    }
+  }, [])
+
+  useEffect(() => {
+    if (ws) {
+      joinProject()
+    }
+  }, [ws])
+
+  function messageCallbacks(message) {
+    const data = JSON.parse(message.data)
+    console.log("DATA")
+    console.log(data)
+  }
+  const joinProject = () => {
+    ws.send(JSON.stringify({
+      type: 'joinProject',
+      projectID: projectID
+    }))
+  }
 
   useEffect(() => {
     asideRef.current.classList.toggle('closed')
@@ -38,7 +73,7 @@ const Project = () => {
       console.log(projectID)
       axios
         .post('http://localhost:3000/getProject', { // Conseguiré el project con la id que tengo
-          token: 'WjGoEb_4VsUkC9vT3zPh6NmKJMl77ayn',
+          token: localStorage.getItem('userToken'),
           projectID: projectID,
         })
         .then(res => { 
@@ -64,7 +99,7 @@ const Project = () => {
   const getSprints = () => {
     axios
       .post('http://localhost:3000/getSprintBoards', {
-        token: 'WjGoEb_4VsUkC9vT3zPh6NmKJMl77ayn',
+        token: localStorage.getItem('userToken'),
         projectID: projectID,
       })
       .then(res => {
@@ -100,7 +135,7 @@ const Project = () => {
   const getTasks = () => {
     axios
       .post('http://localhost:3000/getTasksInSprint', {
-        token: 'WjGoEb_4VsUkC9vT3zPh6NmKJMl77ayn',
+        token: localStorage.getItem('userToken'),
         projectID: projectID,
         sprintName: latestSprint.name,
       })
@@ -166,7 +201,7 @@ const Project = () => {
     if (createSprintTitleRef.current.value !== '') {
       axios
         .post('http://localhost:3000/createSprintBoard', {
-          token: 'WjGoEb_4VsUkC9vT3zPh6NmKJMl77ayn',
+          token: localStorage.getItem("userToken"),
           projectID: projectID,
           name: createSprintTitleRef.current.value,
         })
@@ -208,6 +243,11 @@ const Project = () => {
             </section>
             
             <nav className='flex-1 flex flex-col'>
+              <button onClick={() => setSection("TaskTable")} className="w-full text-left px-3 py-2 flex items-center gap-5">
+                <TableIcon></TableIcon>
+                  Tabla
+              </button>
+
               <span className='font-bold text-2xl'>
                 Sprints
               </span>
@@ -281,10 +321,14 @@ const Project = () => {
 
               </span>
             </header>
-            <section id="main-project-container" className='bg-light-secondary-bg rounded-lg overflow-hidden grid max-h-full grid-cols-4 content-between p-5'>
+            <section id="main-project-container" className={`${section !== "TaskTable" && "nice-gradient grid-cols-4"} bg-light-secondary-bg rounded-lg overflow-hidden grid max-h-full content-between p-5`}>
               {
                 section === "SprintBoard" 
                   && <SprintBoard projectID={ projectID } latestSprint={ latestSprint } tasks={ tasks } />
+              }
+              {
+                section === "TaskTable"
+                  && <TaskTable tasks={ tasks } />
               }
             </section>
           </main>

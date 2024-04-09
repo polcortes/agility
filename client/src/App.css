@@ -116,7 +116,7 @@ aside.closed > *:not(#arrow) {
   display: none;
 }
 
-#main-project-container {
+.nice-gradient {
   background: rgb(29,5,33);
   background: linear-gradient(342deg, rgba(29,5,33,1) 13%, rgba(108,52,128,1) 100%);
 }

@@ -8,6 +8,33 @@ const post = require('./post.js')
 const { MongoClient, ObjectId } = require('mongodb')
 const cors = require('cors')
 const session = require('express-session')
+const nodemailer = require('nodemailer');
+
+const messageExpireTime = 2592000000 // 30 days in ms
+const sessionTokenExpireTime = 3000
+
+var transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'youremail@gmail.com',
+    pass: 'yourpassword'
+  }
+});
+
+var mailOptions = {
+  from: 'youremail@gmail.com',
+  to: 'myfriend@yahoo.com',
+  subject: 'Sending Email using Node.js',
+  text: 'That was easy!'
+};
+/*
+transporter.sendMail(mailOptions, function(error, info){
+  if (error) {
+    console.log(error);
+  } else {
+    console.log('Email sent: ' + info.response);
+  }
+});*/
 
 function generateInviteCode(length) {
   let result = ''
@@ -40,7 +67,7 @@ Number.prototype.toHexString = function () {
 const app = express()
 
 // Use the session middleware
-app.use(session({ secret: 'mi romance con el chema', cookie: { maxAge: 3000 } }))
+app.use(session({ secret: 'mi romance con el chema', cookie: { maxAge: sessionTokenExpireTime } }))
 
 // Access the session as req.session
 app.get('/', function (req, res, next) {
@@ -258,6 +285,15 @@ async function getProject(req, res) {
       let projectCollection = db.collection('projects')
       let project = await projectCollection.findOne({ _id: { $eq: new ObjectId(receivedPOST.projectID) } })
       if (project) {
+        chatHistory = project.chatHistory
+        let now = new Date();
+        if (chatHistory) {
+          for (let i = 0; i < chatHistory.length; i++) {
+            if (now - chatHistory[i].date > messageExpireTime) {
+              chatHistory.splice(i, 1)
+            }
+          }
+        }
         result = { status: "OK", result: project }
       } else {
         result = { status: "KO", result: "PROJECT NOT FOUND" }
@@ -310,6 +346,51 @@ async function createProject(req, res) {
 
   res.writeHead(200, { 'Content-Type': 'application/json' })
   res.end(JSON.stringify(result))
+}
+
+app.post('/inviteToProject', inviteToProject)
+async function inviteToProject(req, res) {
+  let receivedPOST = await post.getPostData(req)
+  let result = {}
+
+  if (receivedPOST) {
+    result = {}
+    const client = new MongoClient(uri)
+    await client.connect()
+    const db = client.db(databaseName)
+
+    let userCollection = db.collection('users')
+    let user = await userCollection.findOne({ token: { $eq: receivedPOST.token } })
+    if (user) {
+      let projectCollection = db.collection('projects')
+      let project = await projectCollection.findOne({ _id: { $eq: new ObjectId(receivedPOST.projectID) } })
+      if (project) {
+        let invitedUser = await userCollection.findOne({ email: { $eq: receivedPOST.email } })
+        if (invitedUser) {
+          let inviteCollection = db.collection('invites')
+          let invite = {
+            projectID: receivedPOST.projectID,
+            email: receivedPOST.email,
+            inviteCode: project.inviteCode
+          }
+          await inviteCollection.insertOne(invite)
+          result = { status: "OK", result: "INVITE SENT" }
+        } else {
+          result = { status: "KO", result: "USER NOT FOUND" }
+        }
+      } else {
+        result = { status: "KO", result: "PROJECT NOT FOUND" }
+      }
+    } else {
+      result = { status: "KO", result: "TOKEN EXPIRED" }
+    }
+
+    await client.close()
+  }
+
+  res.writeHead(200, { 'Content-Type': 'application/json' })
+  res.end(JSON.stringify(result))
+
 }
 
 app.post('/createSprintBoard', createSprintBoard)
@@ -673,22 +754,59 @@ async function getDades(req, res) {
 }
 
 const WebSocket = require('ws')
+const { get } = require('http')
 const wss = new WebSocket.Server({ server: httpServer })
 const socketsClients = new Map()
 console.log(`Example app listening for WebSocket queries on: http://localhost:${port}`)
 
 
 wss.on('connection', (ws) => {
+
+  async function getProjectData(projectID) {
+    const client = new MongoClient(uri)
+    client.connect()
+    const db = client.db(databaseName)
+    const projectCollection = db.collection('projects')
+    let projectData = await projectCollection.findOne({ _id: { $eq: new ObjectId(projectID) } })
+    const sprintsCollection = db.collection('sprintBoards')
+    let sprints = await sprintsCollection.find({ projectID: { $eq: projectID } }).toArray()
+    let sprintsObject = {}
+    for (let i = 0; i < sprints.length; i++) {
+      const tasksCollection = db.collection('tasks')
+      const tasks = await tasksCollection.find({ sprintID: { $eq: sprints[i]._id.toString() } }).toArray()
+      tasksObject = {}
+      tasks.forEach((task) => {
+        tasksObject[task.name] = task
+      })
+      sprints[i].tasks = tasksObject
+      sprintsObject[sprints[i].name] = sprints[i]
+    }
+    projectData.sprints = sprintsObject
+    return projectData
+  }
+
+  function broadcastProjectChange(projectID) {
+    projects[projectID].users.forEach((user) => {
+      user.send(JSON.stringify({ type: "projectData", project: projects[projectID].data }))
+    })
+  }
+
   console.log("Client connected")
 
   // Add client to the clients list
   const id = uuidv4()
   const color = Math.floor(Math.random() * 360)
-  const metadata = { id, color }
+  const projects = {}
+  const metadata = { id, projectID: null }
   socketsClients.set(ws, metadata)
 
   // What to do when a client is disconnected
   ws.on("close", () => {
+    const projectID = socketsClients.get(ws).projectID
+    projects[projectID].users = projects[projectID].users.filter((user) => user !== ws)
+    if (projects[projectID].users.length == 0) {
+      delete projects[projectID]
+    }
     socketsClients.delete(ws)
   })
 
@@ -699,13 +817,33 @@ wss.on('connection', (ws) => {
 
     try { messageAsObject = JSON.parse(messageAsString) }
     catch (e) { console.log("Could not parse bufferedMessage from WS message") }
+    console.log(messageAsObject)
 
     if (messageAsObject.type == "bounce") {
       var rst = { type: "response", text: `Rebotar Websocket: '${messageAsObject.text}'` }
+      console.log(rst)
       ws.send(JSON.stringify(rst))
     } else if (messageAsObject.type == "broadcast") {
       var rst = { type: "response", text: `Broadcast Websocket: '${messageAsObject.text}'` }
       broadcast(rst)
+    } else if (messageAsObject.type == "joinProject") {
+      socketsClients.get(ws).projectID = messageAsObject.projectID
+      if (!Object.keys(projects).includes(messageAsObject.projectID)) {
+        getProjectData(messageAsObject.projectID).then((project) => {
+          if (project) {
+            projects[messageAsObject.projectID] = {data: project, users: [ws]}
+            broadcastProjectChange(messageAsObject.projectID)
+          } else {
+            ws.send(JSON.stringify({ type: "projectData", project: "KO" }))
+          }
+          console.log(projects)
+        })
+      } else {
+        projects[messageAsObject.projectID].users.push(ws)
+        ws.send(JSON.stringify({ type: "projectData", project: projects[messageAsObject.projectID].data }))
+      }
+    } else if (messageAsObject.type == "moveTask") {
+      projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName].tasks[messageAsObject.taskName].status = messageAsObject.newStatus
     }
   })
 })

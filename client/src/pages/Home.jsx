@@ -61,6 +61,7 @@ const Home = () => {
       .then((res) => {
         res = res.data
         if (res.status == "OK") {
+          localStorage.setItem('userToken', res.token)
           window.location.href = '/dashboard'
         } else {
           console.log(res)
@@ -77,6 +78,26 @@ const Home = () => {
   }
 
   const register = () => {
+    if (username.current.value == "") {
+      setError({field: 'usernameRegister', message: 'Inserte un nombre de usuario'})
+      return
+    }
+    if (email.current.value == "") {
+      setError({field: 'emailRegister', message: 'Inserte una dirección de correo electrónico'})
+      return
+    }
+    if (password.current.value == "") {
+      setError({field: 'passwordRegister', message: 'Inserte una contraseña'})
+      return
+    }
+    if (password2.current.value == "") {
+      setError({field: 'repeatPassword', message: 'Confirme su contraseña'})
+      return
+    }
+    if (password.current.value != password2.current.value) {
+      setError({field: 'repeatPassword', message: 'Las contraseñas no coinciden'})
+      return
+    }
     axios
       .post('http://localhost:3000/register', {
         username: username.current.value,
@@ -84,8 +105,15 @@ const Home = () => {
         password: password.current.value
       })
       .then((res) => {
-        console.log(res.data)
-        window.location.href = '/dashboard'
+        res = res.data
+        if (res.status == "OK") {
+          localStorage.setItem('userToken', res.token)
+          window.location.href = '/dashboard'
+        } else {
+          if (res.result == "USER EXISTS") {
+            setError({field: 'emailRegister', message: 'Este correo electrónico ya está registrado'})
+          }
+        }
       })
   }
 
@@ -101,7 +129,9 @@ const Home = () => {
       axios
         .post('http://localhost:3000/googleLogin', userData)
         .then((res) => {
-          console.log(res.data);
+          res = res.data
+          localStorage.setItem('userToken', res.token)
+          window.location.href = '/dashboard'
         })
     }
   }
@@ -110,7 +140,7 @@ const Home = () => {
     () => {
         if (user && user.access_token) {
             axios
-                .get(`+https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
+                .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
                     headers: {
                         Authorization: `Bearer ${user.access_token}`,
                         Accept: 'application/json'
@@ -196,7 +226,7 @@ const Home = () => {
               <div className="form-group w-8/12 mt-1">
                 <label htmlFor="email" className='text-lg'>{ t("home.registerEmail") }</label>
                 <input ref={email} type="email" id="email" className='w-full p-2 border-2 border-black dark:border-white rounded-md bg-transparent' />
-                <span className={`block w-full p-2 text-sm font-extrabold h-8 ${error.field === "email" ? "text-red-500" : "text-transparent"}`}> {(error.field === "email" ? error.message : "")}</span>
+                <span className={`block w-full p-2 text-sm font-extrabold h-8 ${error.field === "emailRegister" ? "text-red-500" : "text-transparent"}`}> {(error.field === "emailRegister" ? error.message : "")}</span>
               </div>
               <div className="form-group w-8/12 mt-1">
                 <label htmlFor="password" className='text-lg'>{ t("home.registerPassword") }</label>
