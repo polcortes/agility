@@ -32,7 +32,7 @@ const CreateProject = ({ onClose }) => {
   const handleCreateProject = () => {
     axios
       .post('http://localhost:3000/createProject', {
-        token: 'WjGoEb_4VsUkC9vT3zPh6NmKJMl77ayn',
+        token: localStorage.getItem("userToken"),
         title: projectTitleRef.current.value,
         description: '',
       })
