@@ -9,7 +9,7 @@
     "frontend:dev": "cd client && npm run dev",
     "backend:dev": "cd api && npm run dev",
     "build": "npm-run-all -p frontend:build backend:build",
-    "frontend:build": "cd client && npm run build",
+    "frontend:build": "cd client && npm run build && npm run preview",
     "backend:build": "cd api && npm run build"
   },
   "keywords": [],
