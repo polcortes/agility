@@ -14,7 +14,7 @@ const Layout = () => {
         <nav className='w-screen bg-slate-900 text-white'>
           <ul>
             <li>
-              <Link to="/">Home</Link>
+              <Link to="./">Home</Link>
             </li>
           </ul>
 

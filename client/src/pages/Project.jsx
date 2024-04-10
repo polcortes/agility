@@ -217,6 +217,11 @@ const Project = () => {
 
   const createSprintBoard = () => {
     if (createSprintTitleRef.current.value !== '') {
+      ws.send(JSON.stringify({
+        type: 'createSprintBoard',
+        projectID: projectID,
+        sprintName: createSprintTitleRef.current.value,
+      }))
       /*
       axios
         .post('http://localhost:3000/createSprintBoard', {

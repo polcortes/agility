@@ -422,7 +422,7 @@ async function createSprintBoard(req, res) {
         } else {
           await insertSprintBoard(receivedPOST.projectID, receivedPOST.name, sprintCollection)
           result = { status: "OK", result: "SPRINT CREATED" }
-        }
+        } 
       } else {
         result = { status: "KO", result: "PROJECT NOT FOUND" }
       }

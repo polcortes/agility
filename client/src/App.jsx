@@ -14,10 +14,10 @@ function App() {
     <HelmetProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Layout />}>
+          <Route path="./" element={<Layout />}>
             <Route index element={<Home />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/project/:projectID" element={<Project />} />
+            <Route path="./dashboard" element={<Dashboard />} />
+            <Route path="./project/:projectID" element={<Project />} />
             <Route path="*" element={<Error404 />} />
           </Route>
         </Routes>
