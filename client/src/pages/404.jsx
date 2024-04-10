@@ -14,7 +14,7 @@ const Error404 = () => {
       </Helmet>
       <main className="bg-slate-900/80">
         <h1>{ t("404.title") }</h1>
-        <Link to="./dashboard/">{ t("404.link") }</Link>
+        <Link to="/dashboard/">{ t("404.link") }</Link>
       </main>
     </>
   )
