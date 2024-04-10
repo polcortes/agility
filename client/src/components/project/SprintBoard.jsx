@@ -5,7 +5,7 @@ import TaskCard from '../project/TaskCard'
 import CreateTaskModal from '../project/CreateTaskModal'
 // import { dragAndDrop } from '@formkit/drag-and-drop/react'
 
-const SprintBoard = ({ projectID, latestSprint, tasks }) => {
+const SprintBoard = ({ projectID, latestSprint, tasks, webSocket }) => {
   const [ isCreateTaskOpen, setIsCreateTaskOpen ] = useState(false)
 
   const [ organizedTasks, setOrganizedTasks ] = useState({})
@@ -30,6 +30,20 @@ const SprintBoard = ({ projectID, latestSprint, tasks }) => {
     setOrganizedTasks(newOrganizedTasks)
   }, [tasks])
 
+  useEffect(() => {
+    console.log(organizedTasks)
+  }, [organizedTasks])
+
+  const moveTask = (taskName, newStatus) => {
+    webSocket.send(JSON.stringify({
+      type: 'moveTask',
+      projectID: projectID,
+      sprintName: latestSprint.name,
+      taskName: taskName,
+      newStatus: newStatus
+    }))
+  }
+
 
 
   useEffect(() => {
@@ -39,25 +53,42 @@ const SprintBoard = ({ projectID, latestSprint, tasks }) => {
     //   tolerance: 'pointer',
     //   helper: 'clone',
     // })
-
     $('.kanban-column').droppable({
       accept: '.task',
+      appendTo: 'body',
+      containment: 'window',
+      helper: 'clone',
       drop: function(ev, ui) {
+        console.log(tasks)
         console.log('dropable activado', this)
         console.log('El draggable que lo activó:', ui)
+        console.log(projectID)
+        console.log(latestSprint.name)
+        //let newTasks = {tasks}
+        //newTasks.filter(task => {return task.name === $(ui.draggable).find("p").text()})[0].status = $(this).find("h3").text().toUpperCase()
+        let newOrganizedTasks = {...organizedTasks}
+        let taskToMove = tasks.find(task => task.name === $(ui.draggable).find("p").text())
+        let status = taskToMove.status.toLowerCase() === "to do" || taskToMove.status.toLowerCase() === "to-do" ? "todo" : taskToMove.status.toLowerCase()
+        let newStatus = ($(this).find("h3").text().toLowerCase() === "to do" || $(this).find("h3").text().toLowerCase() === "to-do") ? "todo" : $(this).find("h3").text().toLowerCase()
+        newOrganizedTasks[status].splice(newOrganizedTasks[status].findIndex(task => task === taskToMove), 1)
+        taskToMove.status = newStatus.toUpperCase()
+        newOrganizedTasks[newStatus].push(taskToMove)
+        setOrganizedTasks(newOrganizedTasks)
+        moveTask($(ui.draggable).find("p").text(), $(this).find("h3").text().toUpperCase() === "TO-DO" ? "TO DO" : $(this).find("h3").text().toUpperCase())
       }
     })
-
+    /*
     $('.kanban-column').sortable({
       
     })
-  }, [])
+    */
+  }, [latestSprint, tasks, organizedTasks])
 
   return (
     <>
-      <div className='flex flex-col align-center justify-center p-5 bg-light-secondary-bg max-w-[330px] rounded-lg'>
+      <div className='kanban-column flex flex-col align-center justify-center p-5 bg-light-secondary-bg max-w-[330px] rounded-lg'>
         <h3 className='font-subtitle font-bold text-2xl mb-5'>To-do</h3>
-        <ul className='kanban-column flex flex-col rounded-lg overflow-hidden h-full max-h-full pr-5 gap-5 flex-1 overflow-y-scroll'>
+        <ul className='flex flex-col rounded-lg overflow-hidden h-full pr-5 gap-5 flex-1 overflow-y-scroll max-h-[calc(100vh-320px)]'>
           { 
             organizedTasks.todo
               ? (organizedTasks.todo.map(task => <li key={task._id}><TaskCard text={task.name} /></li>))
@@ -75,9 +106,9 @@ const SprintBoard = ({ projectID, latestSprint, tasks }) => {
         </span>
       </div>
 
-      <div className='flex flex-col align-center justify-center p-5 bg-light-secondary-bg max-w-[330px] rounded-lg'>
+      <div className='kanban-column flex flex-col align-center justify-center p-5 bg-light-secondary-bg max-w-[330px] rounded-lg'>
         <h3 className='font-subtitle font-bold text-2xl mb-5'>Doing</h3>
-        <ul className='kanban-column flex flex-col rounded-lg overflow-hidden h-full max-h-full pr-5 gap-5 flex-1 overflow-y-scroll'>
+        <ul className='flex flex-col rounded-lg overflow-hidden h-full pr-5 gap-5 flex-1 overflow-y-scroll max-h-[calc(100vh-320px)]'>
           { 
             organizedTasks.doing
               ? (organizedTasks.doing.map(task => <li key={task._id}><TaskCard text={task.name} /></li>))
@@ -86,9 +117,9 @@ const SprintBoard = ({ projectID, latestSprint, tasks }) => {
         </ul>
       </div>
 
-      <div className='flex flex-col align-center justify-center p-5 bg-light-secondary-bg max-w-[330px] rounded-lg'>
+      <div className='kanban-column flex flex-col align-center justify-center p-5 bg-light-secondary-bg max-w-[330px] rounded-lg'>
         <h3 className='font-subtitle font-bold text-2xl mb-5'>Testing</h3>
-        <ul className='kanban-column flex flex-col rounded-lg overflow-hidden h-full max-h-full pr-5 gap-5 flex-1 overflow-y-scroll'>
+        <ul className='flex flex-col rounded-lg overflow-hidden h-full pr-5 gap-5 flex-1 overflow-y-scroll max-h-[calc(100vh-320px)]'>
           { 
             organizedTasks.testing
               ? (organizedTasks.testing.map(task => <li key={task._id}><TaskCard text={task.name} /></li>) )
@@ -97,9 +128,9 @@ const SprintBoard = ({ projectID, latestSprint, tasks }) => {
         </ul>
       </div>
 
-      <div className='flex flex-col align-center justify-center p-5 bg-light-secondary-bg max-w-[330px] rounded-lg'>
+      <div className='kanban-column flex flex-col align-center justify-center p-5 bg-light-secondary-bg max-w-[330px] rounded-lg'>
         <h3 className='font-subtitle font-bold text-2xl mb-5'>Done</h3>
-        <ul className='kanban-column flex flex-col rounded-lg overflow-hidden h-full max-h-full pr-5 gap-5 flex-1 overflow-y-scroll'>
+        <ul className='flex flex-col rounded-lg overflow-hidden h-full pr-5 gap-5 flex-1 overflow-y-scroll max-h-[calc(100vh-320px)]'>
           { 
             organizedTasks.done
               ? (organizedTasks.done.map(task => <li key={task._id}><TaskCard text={task.name} /></li>) )
@@ -110,7 +141,7 @@ const SprintBoard = ({ projectID, latestSprint, tasks }) => {
 
       {
         isCreateTaskOpen
-          && <CreateTaskModal projectID={ projectID } latestSprint={ latestSprint } isCreateTaskOpen={ isCreateTaskOpen } setIsCreateTaskOpen={ setIsCreateTaskOpen } />
+          && <CreateTaskModal projectID={ projectID } latestSprint={ latestSprint } isCreateTaskOpen={ isCreateTaskOpen } setIsCreateTaskOpen={ setIsCreateTaskOpen } webSocket={ webSocket } />
       }
     </>
   )

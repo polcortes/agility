@@ -29,6 +29,7 @@ const Dashboard = () => {
 
   const [ projects, setProjects ] = useState([])
 
+  //TODO: evitar que se haga cada vez la petición
   useEffect(() => {
     if (projects.length === 0) {
       axios

@@ -16,6 +16,7 @@ import TableIcon from '../assets/icons/table'
 import SprintBoard from '../components/project/SprintBoard'
 
 import TaskTable from '../components/project/TaskTable'
+import { use } from 'i18next'
 
 const Project = () => {
   const { projectID } = useParams();
@@ -30,6 +31,13 @@ const Project = () => {
 
   const [ ws, setWs ] = useState(null)
   const asideRef = useRef(null)
+  const [ tasks, setTasks ] = useState([])
+  const [ isEditingTitle, setIsEditingTitle ] = useState(false)
+
+  const currentBoardTitleRef = useRef(null)
+  const newBoardTitleInputRef = useRef(null)
+
+  const [ sprints, setSprints ] = useState([])
 
   const WS_URL = 'ws://localhost:3000'
 
@@ -52,7 +60,14 @@ const Project = () => {
     const data = JSON.parse(message.data)
     console.log("DATA")
     console.log(data)
+    if (data.type == "projectData") {
+      if (currProject == null) {
+        setCurrProject(data.project)
+        setProjectState("200")
+      }
+    }
   }
+
   const joinProject = () => {
     ws.send(JSON.stringify({
       type: 'joinProject',
@@ -61,9 +76,19 @@ const Project = () => {
   }
 
   useEffect(() => {
+    if (currProject) {
+      setSprints(Object.values(currProject.sprints))
+      let sprint = Object.values(currProject.sprints).at(-1)
+      setLatestSprint(sprint)
+      console.log(Object.values(sprint.tasks))
+      setTasks(Object.values(sprint.tasks))
+    }
+  }, [currProject])
+
+  useEffect(() => {
     asideRef.current.classList.toggle('closed')
   }, [isAsideOpen])
-
+  /*
   const getProject = () => {
     if (!projectID) {
       console.log(projectID)
@@ -89,13 +114,6 @@ const Project = () => {
     }
   }
 
-  const [ isEditingTitle, setIsEditingTitle ] = useState(false)
-
-  const currentBoardTitleRef = useRef(null)
-  const newBoardTitleInputRef = useRef(null)
-
-  const [ sprints, setSprints ] = useState([])
-
   const getSprints = () => {
     axios
       .post('http://localhost:3000/getSprintBoards', {
@@ -114,6 +132,7 @@ const Project = () => {
       })
       .catch(() => console.error('No s\'han pogut carregar els sprints'))
   }
+  */
 
   const [ latestSprint, setLatestSprint ] = useState({})
 
@@ -130,8 +149,7 @@ const Project = () => {
     setLatestSprint([...sprints][sprints.length - 1])
   }
 
-  const [ tasks, setTasks ] = useState([])
-
+  /*
   const getTasks = () => {
     axios
       .post('http://localhost:3000/getTasksInSprint', {
@@ -147,7 +165,7 @@ const Project = () => {
           setTasks([])
           console.log('No s\'han pogut carregar les tasques')
         })
-  }
+  }*/
 
   //const [ currentSprint, setLatestSprint ] = useState(null)
 
@@ -161,23 +179,23 @@ const Project = () => {
   }
 
   useEffect(() => {
-    getProject();
+    //getProject();
   }, []);
   
   useEffect(() => {
     if (projectState === "200") {
-      getSprints();
+      //getSprints();
     }
   }, [projectState]);
   
   useEffect(() => {
     if (sprints.length > 0) {
-      getLatestSprint();
+      //getLatestSprint();
     }
   }, [sprints]);
 
   useEffect(() => {
-    getTasks()
+    //getTasks()
   }, [latestSprint])
 
   const discardNewTitle = () => {
@@ -199,6 +217,7 @@ const Project = () => {
 
   const createSprintBoard = () => {
     if (createSprintTitleRef.current.value !== '') {
+      /*
       axios
         .post('http://localhost:3000/createSprintBoard', {
           token: localStorage.getItem("userToken"),
@@ -213,6 +232,7 @@ const Project = () => {
               cancelCreateSprintBoard()
             }
           })
+      */
     } // TODO: else que haga una notificación q no pde estar vacío.
   }
 
@@ -324,7 +344,7 @@ const Project = () => {
             <section id="main-project-container" className={`${section !== "TaskTable" && "nice-gradient grid-cols-4"} bg-light-secondary-bg rounded-lg overflow-hidden grid max-h-full content-between p-5`}>
               {
                 section === "SprintBoard" 
-                  && <SprintBoard projectID={ projectID } latestSprint={ latestSprint } tasks={ tasks } />
+                  && <SprintBoard projectID={ projectID } latestSprint={ latestSprint } tasks={ tasks } webSocket={ ws } />
               }
               {
                 section === "TaskTable"
