@@ -9,6 +9,7 @@ const { MongoClient, ObjectId } = require('mongodb')
 const cors = require('cors')
 const session = require('express-session')
 const nodemailer = require('nodemailer');
+const projects = {}
 
 const messageExpireTime = 2592000000 // 30 days in ms
 const sessionTokenExpireTime = 3000
@@ -253,7 +254,7 @@ async function getProjects(req, res) {
     let user = await userCollection.findOne({ token: { $eq: receivedPOST.token } })
     if (user) {
       let projectCollection = db.collection('projects')
-      let projects = await projectCollection.find({ creator: { $eq: user.email } }).toArray()
+      let projects = await projectCollection.find({$or: [ { creator: { $eq: user.email } }, { invitedUsers : user.email }]}).toArray()
       if (projects) {
         result = { status: "OK", result: projects }
       }
@@ -415,8 +416,13 @@ async function createSprintBoard(req, res) {
       console.log(project)
       if (project) {
         let sprintCollection = db.collection('sprintBoards')
-        await insertSprintBoard(receivedPOST.projectID, receivedPOST.name, sprintCollection)
-        result = { status: "OK", result: "SPRINT CREATED" }
+        let sprintExists = await sprintCollection.findOne({ projectID: { $eq: receivedPOST.projectID }, name: { $eq: receivedPOST.newName } })
+        if (sprintExists) {
+          result = { status: "KO", result: "SPRINT ALREADY EXISTS" }
+        } else {
+          await insertSprintBoard(receivedPOST.projectID, receivedPOST.name, sprintCollection)
+          result = { status: "OK", result: "SPRINT CREATED" }
+        }
       } else {
         result = { status: "KO", result: "PROJECT NOT FOUND" }
       }
@@ -787,6 +793,7 @@ wss.on('connection', (ws) => {
 
   function broadcastProjectChange(projectID) {
     projects[projectID].users.forEach((user) => {
+      console.log("user", socketsClients.get(user))
       user.send(JSON.stringify({ type: "projectData", project: projects[projectID].data }))
     })
   }
@@ -796,16 +803,16 @@ wss.on('connection', (ws) => {
   // Add client to the clients list
   const id = uuidv4()
   const color = Math.floor(Math.random() * 360)
-  const projects = {}
   const metadata = { id, projectID: null }
   socketsClients.set(ws, metadata)
 
   // What to do when a client is disconnected
   ws.on("close", () => {
     const projectID = socketsClients.get(ws).projectID
-    projects[projectID].users = projects[projectID].users.filter((user) => user !== ws)
+    projects[projectID].users.splice(projects[projectID].users.indexOf(ws), 1)
+    console.log("DELETED", projects[projectID].users)
     if (projects[projectID].users.length == 0) {
-      delete projects[projectID]
+      //delete projects[projectID]
     }
     socketsClients.delete(ws)
   })
@@ -828,6 +835,7 @@ wss.on('connection', (ws) => {
       broadcast(rst)
     } else if (messageAsObject.type == "joinProject") {
       socketsClients.get(ws).projectID = messageAsObject.projectID
+      console.log("projects pre", projects)
       if (!Object.keys(projects).includes(messageAsObject.projectID)) {
         getProjectData(messageAsObject.projectID).then((project) => {
           if (project) {
@@ -836,17 +844,77 @@ wss.on('connection', (ws) => {
           } else {
             ws.send(JSON.stringify({ type: "projectData", project: "KO" }))
           }
-          console.log(projects)
+          console.log("projects", projects)
         })
       } else {
         projects[messageAsObject.projectID].users.push(ws)
+        console.log("sers", socketsClients)
         ws.send(JSON.stringify({ type: "projectData", project: projects[messageAsObject.projectID].data }))
       }
     } else if (messageAsObject.type == "moveTask") {
       projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName].tasks[messageAsObject.taskName].status = messageAsObject.newStatus
+      moveTask(messageAsObject.projectID, messageAsObject.sprintName, messageAsObject.taskName, messageAsObject.newStatus);
+      broadcastProjectChange(messageAsObject.projectID)
+    } else if (messageAsObject.type = "createTask") {
+      createTaskWs(messageAsObject.projectID, messageAsObject.sprintName, messageAsObject.taskName).then(result => {
+        console.log("AAAAAAAAAAAAAAAAAAAAAAAAa")
+        projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName].tasks[messageAsObject.taskName] = result
+        broadcastProjectChange(messageAsObject.projectID)
+      })
     }
   })
 })
+
+async function moveTask(projectID, sprintName, taskName, newStatus) {
+  const client = new MongoClient(uri)
+  await client.connect()
+  const db = client.db(databaseName)
+  let sprintCollection = db.collection('sprintBoards')
+  let sprintExists = await sprintCollection.findOne({ projectID: { $eq: projectID }, name: { $eq: sprintName } })
+    if (sprintExists) {
+      let sprintID = sprintExists._id.toString()
+      let taskCollection = db.collection('tasks')
+      let taskExists = await taskCollection.findOne({ sprintID: { $eq: sprintID }, name: { $eq: taskName } })
+      if (taskExists) {
+        taskCollection.updateOne({ sprintID: { $eq: sprintID }, name: { $eq: taskName } }, { $set: {status: newStatus} })
+        result = { status: "OK", result: "TASK EDITED" }
+      } else {
+        result = { status: "KO", result: "TASK NOT FOUND" }
+      }
+
+    } else {
+      result = { status: "KO", result: "SPRINT NOT FOUND" }
+    }
+}
+
+async function createTaskWs(projectID, sprintName, taskName) {
+  const client = new MongoClient(uri)
+    await client.connect()
+    const db = client.db(databaseName)
+    let sprintCollection = db.collection('sprintBoards')
+    let sprintExists = await sprintCollection.findOne({ projectID: { $eq: projectID }, name: { $eq: sprintName } })
+    if (sprintExists) {
+      let sprintID = sprintExists._id.toString()
+      let taskCollection = db.collection('tasks')
+      let taskExists = await taskCollection.findOne({ sprintID: { $eq: sprintID }, name: { $eq: taskName } })
+      if (taskExists) {
+        result = { status: "KO", result: "TASK ALREADY EXISTS" }
+      } else {
+        let task = {
+          sprintID: sprintID,
+          name: taskName,
+          status: "TO DO"
+        }
+        console.log("task", task)
+        let insertedObject = await taskCollection.insertOne(task)
+        insertedId = insertedObject.insertedId
+        return await taskCollection.findOne({ _id: { $eq: insertedId } })
+      }
+
+    } else {
+      result = { status: "KO", result: "SPRINT NOT FOUND" }
+    }
+}
 
 // Send a message to all clients
 async function broadcast(obj) {

@@ -2,7 +2,7 @@
 import { useEffect, useRef } from 'react'
 import axios from 'axios'
 
-const CreateTaskModal = ({ projectID, latestSprint, setIsCreateTaskOpen, isCreateTaskOpen }) => {
+const CreateTaskModal = ({ projectID, latestSprint, setIsCreateTaskOpen, isCreateTaskOpen, webSocket }) => {
   const dialogRef = useRef()
   const newTaskNameRef = useRef()
 
@@ -19,6 +19,14 @@ const CreateTaskModal = ({ projectID, latestSprint, setIsCreateTaskOpen, isCreat
   }, [isCreateTaskOpen])
 
   const createTask = () => {
+    webSocket.send(JSON.stringify({
+      type: 'createTask',
+      projectID: projectID,
+      sprintName: latestSprint.name,
+      taskName: newTaskNameRef.current.value,
+    }))
+    setIsCreateTaskOpen(false)
+    /*
     axios
       .post(`http://localhost:3000/createTask/`, {
         token: localStorage.getItem("userToken"),
@@ -31,6 +39,7 @@ const CreateTaskModal = ({ projectID, latestSprint, setIsCreateTaskOpen, isCreat
         if (res.status === 'OK') console.log('Task created')
         else console.error('Error creating task')
       })
+      */
   }
 
   return (
