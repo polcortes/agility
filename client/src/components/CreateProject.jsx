@@ -32,7 +32,7 @@ const CreateProject = ({ onClose }) => {
   const handleCreateProject = () => {
     axios
       .post(`${import.meta.env.VITE_API_ROUTE}/createProject`, {
-        token: 'WjGoEb_4VsUkC9vT3zPh6NmKJMl77ayn',
+        token: localStorage.getItem("userToken"),
         title: projectTitleRef.current.value,
         description: '',
       })
