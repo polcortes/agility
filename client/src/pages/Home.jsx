@@ -54,7 +54,7 @@ const Home = () => {
 
   const login = () => {
     axios
-      .post('http://localhost:3000/login', {
+      .post(`${import.meta.env.VITE_API_ROUTE}/login`, {
         email: email.current.value,
         password: password.current.value
       })
@@ -99,7 +99,7 @@ const Home = () => {
       return
     }
     axios
-      .post('http://localhost:3000/register', {
+      .post(`${import.meta.env.VITE_API_ROUTE}/register`, {
         username: username.current.value,
         email: email.current.value,
         password: password.current.value
@@ -127,7 +127,7 @@ const Home = () => {
   const googleLoginCallback = (userData) => {
     if (userData) {
       axios
-        .post('http://localhost:3000/googleLogin', userData)
+        .post(`${import.meta.env.VITE_API_ROUTE}/googleLogin`, userData)
         .then((res) => {
           res = res.data
           localStorage.setItem('userToken', res.token)

@@ -31,7 +31,7 @@ const CreateProject = ({ onClose }) => {
 
   const handleCreateProject = () => {
     axios
-      .post('http://localhost:3000/createProject', {
+      .post(`${import.meta.env.VITE_API_ROUTE}/createProject`, {
         token: 'WjGoEb_4VsUkC9vT3zPh6NmKJMl77ayn',
         title: projectTitleRef.current.value,
         description: '',
