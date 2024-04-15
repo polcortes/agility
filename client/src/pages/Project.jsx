@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from 'react'
 
 import axios from 'axios'
 
+import { Toaster, toast } from 'sonner'
+
 import { Helmet } from 'react-helmet-async'
 import { useParams } from 'react-router-dom'
 
@@ -18,6 +20,9 @@ import SprintBoard from '../components/project/SprintBoard'
 import TaskTable from '../components/project/TaskTable'
 import { use } from 'i18next'
 
+import ShareProjectModal from '../components/project/ShareProjectModal'
+import EditSprintBoardModal from '../components/project/EditSprintBoardModal'
+
 const Project = () => {
   const { projectID } = useParams();
 
@@ -28,6 +33,9 @@ const Project = () => {
   const [ projectState, setProjectState ] = useState("200")
 
   const [ isAsideOpen, setIsAsideOpen ] = useState(true)
+
+  const [ isShareProjectModalOpen, setIsShareProjectModalOpen ] = useState(false) // TODO: setear cuando se verá la modal de compartir proyecto
+  const [ isEditSprintBoardOpen, setIsEditSprintBoardOpen ] = useState(false)
 
   const [ ws, setWs ] = useState(null)
   const asideRef = useRef(null)
@@ -230,18 +238,80 @@ const Project = () => {
               getSprints()
               getLatestSprint()
               cancelCreateSprintBoard()
+              
+              toast.success('Tauler creat correctament!', {
+                duration: 3000,
+                closeButton: true,
+                position: 'bottom-right',
+              });
             }
+            else throw new Error(res.result)
+          })
+          .catch(err => {
+            toast.info('The sprintboard couldn\'t be created.', {
+              description: err,
+              duration: 3000,
+              closeButton: true,
+              position: 'bottom-right',
+            });
           })
       */
     } // TODO: else que haga una notificación q no pde estar vacío.
   }
 
   const changeBoard = (e) => {
+    if (section !== 'SprintBoard') setSection('SprintBoard')
     const targetSprint = sprints.filter(sprint => sprint._id === e.target.dataset.id)
 
     if (targetSprint.length > 0) {
       setLatestSprint(targetSprint[0])
     }
+  }
+
+  const deleteSprintboard = () => {
+    // Cuando esté bien:
+    toast.success('S\'ha esborrat el tauler satisfactoriament.', {
+      duration: 3000,
+      position: 'bottom-right',
+      closeButton: true,
+    })
+
+    // Si no:
+    /*
+    toast.error('El tauler no s\'ha pogut esborrar.', {
+      desc: err,  // El error?? Si quieres.
+      duration: 3000,
+      position: 'bottom-right',
+      closeButton: true,
+    })
+    */
+  }
+
+  const [ sprintIsGonnaBeEdited, setSprintIsGonnaBeEdited ] = useState(null)
+
+  const openSprintBoardEditor = (sprintID) => {
+    const spri = sprints.find((sprint) => sprint._id === sprintID)
+    setSprintIsGonnaBeEdited(spri)
+    setIsEditSprintBoardOpen(true)
+  }
+
+  const editSprintboard = () => {
+    // Cuando esté bien:
+    toast.success('S\'ha editat el tauler satisfactoriament.', {
+      duration: 3000,
+      position: 'bottom-right',
+      closeButton: true,
+    })
+
+    // Si no:
+    /*
+    toast.error('El tauler no s\'ha pogut editar correctament.', {
+      desc: err,  // El error?? Si quieres.
+      duration: 3000,
+      position: 'bottom-right',
+      closeButton: true,
+    })
+    */
   }
 
   return (
@@ -261,7 +331,7 @@ const Project = () => {
               <span className="flex size-16 mr-5 bg-black row-span-2 rounded-md box-border">a</span>
               <span className='my-auto'>{ currProject ? currProject.title : "Título mal." }</span>
             </section>
-            
+
             <nav className='flex-1 flex flex-col'>
               <button onClick={() => setSection("TaskTable")} className="w-full text-left px-3 py-2 flex items-center gap-5">
                 <TableIcon></TableIcon>
@@ -274,7 +344,19 @@ const Project = () => {
 
               <ul className='relative flex flex-col gap-3 box-border overflow-hidden overflow-y-scroll flex-1 mt-4 pr-4'>
                 {sprints.map(sprint => (
-                  <li className='w-full bg-light-tertiary-bg text-black rounded-lg' key={sprint._id}>
+                  <li className='group relative w-full bg-light-tertiary-bg text-black rounded-lg' key={sprint._id}>
+                    <button
+                      onClick={() => deleteSprintboard(sprint._id)}
+                      className='aspect-square items-center justify-center text-red-600 absolute top-0 right-0 transition-all bg-tertiary-bg rounded-full hidden group-hover:flex hover:bg-light-secondary-bg size-6'
+                    >
+                      x
+                    </button>
+                    <button 
+                      onClick={() => openSprintBoardEditor(sprint._id)}
+                      className='items-center justify-center absolute top-1.5 right-5 translate-y-1/2 transition-all bg-tertiary-bg rounded-full hidden group-hover:flex hover:bg-light-secondary-bg'
+                    >
+                      <svg width="25" height="25" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.8536 1.14645C11.6583 0.951184 11.3417 0.951184 11.1465 1.14645L3.71455 8.57836C3.62459 8.66832 3.55263 8.77461 3.50251 8.89155L2.04044 12.303C1.9599 12.491 2.00189 12.709 2.14646 12.8536C2.29103 12.9981 2.50905 13.0401 2.69697 12.9596L6.10847 11.4975C6.2254 11.4474 6.3317 11.3754 6.42166 11.2855L13.8536 3.85355C14.0488 3.65829 14.0488 3.34171 13.8536 3.14645L11.8536 1.14645ZM4.42166 9.28547L11.5 2.20711L12.7929 3.5L5.71455 10.5784L4.21924 11.2192L3.78081 10.7808L4.42166 9.28547Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path></svg>
+                    </button>
                     <button onClick={(e) => changeBoard(e)} className="w-full h-full text-left px-3 py-2 flex items-center gap-5" data-id={sprint._id}>
                       <span className='grid size-[45px] rounded-full bg-white'></span>
                         { sprint.name }
@@ -337,8 +419,35 @@ const Project = () => {
                 </button>
               </span>
 
-              <span>
+              <span className='flex items-center'>
+                <button
+                  className='bg-the-accent-color flex text-2xl mr-8 outline-none items-center justify-center rounded-md px-3 py-2 text-white font-medium hover:scale-105 transition-all gap-2'
+                  onClick={() => setIsShareProjectModalOpen(true)}
+                >
+                  <svg width="20" height="20" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.49991 0.876892C3.84222 0.876892 0.877075 3.84204 0.877075 7.49972C0.877075 11.1574 3.84222 14.1226 7.49991 14.1226C11.1576 14.1226 14.1227 11.1574 14.1227 7.49972C14.1227 3.84204 11.1576 0.876892 7.49991 0.876892ZM1.82707 7.49972C1.82707 4.36671 4.36689 1.82689 7.49991 1.82689C10.6329 1.82689 13.1727 4.36671 13.1727 7.49972C13.1727 10.6327 10.6329 13.1726 7.49991 13.1726C4.36689 13.1726 1.82707 10.6327 1.82707 7.49972ZM7.50003 4C7.77617 4 8.00003 4.22386 8.00003 4.5V7H10.5C10.7762 7 11 7.22386 11 7.5C11 7.77614 10.7762 8 10.5 8H8.00003V10.5C8.00003 10.7761 7.77617 11 7.50003 11C7.22389 11 7.00003 10.7761 7.00003 10.5V8H4.50003C4.22389 8 4.00003 7.77614 4.00003 7.5C4.00003 7.22386 4.22389 7 4.50003 7H7.00003V4.5C7.00003 4.22386 7.22389 4 7.50003 4Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path></svg>
+                  Compartir
+                </button>
 
+                { /* TODO: Tooltip encima del +3 para mostrar todos los usuarios en linea. */ }
+                <span className='size-8 mr-2 flex items-center justify-center bg-slate-400 rounded-full ml-'>
+                  +3
+                </span>
+
+                <span className='flex pr-5 border-r-2 border-black'>
+                  <span className='-mr-5 z-10 border-2 border-light-secondary-bg size-14 flex items-center justify-center bg-slate-400 rounded-full text-xl'>
+                    A
+                  </span>
+                  <span className='-mr-5 z-20 border-2 border-light-secondary-bg size-14 flex items-center justify-center bg-slate-400 rounded-full text-xl'>
+                    A
+                  </span>
+                  <span className='z-30 border-2 border-light-secondary-bg size-14 flex items-center justify-center bg-slate-400 rounded-full text-xl'>
+                    A
+                  </span>
+                </span>
+
+                <button className='size-14 flex items-center justify-center bg-slate-400 rounded-full text-xl ml-'>
+                  A
+                </button>
               </span>
             </header>
             <section id="main-project-container" className={`${section !== "TaskTable" && "nice-gradient grid-cols-4"} bg-light-secondary-bg rounded-lg overflow-hidden grid max-h-full content-between p-5`}>
@@ -354,6 +463,16 @@ const Project = () => {
           </main>
         </section>
       ) }
+
+      {
+        isShareProjectModalOpen 
+          && <ShareProjectModal projectID={ projectID } setIsShareProjectModalOpen={ setIsShareProjectModalOpen } isShareProjectModalOpen={ isShareProjectModalOpen } />
+      }
+      {
+        isEditSprintBoardOpen
+          && <EditSprintBoardModal projectID={ projectID } sprintIsGonnaBeEdited={ sprintIsGonnaBeEdited } setIsEditSprintBoardOpen={ setIsEditSprintBoardOpen } isEditSprintBoardOpen={ isEditSprintBoardOpen } />
+      }
+      <Toaster expand={ false } richColors position='bottom-right' />
     </>
   )
 }
