@@ -33,7 +33,7 @@ const Dashboard = () => {
   useEffect(() => {
     if (projects.length === 0) {
       axios
-        .post('http://localhost:3000/getProjects', {
+        .post(`${import.meta.env.VITE_API_ROUTE}/getProjects`, {
           token: localStorage.getItem("userToken"), // localStorage.getItem('token')
         })
         .then(res => {

@@ -47,7 +47,7 @@ const Project = () => {
 
   const [ sprints, setSprints ] = useState([])
 
-  const WS_URL = 'ws://localhost:3000'
+  const WS_URL = import.meta.env.VITE_WS_ROUTE
 
   useEffect(() => {
     const ws = new WebSocket(WS_URL)
