@@ -857,13 +857,14 @@ wss.on('connection', (ws) => {
       broadcastProjectChange(messageAsObject.projectID)
     } else if (messageAsObject.type = "createTask") {
       createTaskWs(messageAsObject.projectID, messageAsObject.sprintName, messageAsObject.taskName).then(result => {
-        console.log("AAAAAAAAAAAAAAAAAAAAAAAAa")
         projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName].tasks[messageAsObject.taskName] = result
         broadcastProjectChange(messageAsObject.projectID)
       })
     }
   })
 })
+
+// TODO: 
 
 async function moveTask(projectID, sprintName, taskName, newStatus) {
   const client = new MongoClient(uri)
