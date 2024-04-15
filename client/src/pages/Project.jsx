@@ -47,6 +47,11 @@ const Project = () => {
 
   const [ sprints, setSprints ] = useState([])
 
+  const [ latestSprint, setLatestSprint ] = useState(null)
+
+  const [ willChangeToSprintBoard, setWillChangeToSprintBoard ] = useState(false)
+
+
   const WS_URL = import.meta.env.VITE_WS_ROUTE
 
   useEffect(() => {
@@ -64,15 +69,23 @@ const Project = () => {
     }
   }, [ws])
 
-  function messageCallbacks(message) {
+  const messageCallbacks = (message) => {
     const data = JSON.parse(message.data)
     console.log("DATA")
     console.log(data)
+    console.log("currPRe", currProject)
     if (data.type == "projectData") {
       if (currProject == null) {
-        setCurrProject(data.project)
         setProjectState("200")
+        console.log("latestSprint", latestSprint)
+        let tasks = data.project.sprints
+        console.log("tasks",tasks)
+        //setTasks(tasks)
       }
+      setCurrProject(data.project)
+    } else if (data.type == "setLatestSprint") {
+      console.log("curr", currProject)
+      setLatestSprint(Object.values(currProject.sprints).at(-1))
     }
   }
 
@@ -85,13 +98,31 @@ const Project = () => {
 
   useEffect(() => {
     if (currProject) {
-      setSprints(Object.values(currProject.sprints))
-      let sprint = Object.values(currProject.sprints).at(-1)
-      setLatestSprint(sprint)
-      console.log(Object.values(sprint.tasks))
-      setTasks(Object.values(sprint.tasks))
+      let sprints = Object.values(currProject.sprints).sort((a, b) => a._id > b._id)
+      setSprints(sprints)
+      let sprint = sprints.at(-1)
+      if (latestSprint == null) {
+        setLatestSprint(sprint)
+      } else {
+        setLatestSprint(currProject.sprints[latestSprint.name])
+      }
     }
   }, [currProject])
+
+  useEffect(() => {
+    if (willChangeToSprintBoard) {
+      console.log("LAST", sprints.at(-1))
+      setSection("SprintBoard")
+      setLatestSprint(sprints.at(-1))
+      setWillChangeToSprintBoard(false)
+    }
+  }, [sprints, willChangeToSprintBoard])
+
+  useEffect(() => {
+    if (latestSprint && latestSprint.tasks) {
+      setTasks(Object.values(latestSprint.tasks))
+    }
+  }, [latestSprint])
 
   useEffect(() => {
     asideRef.current.classList.toggle('closed')
@@ -141,9 +172,6 @@ const Project = () => {
       .catch(() => console.error('No s\'han pogut carregar els sprints'))
   }
   */
-
-  const [ latestSprint, setLatestSprint ] = useState({})
-
   const getLatestSprint = () => { // TODO(Pol): test it.
     // const dates = []
     // sprints.forEach(sprint => dates.push(new Date(sprint.date)))
@@ -202,10 +230,6 @@ const Project = () => {
     }
   }, [sprints]);
 
-  useEffect(() => {
-    //getTasks()
-  }, [latestSprint])
-
   const discardNewTitle = () => {
     setIsEditingTitle(false)
     newBoardTitleInputRef.current.value = ''
@@ -225,6 +249,12 @@ const Project = () => {
 
   const createSprintBoard = () => {
     if (createSprintTitleRef.current.value !== '') {
+      setWillChangeToSprintBoard(true)
+      ws.send(JSON.stringify({
+        type: 'createSprintBoard',
+        projectID: projectID,
+        sprintName: createSprintTitleRef.current.value
+      }))
       /*
       axios
         .post('http://localhost:3000/createSprintBoard', {
@@ -255,7 +285,7 @@ const Project = () => {
               position: 'bottom-right',
             });
           })
-      */
+          */
     } // TODO: else que haga una notificación q no pde estar vacío.
   }
 
