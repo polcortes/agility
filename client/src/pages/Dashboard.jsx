@@ -9,12 +9,14 @@ import LightIcon from '../assets/icons/light-agility'
 import ProjectCard from '../components/ProjectCard'
 import CreateProject from '../components/CreateProject'
 import SearchProjects from '../components/SearchProjects'
+import UserMenu from '../components/UserMenu'
 
 import { useEffect, useRef, useState } from 'react'
 
 const Dashboard = () => {
   const createProjectRef = useRef(null)
-  
+
+  const [ isUserMenuOpen, setIsUserMenuOpen ] = useState(false)
   const [isCreateProjectShown, setIsCreateProjectShown] = useState(false);
 
   const handleCloseCreateProject = () => {
@@ -28,6 +30,51 @@ const Dashboard = () => {
   }
 
   const [ projects, setProjects ] = useState([])
+
+  const [ theme, toggleTheme ] = useState('dark')
+  useEffect(() => {
+    // TODO: Implementar el observer para el cambio de tema
+    const themeObserver = new MutationObserver((event) => {
+      event.forEach((mutation) => {
+        if (mutation.target.classList.contains('dark')) toggleTheme('dark')
+        else toggleTheme('light')
+      })
+    })
+
+    themeObserver.observe(document.documentElement, {
+      attributes: true, 
+      attributeFilter: ['class'],
+      childList: false, 
+      characterData: false,
+    })
+  }, [])
+
+  useEffect(() => {
+		if (window.localStorage.getItem('theme')) {
+			const storageTheme = window.localStorage.getItem('theme')
+			if (storageTheme === 'dark') document.documentElement.classList.add('dark')
+			else document.documentElement.classList.remove('dark')
+		} else {
+			window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => toggleTheme(e.matches ? 'dark' : 'light'))
+			// Crear un evento.
+			toggleTheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+			// document.documentElement.classList.add(
+			// 	window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+			// )
+	
+			if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+				document.documentElement.classList.add('dark')
+			} else {
+				document.documentElement.classList.remove('dark')
+			}
+
+			window.localStorage.setItem('theme', theme)
+	
+			return () => {
+				window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', e => setTheme(e.matches ? 'dark' : 'light'))
+			}
+		}
+	}, [])
 
   //TODO: evitar que se haga cada vez la petición
   useEffect(() => {
@@ -74,8 +121,14 @@ const Dashboard = () => {
             flex items-center justify-between
             bg-light-secondary-bg dark:bg-dark-secondary-bg'
         >
-          <LightIcon className={`w-64 h-auto`} />
-          <DarkIcon className={`w-64 h-auto hidden`} />
+          {
+            theme === 'light'
+              && <LightIcon className={`w-64 h-auto`} />
+          }
+          {
+            theme === 'dark'
+              && <DarkIcon className={`w-64 h-auto`} />
+          }
 
           <button
             id="create-project-button"
@@ -98,9 +151,9 @@ const Dashboard = () => {
               placeholder='Search' 
             />
             <div className='w-[1px] h-full border-l-2 border-black dark:border-white/80 mx-6'></div>
-            <span className="bg-[#d7d7d7] size-12 flex items-center justify-center rounded-full overflow-hidden">
+            <button onClick={() => setIsUserMenuOpen(true)} className="bg-[#d7d7d7] size-12 flex items-center justify-center rounded-full overflow-hidden">
               pfp<br />icon
-            </span>
+            </button>
           </span>
         </header>
         <section 
@@ -119,7 +172,7 @@ const Dashboard = () => {
           </section>
         </section>
 
-        {
+        {// All the modals:
           isCreateProjectShown
             && <CreateProject ref={createProjectRef} onClose={handleCloseCreateProject} />
         }
@@ -127,6 +180,11 @@ const Dashboard = () => {
         {
           isSearchProjectsShown
             && <SearchProjects onClose={handleCloseSearchProjects} projects={results} />
+        }
+
+        {
+          isUserMenuOpen
+            && <UserMenu setIsUserMenuOpen={setIsUserMenuOpen} isUserMenuOpen={isUserMenuOpen} />
         }
       </main>
     </>
