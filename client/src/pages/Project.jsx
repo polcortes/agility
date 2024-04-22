@@ -18,7 +18,6 @@ import TableIcon from '../assets/icons/table'
 import SprintBoard from '../components/project/SprintBoard'
 
 import TaskTable from '../components/project/TaskTable'
-import { use } from 'i18next'
 
 import ShareProjectModal from '../components/project/ShareProjectModal'
 import EditSprintBoardModal from '../components/project/EditSprintBoardModal'
@@ -84,15 +83,15 @@ const Project = () => {
       }
       setCurrProject(data.project)
     } else if (data.type == "setLatestSprint") {
-      console.log("curr", currProject)
-      setLatestSprint(Object.values(currProject.sprints).at(-1))
+      setWillChangeToSprintBoard(true)
     }
   }
 
   const joinProject = () => {
     ws.send(JSON.stringify({
       type: 'joinProject',
-      projectID: projectID
+      projectID: projectID,
+      token: localStorage.getItem('userToken')
     }))
   }
 
@@ -115,6 +114,7 @@ const Project = () => {
       setSection("SprintBoard")
       setLatestSprint(sprints.at(-1))
       setWillChangeToSprintBoard(false)
+      setIsCreatingSprintBoard(false)
     }
   }, [sprints, willChangeToSprintBoard])
 
@@ -298,7 +298,12 @@ const Project = () => {
     }
   }
 
-  const deleteSprintboard = () => {
+  const deleteSprintboard = (sprint) => {
+    ws.send(JSON.stringify({
+      type: 'deleteSprintBoard',
+      projectID: projectID,
+      sprintName: sprint
+    }))
     // Cuando esté bien:
     toast.success('S\'ha esborrat el tauler satisfactoriament.', {
       duration: 3000,
@@ -376,7 +381,7 @@ const Project = () => {
                 {sprints.map(sprint => (
                   <li className='group relative w-full bg-light-tertiary-bg text-black rounded-lg' key={sprint._id}>
                     <button
-                      onClick={() => deleteSprintboard(sprint._id)}
+                      onClick={() => deleteSprintboard(sprint.name)}
                       className='aspect-square items-center justify-center text-red-600 absolute top-0 right-0 transition-all bg-tertiary-bg rounded-full hidden group-hover:flex hover:bg-light-secondary-bg size-6'
                     >
                       x
@@ -487,7 +492,7 @@ const Project = () => {
               }
               {
                 section === "TaskTable"
-                  && <TaskTable tasks={ tasks } />
+                  && <TaskTable project={ currProject } />
               }
             </section>
           </main>
@@ -496,7 +501,7 @@ const Project = () => {
 
       {
         isShareProjectModalOpen 
-          && <ShareProjectModal projectID={ projectID } setIsShareProjectModalOpen={ setIsShareProjectModalOpen } isShareProjectModalOpen={ isShareProjectModalOpen } />
+          && <ShareProjectModal project={ currProject } setIsShareProjectModalOpen={ setIsShareProjectModalOpen } isShareProjectModalOpen={ isShareProjectModalOpen } />
       }
       {
         isEditSprintBoardOpen

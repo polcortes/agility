@@ -2,8 +2,8 @@
 // import { useState } from 'react';
 import TaskCard from '../project/TaskCard'
 
-const TaskTable = ({ tasks }) => {
-
+const TaskTable = ({ project }) => {
+console.log(tasks)
   const createTask = () => {
     
   }
@@ -20,9 +20,9 @@ const TaskTable = ({ tasks }) => {
         </thead>
         <tbody>
             {tasks.map (task => (
-                <tr key={task.key}>
-                    <td>{task.text}</td>
-                    <td>{task.sprint}</td>
+                <tr key={task._id}>
+                    <td>{task.name}</td>
+                    <td>{task.sprintID}</td>
                     <td>{task.member}</td>
                 </tr>
             ))}

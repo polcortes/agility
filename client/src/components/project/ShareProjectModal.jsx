@@ -2,8 +2,9 @@
 import { useEffect, useRef } from 'react'
 import axios from 'axios'
 
-const ShareProjectModal = ({ projectID, setIsShareProjectModalOpen, isShareProjectModalOpen }) => {
+const ShareProjectModal = ({ project, setIsShareProjectModalOpen, isShareProjectModalOpen }) => {
   const dialogRef = useRef()
+  const emailRef = useRef(null)
 
   useEffect(() => {
     if (isShareProjectModalOpen) {
@@ -26,6 +27,25 @@ const ShareProjectModal = ({ projectID, setIsShareProjectModalOpen, isShareProje
     }
   }
 
+  const sendInvite = () => {
+    const email = emailRef.current.value
+    console.log(email)
+    console.log(project)
+    /*
+    axios.post(`${import.meta.env.VITE_API_ROUTE}/sendInviteEmail`, {
+      projectID: project._id,
+      email: email,
+      token: localStorage.getItem('userToken')
+    })
+    .then(res => {
+      console.log(res.data)
+    })
+    .catch(err => {
+      console.log(err)
+    })*/
+    
+  }
+
   // Llamada al back para compartir.
 
   return (
@@ -36,9 +56,9 @@ const ShareProjectModal = ({ projectID, setIsShareProjectModalOpen, isShareProje
 
       <h2 className='font-title font-bold text-3xl mb-5'>Compartir</h2>
       <div className='w-full inline-flex'>
-        <input className='w-full px-3' type="email" name="share-project-email" id="share-project-email" placeholder='Direcció de correu electrònic' />
+        <input className='w-full px-3' ref={emailRef} type="email" name="share-project-email" id="share-project-email" placeholder='Direcció de correu electrònic' />
         <button 
-            onClick={() => console.log('Aqui tendria que invitar a gente.')}
+            onClick={() => sendInvite()}
             className='bg-the-accent-color flex items-center justify-center rounded-md px-3 py-2 text-white font-medium hover:scale-105 transition-all gap-2'
         >
             Invitar
@@ -47,18 +67,32 @@ const ShareProjectModal = ({ projectID, setIsShareProjectModalOpen, isShareProje
 
       <div>
         <ul className='block'>
-            <li className='flex items-center h-fit w-full border-b-2 border-black py-3'>
-                <span className='mr-5 aspect-square size-12 flex items-center justify-center bg-slate-400 rounded-full text-xl ml-'>
-                    A
+          <li className={`flex items-center h-fit w-full border-black py-3 ${project.invitedUsers && project.invitedUsers.length > 0 && "border-b-2"}`}>
+              <span className='mr-5 aspect-square size-12 flex items-center justify-center bg-slate-400 rounded-full text-xl'>
+                  {project.creator[0].toUpperCase()}
+              </span>
+
+              <span className='flex flex-col w-full'>
+                  <h3>{project.creator}</h3>
+              </span>
+
+              <span>Creador</span>
+          </li>
+          {project.invitedUsers && project.invitedUsers.map((user, index) => {
+            return (
+              <li key={index} className='flex items-center h-fit w-full border-black py-3'>
+                <span className='mr-5 aspect-square size-12 flex items-center justify-center bg-slate-400 rounded-full text-xl'>
+                  {user[0].toUpperCase()}
                 </span>
 
                 <span className='flex flex-col w-full'>
-                    <h3>Creador del proyecto</h3>
-                    <span>creador@domain.com</span>
+                  <h3>{user}</h3>
                 </span>
 
-                <span>Creador</span>
-            </li>
+                <span>Invitado</span>
+              </li>
+            )
+          })}
         </ul>
       </div>
     </dialog>

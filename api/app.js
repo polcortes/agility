@@ -14,28 +14,6 @@ const projects = {}
 const messageExpireTime = 2592000000 // 30 days in ms
 const sessionTokenExpireTime = 3000
 
-var transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'youremail@gmail.com',
-    pass: 'yourpassword'
-  }
-});
-
-var mailOptions = {
-  from: 'youremail@gmail.com',
-  to: 'myfriend@yahoo.com',
-  subject: 'Sending Email using Node.js',
-  text: 'That was easy!'
-};
-/*
-transporter.sendMail(mailOptions, function(error, info){
-  if (error) {
-    console.log(error);
-  } else {
-    console.log('Email sent: ' + info.response);
-  }
-});*/
 
 function generateInviteCode(length) {
   let result = ''
@@ -754,6 +732,257 @@ async function getDades(req, res) {
   res.end(JSON.stringify(result))
 }
 
+app.post('/sendInviteEmail', sendInviteEmail)
+async function sendInviteEmail(req, res) {
+  let receivedPOST = await post.getPostData(req)
+  let result = {}
+  if (receivedPOST) {
+    const client = new MongoClient(uri)
+    await client.connect()
+    const db = client.db(databaseName)
+    let userCollection = db.collection('users')
+    let user = await userCollection.findOne({ token: { $eq: receivedPOST.token } })
+    if (user) {
+      let projectCollection = db.collection('projects')
+      console.log(receivedPOST.projectID)
+      let project = await projectCollection.findOne({ _id: { $eq: new ObjectId(receivedPOST.projectID) } })
+      if (project) {
+        await projectCollection.updateOne({ _id: { $eq: new ObjectId(receivedPOST.projectID) } }, { $push: { invitedUsers: receivedPOST.email } })
+        var transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: 'agility@iesesteveterradas.cat',
+            pass: 'Ag1l1ty!--'
+          }
+        });
+        
+        var mailOptions = {
+          from: '"AGILITY" agility@iesesteveterradas.cat',
+          to: receivedPOST.email,
+          subject: 'Sending Email using Node.js',
+          html: `
+          <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+          <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
+          <head>
+          <title></title>
+          <meta charset="UTF-8" />
+          <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+          <!--[if !mso]><!-->
+          <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+          <!--<![endif]-->
+          <meta name="x-apple-disable-message-reformatting" content="" />
+          <meta content="target-densitydpi=device-dpi" name="viewport" />
+          <meta content="true" name="HandheldFriendly" />
+          <meta content="width=device-width" name="viewport" />
+          <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no" />
+          <style type="text/css">
+          table {
+          border-collapse: separate;
+          table-layout: fixed;
+          mso-table-lspace: 0pt;
+          mso-table-rspace: 0pt
+          }
+          table td {
+          border-collapse: collapse
+          }
+          .ExternalClass {
+          width: 100%
+          }
+          .ExternalClass,
+          .ExternalClass p,
+          .ExternalClass span,
+          .ExternalClass font,
+          .ExternalClass td,
+          .ExternalClass div {
+          line-height: 100%
+          }
+          body, a, li, p, h1, h2, h3 {
+          -ms-text-size-adjust: 100%;
+          -webkit-text-size-adjust: 100%;
+          }
+          html {
+          -webkit-text-size-adjust: none !important
+          }
+          body, #innerTable {
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale
+          }
+          #innerTable img+div {
+          display: none;
+          display: none !important
+          }
+          img {
+          Margin: 0;
+          padding: 0;
+          -ms-interpolation-mode: bicubic
+          }
+          h1, h2, h3, p, a {
+          line-height: 1;
+          overflow-wrap: normal;
+          white-space: normal;
+          word-break: break-word
+          }
+          a {
+          text-decoration: none
+          }
+          h1, h2, h3, p {
+          min-width: 100%!important;
+          width: 100%!important;
+          max-width: 100%!important;
+          display: inline-block!important;
+          border: 0;
+          padding: 0;
+          margin: 0
+          }
+          a[x-apple-data-detectors] {
+          color: inherit !important;
+          text-decoration: none !important;
+          font-size: inherit !important;
+          font-family: inherit !important;
+          font-weight: inherit !important;
+          line-height: inherit !important
+          }
+          u + #body a {
+          color: inherit;
+          text-decoration: none;
+          font-size: inherit;
+          font-family: inherit;
+          font-weight: inherit;
+          line-height: inherit;
+          }
+          a[href^="mailto"],
+          a[href^="tel"],
+          a[href^="sms"] {
+          color: inherit;
+          text-decoration: none
+          }
+          img,p{margin:0;Margin:0;font-family:Lato,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:22px;font-weight:400;font-style:normal;font-size:16px;text-decoration:none;text-transform:none;letter-spacing:0;direction:ltr;color:#333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px}h1{margin:0;Margin:0;font-family:Roboto,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:34px;font-weight:400;font-style:normal;font-size:28px;text-decoration:none;text-transform:none;letter-spacing:0;direction:ltr;color:#333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px}h2{margin:0;Margin:0;font-family:Lato,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:30px;font-weight:400;font-style:normal;font-size:24px;text-decoration:none;text-transform:none;letter-spacing:0;direction:ltr;color:#333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px}h3{margin:0;Margin:0;font-family:Lato,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:26px;font-weight:400;font-style:normal;font-size:20px;text-decoration:none;text-transform:none;letter-spacing:0;direction:ltr;color:#333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px}
+          </style>
+          <style type="text/css">
+          @media (min-width: 481px) {
+          .hd { display: none!important }
+          }
+          </style>
+          <style type="text/css">
+          @media (max-width: 480px) {
+          .hm { display: none!important }
+          }
+          </style>
+          <style type="text/css">
+          @media (min-width: 481px) {
+          h1,img,p{margin:0;Margin:0}img,p{font-family:Lato,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:22px;font-weight:400;font-style:normal;font-size:16px;text-decoration:none;text-transform:none;letter-spacing:0;direction:ltr;color:#333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px}h1{font-family:Roboto,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:34px;font-weight:400;font-style:normal;font-size:28px;text-decoration:none;text-transform:none;letter-spacing:0;direction:ltr;color:#333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px}h2,h3{margin:0;Margin:0;font-family:Lato,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;font-weight:400;font-style:normal;text-decoration:none;text-transform:none;letter-spacing:0;direction:ltr;color:#333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px}h2{line-height:30px;font-size:24px}h3{line-height:26px;font-size:20px}.t31{width:560px!important}.t29{width:558px!important}.t14,.t17,.t22,.t27,.t5,.t8{width:600px!important}
+          }
+          </style>
+          <style type="text/css" media="screen and (min-width:481px)">.moz-text-html img,.moz-text-html p{margin:0;Margin:0;font-family:Lato,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:22px;font-weight:400;font-style:normal;font-size:16px;text-decoration:none;text-transform:none;letter-spacing:0;direction:ltr;color:#333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px}.moz-text-html h1{margin:0;Margin:0;font-family:Roboto,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:34px;font-weight:400;font-style:normal;font-size:28px;text-decoration:none;text-transform:none;letter-spacing:0;direction:ltr;color:#333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px}.moz-text-html h2{margin:0;Margin:0;font-family:Lato,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:30px;font-weight:400;font-style:normal;font-size:24px;text-decoration:none;text-transform:none;letter-spacing:0;direction:ltr;color:#333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px}.moz-text-html h3{margin:0;Margin:0;font-family:Lato,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:26px;font-weight:400;font-style:normal;font-size:20px;text-decoration:none;text-transform:none;letter-spacing:0;direction:ltr;color:#333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px}.moz-text-html .t31{width:560px!important}.moz-text-html .t29{width:558px!important}.moz-text-html .t14,.moz-text-html .t17,.moz-text-html .t22,.moz-text-html .t27,.moz-text-html .t5,.moz-text-html .t8{width:600px!important}</style>
+          <!--[if !mso]><!-->
+          <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@700&amp;family=Montserrat:wght@400;700&amp;display=swap" rel="stylesheet" type="text/css" />
+          <!--<![endif]-->
+          <!--[if mso]>
+          <style type="text/css">
+          img,p{margin:0;Margin:0;font-family:Lato,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:22px;font-weight:400;font-style:normal;font-size:16px;text-decoration:none;text-transform:none;letter-spacing:0;direction:ltr;color:#333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px}h1{margin:0;Margin:0;font-family:Roboto,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:34px;font-weight:400;font-style:normal;font-size:28px;text-decoration:none;text-transform:none;letter-spacing:0;direction:ltr;color:#333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px}h2{margin:0;Margin:0;font-family:Lato,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:30px;font-weight:400;font-style:normal;font-size:24px;text-decoration:none;text-transform:none;letter-spacing:0;direction:ltr;color:#333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px}h3{margin:0;Margin:0;font-family:Lato,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:26px;font-weight:400;font-style:normal;font-size:20px;text-decoration:none;text-transform:none;letter-spacing:0;direction:ltr;color:#333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px}td.t14,td.t17,td.t22,td.t27,td.t29,td.t31,td.t5,td.t8{width:600px !important}
+          </style>
+          <![endif]-->
+          <!--[if mso]>
+          <xml>
+          <o:OfficeDocumentSettings>
+          <o:AllowPNG/>
+          <o:PixelsPerInch>96</o:PixelsPerInch>
+          </o:OfficeDocumentSettings>
+          </xml>
+          <![endif]-->
+          </head>
+          <body id="body" class="t35" style="min-width:100%;Margin:0px;padding:0px;background-color:#EEF2FF;"><div class="t34" style="background-color:#EEF2FF;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" align="center"><tr><td class="t33" style="font-size:0;line-height:0;mso-line-height-rule:exactly;background-color:#EEF2FF;" valign="top" align="center">
+          <!--[if mso]>
+          <v:background xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false">
+          <v:fill color="#EEF2FF"/>
+          </v:background>
+          <![endif]-->
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" align="center" id="innerTable"><tr><td>
+          <table class="t32" role="presentation" cellpadding="0" cellspacing="0" align="center"><tr>
+          <!--[if !mso]><!--><td class="t31" style="width:440px;padding:20px 20px 20px 20px;">
+          <!--<![endif]-->
+          <!--[if mso]><td class="t31" style="width:480px;padding:20px 20px 20px 20px;"><![endif]-->
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td>
+          <table class="t30" role="presentation" cellpadding="0" cellspacing="0" align="center"><tr>
+          <!--[if !mso]><!--><td class="t29" style="background-color:#FFFFFF;border:1px solid #A1A1A1;overflow:hidden;width:438px;padding:20px 20px 20px 20px;border-radius:8px 8px 8px 8px;">
+          <!--<![endif]-->
+          <!--[if mso]><td class="t29" style="background-color:#FFFFFF;border:1px solid #A1A1A1;overflow:hidden;width:480px;padding:20px 20px 20px 20px;border-radius:8px 8px 8px 8px;"><![endif]-->
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td>
+          <table class="t2" role="presentation" cellpadding="0" cellspacing="0" align="center"><tr>
+          <!--[if !mso]><!--><td class="t1" style="width:270px;">
+          <!--<![endif]-->
+          <!--[if mso]><td class="t1" style="width:270px;"><![endif]-->
+          <div style="font-size:0px;"><img class="t0" style="display:block;border:0;height:auto;width:100%;Margin:0;max-width:100%;" width="270" height="57.34375" alt="" src="https://568693dd-b385-4af7-bcc9-02d5aaa3a2d4.b-cdn.net/e/09cdd235-a6c9-4cd4-b9ae-fdf3fceddffa/25b99f8b-4955-4596-bf39-d1e0cd08ae85.png"/></div></td>
+          </tr></table>
+          </td></tr><tr><td><div class="t4" style="mso-line-height-rule:exactly;mso-line-height-alt:10px;line-height:10px;font-size:1px;display:block;">&nbsp;</div></td></tr><tr><td>
+          <table class="t6" role="presentation" cellpadding="0" cellspacing="0" align="center"><tr>
+          <!--[if !mso]><!--><td class="t5" style="width:480px;">
+          <!--<![endif]-->
+          <!--[if mso]><td class="t5" style="width:480px;"><![endif]-->
+          <h2 class="t3" style="margin:0;Margin:0;font-family:Source Sans 3,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:30px;font-weight:700;font-style:normal;font-size:22px;text-decoration:none;text-transform:none;direction:ltr;color:#333333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px;">${user.username} te ha invitado a colaborar en el proyecto ${project.title}</h2></td>
+          </tr></table>
+          </td></tr><tr><td><div class="t16" style="mso-line-height-rule:exactly;mso-line-height-alt:10px;line-height:10px;font-size:1px;display:block;">&nbsp;</div></td></tr><tr><td>
+          <table class="t18" role="presentation" cellpadding="0" cellspacing="0" align="center"><tr>
+          <!--[if !mso]><!--><td class="t17" style="width:480px;">
+          <!--<![endif]-->
+          <!--[if mso]><td class="t17" style="width:480px;"><![endif]-->
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td>
+          <table class="t15" role="presentation" cellpadding="0" cellspacing="0" align="center"><tr>
+          <!--[if !mso]><!--><td class="t14" style="border-bottom:1px solid #A1A1A1;border-top:1px solid #A1A1A1;width:480px;padding:0 0 7px 0;">
+          <!--<![endif]-->
+          <!--[if mso]><td class="t14" style="border-bottom:1px solid #A1A1A1;border-top:1px solid #A1A1A1;width:480px;padding:0 0 7px 0;"><![endif]-->
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td>
+          <table class="t9" role="presentation" cellpadding="0" cellspacing="0" align="center"><tr>
+          <!--[if !mso]><!--><td class="t8" style="width:480px;">
+          <!--<![endif]-->
+          <!--[if mso]><td class="t8" style="width:480px;"><![endif]-->
+          <p class="t7" style="margin:0;Margin:0;font-family:Montserrat,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:22px;font-weight:400;font-style:normal;font-size:16px;text-decoration:none;text-transform:none;direction:ltr;color:#333333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px;">${user.username} (${user.email}) te ha invitado a colaborar en el proyecto ${project.name} en Agility:</p></td>
+          </tr></table>
+          </td></tr><tr><td><div class="t11" style="mso-line-height-rule:exactly;mso-line-height-alt:10px;line-height:10px;font-size:1px;display:block;">&nbsp;</div></td></tr><tr><td>
+          <table class="t13" role="presentation" cellpadding="0" cellspacing="0" align="center"><tr>
+          <!--[if !mso]><!--><td class="t12" style="background-color:#4F46E5;overflow:hidden;width:380px;text-align:center;line-height:24px;mso-line-height-rule:exactly;mso-text-raise:2px;padding:10px 10px 10px 10px;border-radius:4px 4px 4px 4px;">
+          <!--<![endif]-->
+          <!--[if mso]><td class="t12" style="background-color:#4F46E5;overflow:hidden;width:400px;text-align:center;line-height:24px;mso-line-height-rule:exactly;mso-text-raise:2px;padding:10px 10px 10px 10px;border-radius:4px 4px 4px 4px;"><![endif]-->
+          <a href="http://localhost:5173/project/${receivedPOST.projectID}"><span class="t10" style="display:block;margin:0;Margin:0;font-family:Montserrat,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:24px;font-weight:700;font-style:normal;font-size:16px;text-decoration:none;direction:ltr;color:#FFFFFF;text-align:center;mso-line-height-rule:exactly;mso-text-raise:2px;">Abrir Proyecto</span></a></td>
+          </tr></table>
+          </td></tr></table></td>
+          </tr></table>
+          </td></tr></table></td>
+          </tr></table>
+          </td></tr><tr><td><div class="t21" style="mso-line-height-rule:exactly;mso-line-height-alt:10px;line-height:10px;font-size:1px;display:block;">&nbsp;</div></td></tr><tr><td>
+          <table class="t23" role="presentation" cellpadding="0" cellspacing="0" align="center"><tr>
+          <!--[if !mso]><!--><td class="t22" style="width:480px;">
+          <!--<![endif]-->
+          <!--[if mso]><td class="t22" style="width:480px;"><![endif]-->
+          <p class="t20" style="margin:0;Margin:0;font-family:Montserrat,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:22px;font-weight:400;font-style:normal;font-size:14px;text-decoration:none;text-transform:none;direction:ltr;color:#333333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px;"><span class="t19" style="margin:0;Margin:0;font-weight:700;mso-line-height-rule:exactly;">Si te aparece un error 404 o 403</span>, asegúrate de haber iniciado sesión como [Your Username]</p></td>
+          </tr></table>
+          </td></tr><tr><td><div class="t26" style="mso-line-height-rule:exactly;mso-line-height-alt:10px;line-height:10px;font-size:1px;display:block;">&nbsp;</div></td></tr><tr><td>
+          <table class="t28" role="presentation" cellpadding="0" cellspacing="0" align="center"><tr>
+          <!--[if !mso]><!--><td class="t27" style="width:480px;">
+          <!--<![endif]-->
+          <!--[if mso]><td class="t27" style="width:480px;"><![endif]-->
+          <p class="t25" style="margin:0;Margin:0;font-family:Montserrat,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:22px;font-weight:400;font-style:normal;font-size:14px;text-decoration:none;text-transform:none;direction:ltr;color:#333333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px;"><span class="t24" style="margin:0;Margin:0;font-weight:700;mso-line-height-rule:exactly;">Si no funciona el botón</span>, prueba a acceder a la siguiente URL: [URL]</p></td>
+          </tr></table>
+          </td></tr></table></td>
+          </tr></table>
+          </td></tr></table></td>
+          </tr></table>
+          </td></tr></table></td></tr></table></div></body>
+          </html>`
+        };
+        
+        
+        transporter.sendMail(mailOptions, function(error, info){
+          if (error) {
+            console.log(error);
+          } else {
+            console.log('Email sent: ' + info.response);
+          }
+        });
+    }}
+}
+}
+
 const WebSocket = require('ws')
 const { get } = require('http')
 const wss = new WebSocket.Server({ server: httpServer })
@@ -817,6 +1046,7 @@ wss.on('connection', (ws) => {
 
     try { messageAsObject = JSON.parse(messageAsString) }
     catch (e) { console.log("Could not parse bufferedMessage from WS message") }
+    console.log(messageAsObject)
     if (messageAsObject.type == "bounce") {
       var rst = { type: "response", text: `Rebotar Websocket: '${messageAsObject.text}'` }
       console.log(rst)
@@ -826,8 +1056,12 @@ wss.on('connection', (ws) => {
       broadcast(rst)
     } else if (messageAsObject.type == "joinProject") {
       socketsClients.get(ws).projectID = messageAsObject.projectID
-      console.log("projects pre", projects)
       let project = projects[messageAsObject.projectID]
+      getUserDataWs(messageAsObject.token).then((user) => {
+        if (project && project.users) {
+
+        }
+      })
       if (project) {
         let usersInProject = projects[messageAsObject.projectID].users
         if (!usersInProject) {
@@ -858,14 +1092,28 @@ wss.on('connection', (ws) => {
         console.log("tesult", result)
         projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName] = result
         broadcastProjectChange(messageAsObject.projectID)
+        console.log(ws.bufferedAmount)
         ws.send(JSON.stringify({ type: "setLatestSprint" }))
       })
+    } else if (messageAsObject.type == "deleteSprintBoard") {
+      deleteSprintBoardWs(messageAsObject.projectID, messageAsObject.sprintName)
+      delete projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName]
+      broadcastProjectChange(messageAsObject.projectID)
     }
   })
 })
 
 // TODO: 
-
+async function getUserDataWs(token) {
+  const client = new MongoClient(uri)
+  await client.connect()
+  const db = client.db(databaseName)
+  let userCollection = db.collection('users')
+  let user = await userCollection.findOne({ token: { $eq: token } })
+  if (user) {
+    return user
+  }
+}
 async function moveTask(projectID, sprintName, taskName, newStatus) {
   const client = new MongoClient(uri)
   await client.connect()
@@ -938,6 +1186,16 @@ async function createSprintBoardWs(projectID, sprintName) {
   }
 
   await client.close()
+}
+
+async function deleteSprintBoardWs(projectID, sprintName) {
+  result = {}
+  const client = new MongoClient(uri)
+  await client.connect()
+  const db = client.db(databaseName)
+  let sprintCollection = db.collection('sprintBoards')
+  await sprintCollection.deleteOne({ projectID: { $eq: projectID }, name: { $eq: sprintName } })
+  result = { status: "OK", result: "SPRINT DELETED" }
 }
 
 // Send a message to all clients
