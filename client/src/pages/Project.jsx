@@ -14,6 +14,8 @@ import PageNotFound from '../pages/404'
 import ArrowIcon from '../assets/icons/arrow'
 
 import TableIcon from '../assets/icons/table'
+import ChatIcon from '../assets/icons/chat-icon'
+import Chat from '../components/project/chat/Chat'
 
 import SprintBoard from '../components/project/SprintBoard'
 
@@ -358,8 +360,8 @@ const Project = () => {
       { projectState === "403" && <h1>403</h1> /* Hacer página de 403 y estilar la de 404!!! */ }
 
       { projectState === "200" && (
-        <section id='dashboard-section' className="bg-light-primary-bg p-2 gap-2 overflow-hidden max-h-screen">
-          <aside id='dashboard-aside' ref={asideRef} className="closed bg-light-secondary-bg relative transition-all rounded-lg flex flex-col p-5 box-border">
+        <section id='dashboard-section' className="bg-light-primary-bg dark:bg-dark-primary-bg p-2 gap-2 overflow-hidden max-h-screen">
+          <aside id='dashboard-aside' ref={asideRef} className="closed bg-light-secondary-bg dark:bg-dark-secondary-bg relative transition-all rounded-lg flex flex-col p-5 box-border">
             <ArrowIcon onClick={() => setIsAsideOpen(!isAsideOpen)} className={`rounded-full bg-purple-800 absolute -right-[15px] top-1/2 bototm-1/2 -translate-y-1/2 transition-all hover:cursor-pointer ${isAsideOpen ? 'rotate-180' : ''}`} />
 
             <section className='h-fit pb-[21px] border-b-2 flex overflow-hidden mb-3'>
@@ -371,6 +373,11 @@ const Project = () => {
               <button onClick={() => setSection("TaskTable")} className="w-full text-left px-3 py-2 flex items-center gap-5">
                 <TableIcon></TableIcon>
                   Tabla
+              </button>
+
+              <button onClick={() => setSection("Chat")} className="w-full text-left px-3 py-2 flex items-center gap-5">
+                <ChatIcon />
+                  Chat
               </button>
 
               <span className='font-bold text-2xl'>
@@ -485,7 +492,7 @@ const Project = () => {
                 </button>
               </span>
             </header>
-            <section id="main-project-container" className={`${section !== "TaskTable" && "nice-gradient grid-cols-4"} bg-light-secondary-bg rounded-lg overflow-hidden grid max-h-full content-between p-5`}>
+            <section id="main-project-container" className={`${section !== "TaskTable" && section !== "Chat" && "nice-gradient grid-cols-4"} bg-light-secondary-bg rounded-lg overflow-hidden grid max-h-full content-between p-5`}>
               {
                 section === "SprintBoard" 
                   && <SprintBoard projectID={ projectID } latestSprint={ latestSprint } tasks={ tasks } webSocket={ ws } />
@@ -493,6 +500,10 @@ const Project = () => {
               {
                 section === "TaskTable"
                   && <TaskTable project={ currProject } />
+              }
+              {
+                section === "Chat"
+                  && <Chat />
               }
             </section>
           </main>

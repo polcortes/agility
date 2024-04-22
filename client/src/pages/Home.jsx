@@ -15,8 +15,9 @@ import ThemeToggler from '../components/ThemeToggler'
 const Home = () => {
   const { t } = useTranslation()
 
-  const [theme, setTheme] = useState('dark')
-  const [formType, setFormType] = useState('login')
+  const [ theme, toggleTheme ] = useState('dark')
+
+  const [ formType, setFormType ] = useState('login')
   const [ user, setUser ] = useState([])
   const [ error, setError ] = useState({field: '', message: ''})
   const email = useRef(null)
@@ -24,32 +25,30 @@ const Home = () => {
   const password = useRef(null)
   const repeatPassword = useRef(null)
 
+  // const changeTheme = () => {
+  //   toggleTheme(document.documentElement.classList.contains('dark') ? 'dark' : 'light')
+  // }
+
   useEffect(() => {
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => setTheme(e.matches ? 'dark' : 'light'))
+    // TODO: Implementar el observer para el cambio de tema
+    const themeObserver = new MutationObserver((event) => {
+      event.forEach((mutation) => {
+        if (mutation.target.classList.contains('dark')) toggleTheme('dark')
+        else toggleTheme('light')
+      })
+    })
 
-    setTheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-    document.documentElement.classList.add(
-      window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-    )
-
-    return () => {
-      window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', e => setTheme(e.matches ? 'dark' : 'light'))
-    }
+    themeObserver.observe(document.documentElement, {
+      attributes: true, 
+      attributeFilter: ['class'],
+      childList: false, 
+      characterData: false,
+    })
   }, [])
-
-  const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
-    document.documentElement.classList.toggle("dark");
-  }
 
   const toggleFormType = () => {
     setError({field: '', message: ''})
     setFormType((prevFormType) => (prevFormType === 'login' ? 'register' : 'login'));
-  }
-
-  const THEME_ICONS = {
-    dark: "Cambiar a tema claro",
-    light: "Cambiar a tema oscuro"
   }
 
   const login = () => {
@@ -156,6 +155,9 @@ const Home = () => {
     [ user ]
   );
 
+  useEffect(() => {
+
+  }, [])
 
   return (
     <>
