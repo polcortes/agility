@@ -55,6 +55,8 @@ const Project = () => {
 
   const [ thisUser, setThisUser ] = useState(null)
   const [ otherUsers, setOtherUsers ] = useState([])
+  
+  const [ isUserMenuOpen, setIsUserMenuOpen ] = useState(false)
 
 
   const WS_URL = import.meta.env.VITE_WS_ROUTE
@@ -507,7 +509,7 @@ const Project = () => {
               </span>
             </header>
             <section id="main-project-container" className={`${section !== "TaskTable" && section !== "Chat" && "nice-gradient grid-cols-4"} ${section === 'Chat' && 'flex-col '} dark:bg-dark-secondary-bg bg-light-secondary-bg rounded-lg overflow-hidden flex-row justify-between flex w-full max-h-full content-between p-5`}> {/* grid */}
-              {
+            {
                 section === "SprintBoard" 
                   && <SprintBoard projectID={ projectID } latestSprint={ latestSprint } tasks={ tasks } webSocket={ ws } />
               }
@@ -531,6 +533,10 @@ const Project = () => {
       {
         isEditSprintBoardOpen
           && <EditSprintBoardModal projectID={ projectID } sprintIsGonnaBeEdited={ sprintIsGonnaBeEdited } setIsEditSprintBoardOpen={ setIsEditSprintBoardOpen } isEditSprintBoardOpen={ isEditSprintBoardOpen } />
+      }
+      {
+        isUserMenuOpen
+          && <UserMenu setIsUserMenuOpen={ setIsUserMenuOpen } isUserMenuOpen={ isUserMenuOpen } />
       }
       {
         isUserMenuOpen
