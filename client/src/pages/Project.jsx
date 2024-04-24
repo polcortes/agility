@@ -503,7 +503,7 @@ const Project = () => {
 
                 <div className='flex w-0.5 bg-black h-[56px] mx-3'></div>
 
-                <button className='size-14 flex items-center justify-center bg-slate-400 rounded-full text-xl ml-'>
+                <button onClick={() => setIsUserMenuOpen(true)} className='size-14 flex items-center justify-center bg-slate-400 rounded-full text-xl ml-'>
                   { thisUser ? thisUser.username[0].toUpperCase() : "" }
                 </button>
               </span>
