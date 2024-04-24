@@ -23,6 +23,7 @@ import TaskTable from '../components/project/TaskTable'
 
 import ShareProjectModal from '../components/project/ShareProjectModal'
 import EditSprintBoardModal from '../components/project/EditSprintBoardModal'
+import UserMenu from '../components/UserMenu'
 
 const Project = () => {
   const { projectID } = useParams();
@@ -51,6 +52,8 @@ const Project = () => {
   const [ latestSprint, setLatestSprint ] = useState(null)
 
   const [ willChangeToSprintBoard, setWillChangeToSprintBoard ] = useState(false)
+  
+  const [ isUserMenuOpen, setIsUserMenuOpen ] = useState(false)
 
 
   const WS_URL = import.meta.env.VITE_WS_ROUTE
@@ -361,7 +364,7 @@ const Project = () => {
 
       { projectState === "200" && (
         <section id='dashboard-section' className="bg-light-primary-bg dark:bg-dark-primary-bg p-2 gap-2 overflow-hidden max-h-screen">
-          <aside id='dashboard-aside' ref={asideRef} className="closed bg-light-secondary-bg dark:bg-dark-secondary-bg relative transition-all rounded-lg flex flex-col p-5 box-border">
+          <aside id='dashboard-aside' ref={asideRef} className="closed dark:text-white bg-light-secondary-bg dark:bg-dark-secondary-bg relative transition-all rounded-lg flex flex-col p-5 box-border">
             <ArrowIcon onClick={() => setIsAsideOpen(!isAsideOpen)} className={`rounded-full bg-purple-800 absolute -right-[15px] top-1/2 bototm-1/2 -translate-y-1/2 transition-all hover:cursor-pointer ${isAsideOpen ? 'rotate-180' : ''}`} />
 
             <section className='h-fit pb-[21px] border-b-2 flex overflow-hidden mb-3'>
@@ -369,24 +372,24 @@ const Project = () => {
               <span className='my-auto'>{ currProject ? currProject.title : "Título mal." }</span>
             </section>
 
-            <nav className='flex-1 flex flex-col'>
-              <button onClick={() => setSection("TaskTable")} className="w-full text-left px-3 py-2 flex items-center gap-5">
+            <nav className='flex-1 flex flex-col gap-1'>
+              <button onClick={() => setSection("TaskTable")} className="hover:bg-light-tertiary-bg/90 dark:hover:bg-dark-tertiary-bg/90 rounded-md duration-100 dark:text-white w-full text-left px-3 py-2 flex items-center gap-5">
                 <TableIcon></TableIcon>
                   Tabla
               </button>
 
-              <button onClick={() => setSection("Chat")} className="w-full text-left px-3 py-2 flex items-center gap-5">
+              <button onClick={() => setSection("Chat")} className="hover:bg-light-tertiary-bg/90 dark:hover:bg-dark-tertiary-bg/90 rounded-md duration-100 dark:text-white w-full text-left px-3 py-2 flex items-center gap-5">
                 <ChatIcon />
                   Chat
               </button>
 
-              <span className='font-bold text-2xl'>
+              <span className='font-bold mt-4 text-2xl'>
                 Sprints
               </span>
 
               <ul className='relative flex flex-col gap-3 box-border overflow-hidden overflow-y-scroll flex-1 mt-4 pr-4'>
                 {sprints.map(sprint => (
-                  <li className='group relative w-full bg-light-tertiary-bg text-black rounded-lg' key={sprint._id}>
+                  <li className='group relative w-full dark:bg-dark-tertiary-bg hover:dark:bg-dark-tertiary-bg/60 bg-light-tertiary-bg dark:text-white text-black rounded-lg' key={sprint._id}>
                     <button
                       onClick={() => deleteSprintboard(sprint.name)}
                       className='aspect-square items-center justify-center text-red-600 absolute top-0 right-0 transition-all bg-tertiary-bg rounded-full hidden group-hover:flex hover:bg-light-secondary-bg size-6'
@@ -407,7 +410,7 @@ const Project = () => {
                 ))}
                 {
                   isCreatingSprintBoard && (
-                    <li className='w-full bg-light-tertiary-bg text-black rounded-lg relative border-green-500 border-2'>
+                    <li className='w-full dark:bg-dark-tertiary-bg bg-light-tertiary-bg dark:text-white text-black rounded-lg relative border-green-500 border-2'>
                       <button onClick={() => cancelCreateSprintBoard()} className='absolute top-0 right-0 text-white bg-red-500 hover:bg-red-700 rounded-full' title='Discard'>
                         <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.7816 4.03157C12.0062 3.80702 12.0062 3.44295 11.7816 3.2184C11.5571 2.99385 11.193 2.99385 10.9685 3.2184L7.50005 6.68682L4.03164 3.2184C3.80708 2.99385 3.44301 2.99385 3.21846 3.2184C2.99391 3.44295 2.99391 3.80702 3.21846 4.03157L6.68688 7.49999L3.21846 10.9684C2.99391 11.193 2.99391 11.557 3.21846 11.7816C3.44301 12.0061 3.80708 12.0061 4.03164 11.7816L7.50005 8.31316L10.9685 11.7816C11.193 12.0061 11.5571 12.0061 11.7816 11.7816C12.0062 11.557 12.0062 11.193 11.7816 10.9684L8.31322 7.49999L11.7816 4.03157Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path></svg>
                       </button>
@@ -431,12 +434,12 @@ const Project = () => {
             </nav>
           </aside>
           <main id='main-dashboard' className='gap-2 box-border transition-all rounded-lg'>
-            <header className='bg-light-secondary-bg rounded-lg flex items-center justify-between p-5'>
+            <header className='dark:bg-dark-secondary-bg bg-light-secondary-bg rounded-lg flex items-center justify-between p-5'>
               <h1 
                 ref={currentBoardTitleRef}
                 title='Double click to edit the title.'
                 onDoubleClick={() => setIsEditingTitle(true)}
-                className={`text-3xl font-bold text-black box-border bg-light-secondary-bg rounded-lg hover:cursor-pointer hover:bg-light-primary-bg transition-all ${isEditingTitle ? 'hidden' : 'flex'}`}
+                className={`text-3xl font-bold dark:text-white text-black box-border dark:bg-dark-secondary-bg bg-light-secondary-bg rounded-lg hover:cursor-pointer hover:bg-light-primary-bg transition-all ${isEditingTitle ? 'hidden' : 'flex'}`}
               >
                 { latestSprint ? latestSprint.name : "Título mal."}
               </h1>
@@ -476,23 +479,23 @@ const Project = () => {
                 </span>
 
                 <span className='flex pr-5 border-r-2 border-black'>
-                  <span className='-mr-5 z-10 border-2 border-light-secondary-bg size-14 flex items-center justify-center bg-slate-400 rounded-full text-xl'>
+                  <span className='-mr-5 z-10 border-2 dark:border-dark-secondary-bg border-light-secondary-bg size-14 flex items-center justify-center bg-slate-400 rounded-full text-xl'>
                     A
                   </span>
-                  <span className='-mr-5 z-20 border-2 border-light-secondary-bg size-14 flex items-center justify-center bg-slate-400 rounded-full text-xl'>
+                  <span className='-mr-5 z-20 border-2 dark:border-dark-secondary-bg border-light-secondary-bg size-14 flex items-center justify-center bg-slate-400 rounded-full text-xl'>
                     A
                   </span>
-                  <span className='z-30 border-2 border-light-secondary-bg size-14 flex items-center justify-center bg-slate-400 rounded-full text-xl'>
+                  <span className='z-30 border-2 dark:border-dark-secondary-bg border-light-secondary-bg size-14 flex items-center justify-center bg-slate-400 rounded-full text-xl'>
                     A
                   </span>
                 </span>
 
-                <button className='size-14 flex items-center justify-center bg-slate-400 rounded-full text-xl ml-'>
+                <button onClick={() => setIsUserMenuOpen(true)} className='size-14 flex items-center justify-center bg-slate-400 rounded-full text-xl ml-'>
                   A
                 </button>
               </span>
             </header>
-            <section id="main-project-container" className={`${section !== "TaskTable" && section !== "Chat" && "nice-gradient grid-cols-4"} bg-light-secondary-bg rounded-lg overflow-hidden grid max-h-full content-between p-5`}>
+            <section id="main-project-container" className={`${section !== "TaskTable" && section !== "Chat" && "nice-gradient grid-cols-4"} dark:bg-dark-secondary-bg bg-light-secondary-bg rounded-lg overflow-hidden flex flex-col justify-between w-full max-h-full content-between p-5`}> {/* grid */}
               {
                 section === "SprintBoard" 
                   && <SprintBoard projectID={ projectID } latestSprint={ latestSprint } tasks={ tasks } webSocket={ ws } />
@@ -517,6 +520,10 @@ const Project = () => {
       {
         isEditSprintBoardOpen
           && <EditSprintBoardModal projectID={ projectID } sprintIsGonnaBeEdited={ sprintIsGonnaBeEdited } setIsEditSprintBoardOpen={ setIsEditSprintBoardOpen } isEditSprintBoardOpen={ isEditSprintBoardOpen } />
+      }
+      {
+        isUserMenuOpen
+          && <UserMenu setIsUserMenuOpen={ setIsUserMenuOpen } isUserMenuOpen={ isUserMenuOpen } />
       }
       <Toaster expand={ false } richColors position='bottom-right' />
     </>
