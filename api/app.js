@@ -1099,6 +1099,8 @@ wss.on('connection', (ws) => {
       deleteSprintBoardWs(messageAsObject.projectID, messageAsObject.sprintName)
       delete projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName]
       broadcastProjectChange(messageAsObject.projectID)
+    } else if (messageAsObject.type == "sendMessage") {
+      // projects[messageAsObject.projectID].data.chat
     }
   })
 })

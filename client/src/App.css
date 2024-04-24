@@ -137,7 +137,6 @@ dialog::-ms-backdrop {
 }
 
 #chat-input {
-  max-width: calc(100vw - 450px);
   max-height: inherit;
 }
 

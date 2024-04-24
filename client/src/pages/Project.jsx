@@ -495,7 +495,7 @@ const Project = () => {
                 </button>
               </span>
             </header>
-            <section id="main-project-container" className={`${section !== "TaskTable" && section !== "Chat" && "nice-gradient grid-cols-4"} dark:bg-dark-secondary-bg bg-light-secondary-bg rounded-lg overflow-hidden flex flex-col justify-between w-full max-h-full content-between p-5`}> {/* grid */}
+            <section id="main-project-container" className={`${section !== "TaskTable" && section !== "Chat" && "nice-gradient grid-cols-4"} ${section === 'Chat' && 'flex-col '} dark:bg-dark-secondary-bg bg-light-secondary-bg rounded-lg overflow-hidden flex-row justify-between flex w-full max-h-full content-between p-5`}> {/* grid */}
               {
                 section === "SprintBoard" 
                   && <SprintBoard projectID={ projectID } latestSprint={ latestSprint } tasks={ tasks } webSocket={ ws } />
@@ -506,7 +506,7 @@ const Project = () => {
               }
               {
                 section === "Chat"
-                  && <Chat />
+                  && <Chat projectID={projectID} webSocket={ws} />
               }
             </section>
           </main>

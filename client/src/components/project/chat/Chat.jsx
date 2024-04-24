@@ -1,7 +1,7 @@
 import ChatBubble from "./ChatBubble"
 import { useEffect, useRef } from "react"
 
-const Chat = () => {
+const Chat = ({}) => {
   const aDate = new Date()
   const sectionInputRef = useRef(null)
 
