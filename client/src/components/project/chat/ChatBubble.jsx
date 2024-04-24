@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 const ChatBubble = ({ message, sender, timeWasSent }) => {
-
-  const timeWasSentString = timeWasSent.toLocaleString('es-ES').split(' ')[1].slice(10, 15)
+  const timeWasSentString = timeWasSent.toLocaleString('es-ES').split(' ')[1]
+  console.log("TIME", timeWasSent.toLocaleString('es-ES').split(' ')[1])
 
   return (
     <div className="flex items-start gap-2.5">

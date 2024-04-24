@@ -57,7 +57,9 @@ const Project = () => {
   const [ otherUsers, setOtherUsers ] = useState([])
   
   const [ isUserMenuOpen, setIsUserMenuOpen ] = useState(false)
+  const [ chat, setChat ] = useState([])
 
+  const mainProjectContainerRef = useRef(null)
 
   const WS_URL = import.meta.env.VITE_WS_ROUTE
 
@@ -108,6 +110,7 @@ const Project = () => {
       console.log("THISUSER", currProject.users.find(user => user.token === localStorage.getItem('userToken')))
       setThisUser(currProject.users.find(user => user.token === localStorage.getItem('userToken')))
       setOtherUsers(currProject.users.filter(user => user.token !== localStorage.getItem('userToken')))
+      setChat(currProject.chat)
       let sprints = Object.values(currProject.sprints).sort((a, b) => a._id > b._id)
       setSprints(sprints)
       let sprint = sprints.at(-1)
@@ -371,7 +374,7 @@ const Project = () => {
       { projectState === "200" && (
         <section id='dashboard-section' className="bg-light-primary-bg dark:bg-dark-primary-bg p-2 gap-2 overflow-hidden max-h-screen">
           <aside id='dashboard-aside' ref={asideRef} className="closed dark:text-white bg-light-secondary-bg dark:bg-dark-secondary-bg relative transition-all rounded-lg flex flex-col p-5 box-border">
-            <ArrowIcon onClick={() => setIsAsideOpen(!isAsideOpen)} className={`rounded-full bg-purple-800 absolute -right-[15px] top-1/2 bototm-1/2 -translate-y-1/2 transition-all hover:cursor-pointer ${isAsideOpen ? 'rotate-180' : ''}`} />
+            <ArrowIcon onClick={() => setIsAsideOpen(!isAsideOpen)} className={`z-50 rounded-full bg-purple-800 absolute -right-[15px] top-1/2 bototm-1/2 -translate-y-1/2 transition-all hover:cursor-pointer ${isAsideOpen ? 'rotate-180' : ''}`} />
 
             <section className='h-fit pb-[21px] border-b-2 flex overflow-hidden mb-3'>
               <span className="flex size-16 mr-5 bg-black row-span-2 rounded-md box-border">a</span>
@@ -439,7 +442,7 @@ const Project = () => {
               </button>
             </nav>
           </aside>
-          <main id='main-dashboard' className='gap-2 box-border transition-all rounded-lg'>
+          <main id='main-dashboard' className='overflow-hidden gap-2 box-border transition-all rounded-lg'>
             <header className='dark:bg-dark-secondary-bg bg-light-secondary-bg rounded-lg flex items-center justify-between p-5'>
               <h1 
                 ref={currentBoardTitleRef}
@@ -508,7 +511,7 @@ const Project = () => {
                 </button>
               </span>
             </header>
-            <section id="main-project-container" className={`${section !== "TaskTable" && section !== "Chat" && "nice-gradient grid-cols-4"} ${section === 'Chat' && 'flex-col '} dark:bg-dark-secondary-bg bg-light-secondary-bg rounded-lg overflow-hidden flex-row justify-between flex w-full max-h-full content-between p-5`}> {/* grid */}
+            <section ref={ mainProjectContainerRef } id="main-project-container" className={`${section !== "TaskTable" && section !== "Chat" && "nice-gradient grid-cols-4"} ${section === 'Chat' && 'flex-col overflow-y-auto pb-[87px]'} dark:bg-dark-secondary-bg relative bg-light-secondary-bg rounded-lg overflow-hidden flex-row justify-between flex w-full max-h-full content-between p-5`}> {/* grid */}
             {
                 section === "SprintBoard" 
                   && <SprintBoard projectID={ projectID } latestSprint={ latestSprint } tasks={ tasks } webSocket={ ws } />
@@ -519,7 +522,7 @@ const Project = () => {
               }
               {
                 section === "Chat"
-                  && <Chat projectID={projectID} webSocket={ws} />
+                  && <Chat projectID={projectID} ws={ws} chat={chat} mainProjectContainerRef={mainProjectContainerRef} />
               }
             </section>
           </main>

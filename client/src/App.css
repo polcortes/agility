@@ -141,5 +141,5 @@ dialog::-ms-backdrop {
 }
 
 .sender-section {
-  width: calc(100% - 58px)!important;
+  width: calc(100% - 425px) !important;
 }

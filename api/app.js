@@ -1122,7 +1122,22 @@ wss.on('connection', (ws) => {
       delete projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName]
       broadcastProjectChange(messageAsObject.projectID)
     } else if (messageAsObject.type == "sendMessage") {
-      // projects[messageAsObject.projectID].data.chat
+      if (!projects[messageAsObject.projectID].data.chat) {
+        projects[messageAsObject.projectID].data.chat = []
+      }
+      getUserDataWs(messageAsObject.token).then((user) => {
+        projects[messageAsObject.projectID].data.chat.push({ 
+          message: messageAsObject.message,
+          token: messageAsObject.token, 
+          username: user.username,
+          date: new Date()
+        })
+
+        // console.log("\n\n\n\n\n\n\n\n\n------------ CHAT:", projects[messageAsObject.projectID].data.chat)
+
+        updateChatWs(messageAsObject.projectID, projects[messageAsObject.projectID].data.chat)
+        broadcastProjectChange(messageAsObject.projectID)
+      })
     }
   })
 })
@@ -1210,6 +1225,17 @@ async function createSprintBoardWs(projectID, sprintName) {
   }
 
   await client.close()
+}
+
+async function updateChatWs(projectID, chat) {
+  const client = new MongoClient(uri)
+  await client.connect()
+  const db = client.db(databaseName)
+  let projectCollection = db.collection('projects')
+  let project = await projectCollection.findOne({ _id: { $eq: new ObjectId(projectID) } })
+  if (project) {
+    projectCollection.updateOne({ _id: { $eq: new ObjectId(projectID) } }, { $set: { chat: chat } })
+  }
 }
 
 async function deleteSprintBoardWs(projectID, sprintName) {
