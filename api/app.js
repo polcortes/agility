@@ -30,7 +30,7 @@ function generateInviteCode(length) {
 Number.prototype.toHexString = function () {
   if (this === null) { return null; }
   if (isNaN(this)) { return this; }
-  var num;//  w ww .  j av  a 2 s  .c  o  m
+  var num;
   var hex;
   if (this < 0) {
     num = 0xFFFFFFFF + this + 1;
@@ -1016,6 +1016,8 @@ wss.on('connection', (ws) => {
   }
 
   function broadcastProjectChange(projectID) {
+    console.log("PROJECT", projects[projectID])
+    console.log("USERS", projects[projectID].data.users)
     projects[projectID].users.forEach((user) => {
       user.send(JSON.stringify({ type: "projectData", project: projects[projectID].data }))
     })
@@ -1026,16 +1028,21 @@ wss.on('connection', (ws) => {
   // Add client to the clients list
   const id = uuidv4()
   const color = Math.floor(Math.random() * 360)
-  const metadata = { id, projectID: null }
+  const metadata = { id, projectID: null, token: null }
   socketsClients.set(ws, metadata)
 
   // What to do when a client is disconnected
   ws.on("close", () => {
     const projectID = socketsClients.get(ws).projectID
+    console.log("USERSSSS", projects[projectID].users)
+    console.log("USER TO DELETE", projects[projectID].data.users.filter((user) => user.token == socketsClients.get(ws).token))
+    projects[projectID].data.users.splice(projects[projectID].data.users.indexOf(projects[projectID].data.users.filter((user) => user.token == socketsClients.get(ws).token)[0]), 1)
     projects[projectID].users.splice(projects[projectID].users.indexOf(ws), 1)
     if (projects[projectID].users.length == 0) {
       //delete projects[projectID]
     }
+    console.log("TOKEN", socketsClients.get(ws).token)
+    delete projects[projectID].users.filter((user) => user.token == socketsClients.get(ws).token)
     socketsClients.delete(ws)
   })
 
@@ -1056,12 +1063,8 @@ wss.on('connection', (ws) => {
       broadcast(rst)
     } else if (messageAsObject.type == "joinProject") {
       socketsClients.get(ws).projectID = messageAsObject.projectID
+      socketsClients.get(ws).token = messageAsObject.token
       let project = projects[messageAsObject.projectID]
-      getUserDataWs(messageAsObject.token).then((user) => {
-        if (project && project.users) {
-
-        }
-      })
       if (project) {
         let usersInProject = projects[messageAsObject.projectID].users
         if (!usersInProject) {
@@ -1073,10 +1076,29 @@ wss.on('connection', (ws) => {
       if (usersInProject.indexOf(ws) == -1) {
         usersInProject.push(ws)
       }
-      getProjectData(messageAsObject.projectID).then((project) => {
-          projects[messageAsObject.projectID] = {data: project, users: usersInProject}
+      if (!project) {
+        getProjectData(messageAsObject.projectID).then((project) => {
+          getUserDataWs(messageAsObject.token).then((user) => {
+            if (!project.users) {
+              project.users = []
+            }
+            project.users.push(user)
+            projects[messageAsObject.projectID] = {data: project, users: usersInProject}
+            broadcastProjectChange(messageAsObject.projectID)
+          })
+        })
+      } else {
+        getUserDataWs(messageAsObject.token).then((user) => {
+          if (!project.data.users) {
+            project.data.users = []
+          }
+          if (project.data.users.indexOf(user) == -1) {
+            project.data.users.push(user)
+          }
+          projects[messageAsObject.projectID] = project
           broadcastProjectChange(messageAsObject.projectID)
-      })
+        })
+      }
     } else if (messageAsObject.type == "moveTask") {
       projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName].tasks[messageAsObject.taskName].status = messageAsObject.newStatus
       moveTask(messageAsObject.projectID, messageAsObject.sprintName, messageAsObject.taskName, messageAsObject.newStatus);

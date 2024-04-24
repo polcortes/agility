@@ -52,6 +52,9 @@ const Project = () => {
 
   const [ willChangeToSprintBoard, setWillChangeToSprintBoard ] = useState(false)
 
+  const [ thisUser, setThisUser ] = useState(null)
+  const [ otherUsers, setOtherUsers ] = useState([])
+
 
   const WS_URL = import.meta.env.VITE_WS_ROUTE
 
@@ -99,6 +102,9 @@ const Project = () => {
 
   useEffect(() => {
     if (currProject) {
+      console.log("THISUSER", currProject.users.find(user => user.token === localStorage.getItem('userToken')))
+      setThisUser(currProject.users.find(user => user.token === localStorage.getItem('userToken')))
+      setOtherUsers(currProject.users.filter(user => user.token !== localStorage.getItem('userToken')))
       let sprints = Object.values(currProject.sprints).sort((a, b) => a._id > b._id)
       setSprints(sprints)
       let sprint = sprints.at(-1)
@@ -471,24 +477,31 @@ const Project = () => {
                 </button>
 
                 { /* TODO: Tooltip encima del +3 para mostrar todos los usuarios en linea. */ }
-                <span className='size-8 mr-2 flex items-center justify-center bg-slate-400 rounded-full ml-'>
-                  +3
+                {
+                  otherUsers.length > 2 &&
+                  (
+                  <span className='size-8 mr-2 flex items-center justify-center bg-slate-400 rounded-full ml-'>
+                    +3
+                  </span>
+                  )
+                }
+
+                <span className='flex pr-5'>
+                  {
+                    otherUsers.map((user, index) => {
+                      console.log(otherUsers)
+                      if (index < 2) return (
+                      <span key={user._id} className='-mr-5 z-10 border-2 border-light-secondary-bg size-14 flex items-center justify-center bg-slate-400 rounded-full text-xl'>
+                        { user.username[0].toUpperCase() }
+                      </span>)
+                    })
+                  }
                 </span>
 
-                <span className='flex pr-5 border-r-2 border-black'>
-                  <span className='-mr-5 z-10 border-2 border-light-secondary-bg size-14 flex items-center justify-center bg-slate-400 rounded-full text-xl'>
-                    A
-                  </span>
-                  <span className='-mr-5 z-20 border-2 border-light-secondary-bg size-14 flex items-center justify-center bg-slate-400 rounded-full text-xl'>
-                    A
-                  </span>
-                  <span className='z-30 border-2 border-light-secondary-bg size-14 flex items-center justify-center bg-slate-400 rounded-full text-xl'>
-                    A
-                  </span>
-                </span>
+                <div className='flex w-0.5 bg-black h-[56px] mx-3'></div>
 
                 <button className='size-14 flex items-center justify-center bg-slate-400 rounded-full text-xl ml-'>
-                  A
+                  { thisUser ? thisUser.username[0].toUpperCase() : "" }
                 </button>
               </span>
             </header>
