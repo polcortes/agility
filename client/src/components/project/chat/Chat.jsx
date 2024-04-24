@@ -1,11 +1,19 @@
 import ChatBubble from "./ChatBubble"
 import { useEffect, useRef } from "react"
 
-const Chat = ({}) => {
+const Chat = ({ projectID, ws, chat}) => {
   const aDate = new Date()
   const sectionInputRef = useRef(null)
 
   // useEffect(() => sectionInputRef.current.style.width = `calc(100% - 35px);`, [])
+
+  const sendMessage = () => {
+    ws.send(JSON.stringify({
+      type: 'sendMessage',
+      projectID: projectID,
+      message: sectionInputRef.current.querySelector('#chat-input').innerText
+    }))
+  }
 
   const handleSectionInputClick = () => {
     sectionInputRef.current.querySelector('#chat-input').focus()
