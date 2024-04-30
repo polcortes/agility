@@ -118,7 +118,7 @@ aside.closed > *:not(#arrow) {
 
 .nice-gradient {
   background: rgb(29,5,33);
-  background: linear-gradient(342deg, rgba(29,5,33,1) 13%, rgba(108,52,128,1) 100%);
+  background: linear-gradient(342deg, rgba(29,5,33,1) 13%, rgb(108, 52, 128) 100%);
 }
 
 :root {
@@ -142,4 +142,24 @@ dialog::-ms-backdrop {
 
 .sender-section {
   width: calc(100% - 425px) !important;
+}
+
+#main-project-container {
+  gap: 20px;
+  overflow-x: auto;
+}
+
+@media (max-width: 768px) {
+  #dashboard-section:has(> #dashboard-aside:not(.closed)) > #main-dashboard > header h1,
+  #dashboard-section:has(> #dashboard-aside:not(.closed)) > #main-dashboard > header > span *:not(#user-butt) {
+    display: none;
+  }
+
+  #dashboard-section:has(> #dashboard-aside:not(.closed)) > #main-dashboard > header {
+    justify-content: end !important;
+  }
+
+  #share-butt > span {
+    display: none;
+  }
 }

@@ -11,6 +11,8 @@ import CreateProject from '../components/CreateProject'
 import SearchProjects from '../components/SearchProjects'
 import UserMenu from '../components/UserMenu'
 
+import ThemeDetector from '../components/ThemeDetector'
+
 import { useEffect, useRef, useState } from 'react'
 
 const Dashboard = () => {
@@ -108,7 +110,7 @@ const Dashboard = () => {
         <title>Els teus projectes | Agility</title>
         <meta name="description" content="Projectes" />
       </Helmet>
-
+      <ThemeDetector theme={ theme } setTheme={ toggleTheme } />  
       <main 
         className="
           grid grid-rows-[82px_1fr] overflow-hidden gap-4 relative
@@ -184,7 +186,7 @@ const Dashboard = () => {
 
         {
           isUserMenuOpen
-            && <UserMenu setIsUserMenuOpen={setIsUserMenuOpen} isUserMenuOpen={isUserMenuOpen} />
+            && <UserMenu theme={ theme } setTheme={ toggleTheme } setIsUserMenuOpen={setIsUserMenuOpen} isUserMenuOpen={isUserMenuOpen} />
         }
       </main>
     </>

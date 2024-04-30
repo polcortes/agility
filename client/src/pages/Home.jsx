@@ -10,6 +10,7 @@ import { Helmet } from 'react-helmet-async'
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import ThemeToggler from '../components/ThemeToggler'
+import ThemeDetector from '../components/ThemeDetector'
 // import { useTheme } from '../custom-hooks/useTheme'
 
 const Home = () => {
@@ -24,10 +25,6 @@ const Home = () => {
   const username = useRef(null)
   const password = useRef(null)
   const repeatPassword = useRef(null)
-
-  // const changeTheme = () => {
-  //   toggleTheme(document.documentElement.classList.contains('dark') ? 'dark' : 'light')
-  // }
 
   useEffect(() => {
     // TODO: Implementar el observer para el cambio de tema
@@ -44,7 +41,7 @@ const Home = () => {
       childList: false, 
       characterData: false,
     })
-  }, [])
+  }, [theme])
 
   const toggleFormType = () => {
     setError({field: '', message: ''})
@@ -165,6 +162,7 @@ const Home = () => {
         <title>{t("home.seoTitle")}</title>
         <meta name="description" content={t("home.seoDescription")} />
       </Helmet>
+      <ThemeDetector theme={ theme } setTheme={ toggleTheme } />
       <main 
         className="
           min-h-screen w-screen xl:p-4 box-border font-body transition-[padding]
@@ -194,7 +192,7 @@ const Home = () => {
           </div>
         </section>
         <aside className="relative bg-light-secondary-bg dark:bg-dark-secondary-bg/80 px-6 py-14 flex flex-col items-center justify-center rounded-none xl:rounded-md">
-          <ThemeToggler className={theme === 'dark' ? "from-transparent to-white" : "from-the-accent-color"} onClick={() => toggleTheme(theme)}/>
+          <ThemeToggler theme={ theme } setTheme={ toggleTheme } className={theme === 'dark' ? "from-transparent to-white" : "from-the-accent-color"} onClick={() => toggleTheme(theme)}/>
           <LanguageChanger className={`hidden xl:flex`} />
           {formType === 'login' && (
             <>

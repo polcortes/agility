@@ -2,38 +2,10 @@
 import { useState, useEffect } from 'react'
 import Sun from '../assets/icons/sun'
 import Moon from '../assets/icons/moon'
-import { subscribe, unsubscribe, publish } from '../customEvents/event'
+// import { subscribe, unsubscribe, publish } from '../customEvents/event'
 
-const ThemeToggler = props => {
-	const [theme, setTheme] = useState('dark')
-	useEffect(() => {
-		if (window.localStorage.getItem('theme')) {
-			const storageTheme = window.localStorage.getItem('theme')
-			if (storageTheme === 'dark') document.documentElement.classList.add('dark')
-			else document.documentElement.classList.remove('dark')
-		} else {
-			window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => setTheme(e.matches ? 'dark' : 'light'))
-			// Crear un evento.
-			subscribe('themeChange', () => document.documentElement.classList.toggle('dark'))
-			setTheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-			// document.documentElement.classList.add(
-			// 	window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-			// )
-	
-			if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-				document.documentElement.classList.add('dark')
-			} else {
-				document.documentElement.classList.remove('dark')
-			}
-
-			window.localStorage.setItem('theme', theme)
-	
-			return () => {
-				window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', e => setTheme(e.matches ? 'dark' : 'light'))
-				unsubscribe('themeChange', () => document.documentElement.classList.toggle('dark'))
-			}
-		}
-	}, [])
+const ThemeToggler = ({theme, setTheme}) => {
+	// const [theme, setTheme] = useState('dark')
 
 	const [path, setPath] = useState('')
 	useEffect(() => {
