@@ -142,6 +142,8 @@ const Project = () => {
     if (latestSprint && latestSprint.tasks) {
       console.log("TASKS", Object.values(latestSprint.tasks))
       setTasks(Object.values(latestSprint.tasks))
+    } else if (latestSprint) {
+      setTasks([])
     }
   }, [latestSprint])
 
