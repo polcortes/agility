@@ -71,6 +71,7 @@ const Project = () => {
   }, [])
 
   useEffect(() => {
+    console.log("WS", ws)
     if (ws) {
       joinProject()
     }
@@ -117,6 +118,7 @@ const Project = () => {
         setLatestSprint(currProject.sprints[latestSprint.name])
       }
     }
+    console.log("SPRINT", latestSprint)
   }, [currProject])
 
   useEffect(() => {
@@ -130,7 +132,9 @@ const Project = () => {
   }, [sprints, willChangeToSprintBoard])
 
   useEffect(() => {
+    console.log("LATEST", latestSprint)
     if (latestSprint && latestSprint.tasks) {
+      console.log("TASKS", Object.values(latestSprint.tasks))
       setTasks(Object.values(latestSprint.tasks))
     }
   }, [latestSprint])
@@ -303,6 +307,7 @@ const Project = () => {
   const changeBoard = (e) => {
     if (section !== 'SprintBoard') setSection('SprintBoard')
     const targetSprint = sprints.filter(sprint => sprint._id === e.target.dataset.id)
+    console.log("TARGET", targetSprint)
 
     if (targetSprint.length > 0) {
       setLatestSprint(targetSprint[0])
@@ -310,17 +315,31 @@ const Project = () => {
   }
 
   const deleteSprintboard = (sprint) => {
-    ws.send(JSON.stringify({
-      type: 'deleteSprintBoard',
-      projectID: projectID,
-      sprintName: sprint
-    }))
-    // Cuando esté bien:
-    toast.success('S\'ha esborrat el tauler satisfactoriament.', {
-      duration: 3000,
-      position: 'bottom-right',
-      closeButton: true,
-    })
+    if (sprints.length === 1) {
+      toast.error('Hi ha d\'haver al menys un tauler al projecte.', {
+        duration: 3000,
+        position: 'bottom-right',
+        closeButton: true,
+      })
+    } else {
+      ws.send(JSON.stringify({
+        type: 'deleteSprintBoard',
+        projectID: projectID,
+        sprintName: sprint
+      }))
+      if (latestSprint.name === sprint) {
+        if (latestSprint === sprints[sprints.length-1])
+          setLatestSprint(sprints[sprints.length-2])
+        else
+          setLatestSprint(sprints[sprints.length-1])
+      }
+      // Cuando esté bien:
+      toast.success('S\'ha esborrat el tauler satisfactoriament.', {
+        duration: 3000,
+        position: 'bottom-right',
+        closeButton: true,
+      })
+    }
 
     // Si no:
     /*
@@ -532,7 +551,7 @@ const Project = () => {
       }
       {
         isEditSprintBoardOpen
-          && <EditSprintBoardModal projectID={ projectID } sprintIsGonnaBeEdited={ sprintIsGonnaBeEdited } setIsEditSprintBoardOpen={ setIsEditSprintBoardOpen } isEditSprintBoardOpen={ isEditSprintBoardOpen } />
+          && <EditSprintBoardModal webSocket={ ws } projectID={ projectID } sprintIsGonnaBeEdited={ sprintIsGonnaBeEdited } setIsEditSprintBoardOpen={ setIsEditSprintBoardOpen } isEditSprintBoardOpen={ isEditSprintBoardOpen } latestSprint={latestSprint} setLatestSprint={setLatestSprint}/>
       }
       {
         isUserMenuOpen

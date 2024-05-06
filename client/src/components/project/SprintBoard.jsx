@@ -11,6 +11,7 @@ const SprintBoard = ({ projectID, latestSprint, tasks, webSocket }) => {
   const [ organizedTasks, setOrganizedTasks ] = useState({})
 
   useEffect(() => {
+    console.log(latestSprint)
     const newOrganizedTasks = {
       todo: [],
       doing: [],
@@ -27,11 +28,13 @@ const SprintBoard = ({ projectID, latestSprint, tasks, webSocket }) => {
       else if (task.status === 'DONE') newOrganizedTasks.done.push(task)
     })
 
+    console.log("NEWORG", newOrganizedTasks)
+
     setOrganizedTasks(newOrganizedTasks)
-  }, [tasks])
+  }, [tasks, latestSprint])
 
   useEffect(() => {
-    console.log(organizedTasks)
+    console.log("ORG", organizedTasks)
   }, [organizedTasks])
 
   const moveTask = (taskName, newStatus) => {

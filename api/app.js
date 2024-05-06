@@ -1123,6 +1123,12 @@ wss.on('connection', (ws) => {
       broadcastProjectChange(messageAsObject.projectID)
     } else if (messageAsObject.type == "sendMessage") {
       // projects[messageAsObject.projectID].data.chat
+    } else if (messageAsObject.type == "editSprintBoard") {
+      editSprintBoardWs(messageAsObject.projectID, messageAsObject.oldName, messageAsObject.newName)
+      projects[messageAsObject.projectID].data.sprints[messageAsObject.newName] = projects[messageAsObject.projectID].data.sprints[messageAsObject.oldName]
+      projects[messageAsObject.projectID].data.sprints[messageAsObject.newName].name = messageAsObject.newName
+      delete projects[messageAsObject.projectID].data.sprints[messageAsObject.oldName]
+      broadcastProjectChange(messageAsObject.projectID)
     }
   })
 })
@@ -1210,6 +1216,15 @@ async function createSprintBoardWs(projectID, sprintName) {
   }
 
   await client.close()
+}
+
+async function editSprintBoardWs(projectID, oldName, newName) {
+  const client = new MongoClient(uri)
+  await client.connect()
+  const db = client.db(databaseName)
+  let sprintCollection = db.collection('sprintBoards')
+  console.log("NEW", newName)
+  await sprintCollection.updateOne({ projectID: { $eq: projectID }, name: { $eq: oldName } }, { $set: { name: newName } })
 }
 
 async function deleteSprintBoardWs(projectID, sprintName) {
