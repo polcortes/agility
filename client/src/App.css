@@ -132,7 +132,8 @@ dialog {
 
 dialog::backdrop,
 dialog::-ms-backdrop {
-  background: var(--backdrop-bg);
+  /* background: var(--backdrop-bg); */
+  background: rgba(0, 0, 0, .8) !important;
   transition: background .2s ease-in-out;
 }
 

@@ -9,6 +9,7 @@ const TaskCard = ({ text, onDoubleClick, type }) => {
     $('.task').draggable({ 
       handle: '.draggable-section',
       cancel: 'invalid',
+      containment: "window",
       helper: function() {
         return $(`
           <article className="flex bg-light-tertiary-bg dark:bg-dark-tertiary-bg py-3 px-4 rounded-2xl items-center task">

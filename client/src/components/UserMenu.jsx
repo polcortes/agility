@@ -11,7 +11,7 @@ const UserMenuDialog = ({ setIsUserMenuOpen, isUserMenuOpen, theme, setTheme }) 
     if (isUserMenuOpen) {
       dialogRef.current.showModal()
       dialogRef.current.style.opacity = 1
-      document.documentElement.style.setProperty('--backdrop-bg', "rgba(0, 0, 0, .8)")
+      document.documentElement.style.setProperty('--backdrop-bg', "rgba(0, 0, 0, .8)!important")
     } else {
       document.documentElement.style.setProperty('--backdrop-bg', "transparent")
       dialogRef.current.style.opacity = 0
