@@ -153,7 +153,7 @@ const Home = () => {
   );
 
   useEffect(() => {
-
+    document.documentElement.style.overflowX = 'hidden'
   }, [])
 
   return (
@@ -167,13 +167,13 @@ const Home = () => {
         className="
           min-h-screen w-screen xl:p-4 box-border font-body transition-[padding]
           bg-gradient-to-t from-light-primary-bg/80 to-light-primary-bg text-black dark:from-black dark:to-dark-primary-bg dark:text-white
-          grid grid-cols-[1fr] grid-rows-[35%_65%] xl:grid-cols-[4fr_2fr] xl:grid-rows-[1fr] xl:gap-4
+          grid grid-cols-[1fr] grid-rows-[35%_65%] xl:grid-cols-[4fr_2fr] xl:grid-rows-[1fr] xl:gap-4 overflow-x-hidden
         "
       >
         {/* <!--  bg-white text-black dark:bg-[#100C12] dark:text-white  --> */}
         
         <section className="relative bg-light-secondary-bg dark:bg-dark-secondary-bg/80 px-6 py-14 flex flex-col items-center justify-center rounded-none xl:rounded-md">
-          <LanguageChanger props={true} className={`flex absolute right-0 top-0 xl:hidden`} />
+          {/* <LanguageChanger props={true} className={`flex absolute right-0 top-0 xl:hidden`} /> */}
 
           { // Dark theme logo
             theme === 'dark' 
@@ -193,7 +193,7 @@ const Home = () => {
         </section>
         <aside className="relative bg-light-secondary-bg dark:bg-dark-secondary-bg/80 px-6 py-14 flex flex-col items-center justify-center rounded-none xl:rounded-md">
           <ThemeToggler theme={ theme } setTheme={ toggleTheme } className={theme === 'dark' ? "from-transparent to-white" : "from-the-accent-color"} onClick={() => toggleTheme(theme)}/>
-          <LanguageChanger className={`hidden xl:flex`} />
+          {/* <LanguageChanger className={`hidden xl:flex`} /> */}
           {formType === 'login' && (
             <>
               <h1 className='text-3xl font-bold font-subtitle'>{ t("home.loginMessage") }</h1>

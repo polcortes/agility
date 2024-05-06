@@ -190,15 +190,6 @@ const Project = () => {
   }
   */
   const getLatestSprint = () => { // TODO(Pol): test it.
-    // const dates = []
-    // sprints.forEach(sprint => dates.push(new Date(sprint.date)))
-
-    // const max = new Date(Math.max.apply(null, dates))
-
-    // const latestSprint = sprints.find(sprint => sprint.date === max)
-
-    console.log("holaaaaaaaaaaaaaaaaaaa", sprints)
-
     setLatestSprint([...sprints][sprints.length - 1])
   }
 
@@ -246,10 +237,6 @@ const Project = () => {
       //getLatestSprint();
     }
   }, [sprints]);
-
-  const acceptNewTitle = () => {
-    // TODO: acceptNewTitle function
-  }
 
   const [ isCreatingSprintBoard, setIsCreatingSprintBoard ] = useState(false)
   const createSprintTitleRef = useRef()
