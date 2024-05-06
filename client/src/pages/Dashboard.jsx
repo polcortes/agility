@@ -11,10 +11,15 @@ import CreateProject from '../components/CreateProject'
 import SearchProjects from '../components/SearchProjects'
 import UserMenu from '../components/UserMenu'
 
+import ThemeDetector from '../components/ThemeDetector'
+
 import { useEffect, useRef, useState } from 'react'
 
 const Dashboard = () => {
   const createProjectRef = useRef(null)
+
+  const lightIconRef = useRef(null)
+  const darkIconRef = useRef(null)
 
   const [ isUserMenuOpen, setIsUserMenuOpen ] = useState(false)
   const [isCreateProjectShown, setIsCreateProjectShown] = useState(false);
@@ -91,6 +96,26 @@ const Dashboard = () => {
     }
   }, [projects])
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        if (lightIconRef.current) lightIconRef.current.querySelector('svg > path:last-of-type').style.display = 'none'
+        if (darkIconRef.current) darkIconRef.current.querySelector('svg > path:last-of-type').style.display = 'none'
+      } else {
+        if (lightIconRef.current) lightIconRef.current.querySelector('svg > path:last-of-type').style.display = 'block'
+        if (darkIconRef.current) darkIconRef.current.querySelector('svg > path:last-of-type').style.display = 'block'
+      }
+    }
+  
+    handleResize(); // Llamar a la función una vez al inicio para establecer el estado inicial
+  
+    window.addEventListener('resize', handleResize)
+  
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
+
   const [ searchValue, setSearchValue ] = useState('')
 
   const [ results, setResults ] = useState([])
@@ -108,7 +133,7 @@ const Dashboard = () => {
         <title>Els teus projectes | Agility</title>
         <meta name="description" content="Projectes" />
       </Helmet>
-
+      <ThemeDetector theme={ theme } setTheme={ toggleTheme } />  
       <main 
         className="
           grid grid-rows-[82px_1fr] overflow-hidden gap-4 relative
@@ -123,11 +148,11 @@ const Dashboard = () => {
         >
           {
             theme === 'light'
-              && <LightIcon className={`w-64 h-auto`} />
+              && <LightIcon ref={ lightIconRef } className={`w-64 h-auto`} />
           }
           {
             theme === 'dark'
-              && <DarkIcon className={`w-64 h-auto`} />
+              && <DarkIcon ref={ darkIconRef } className={`w-64 h-auto`} />
           }
 
           <button
@@ -157,6 +182,7 @@ const Dashboard = () => {
           </span>
         </header>
         <section 
+          style={{ width: '100vw' }}
           className="
             p-5 rounded-md overflow-y-scroll
             flex flex-col items-center"
@@ -184,7 +210,7 @@ const Dashboard = () => {
 
         {
           isUserMenuOpen
-            && <UserMenu setIsUserMenuOpen={setIsUserMenuOpen} isUserMenuOpen={isUserMenuOpen} />
+            && <UserMenu theme={ theme } setTheme={ toggleTheme } setIsUserMenuOpen={setIsUserMenuOpen} isUserMenuOpen={isUserMenuOpen} />
         }
       </main>
     </>

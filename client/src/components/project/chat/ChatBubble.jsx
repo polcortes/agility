@@ -1,10 +1,11 @@
 /* eslint-disable react/prop-types */
 const ChatBubble = ({ message, sender, timeWasSent }) => {
-
-  const timeWasSentString = timeWasSent.toLocaleString('es-ES').split(' ')[1].slice(10, 15)
+  const timeWasSentString = timeWasSent.toLocaleString('es-ES').split(' ')[1]
+  console.log("TIME", timeWasSent.toLocaleString('es-ES').split(' ')[1])
 
   return (
     <div className="flex items-start gap-2.5">
+    {/* <div className="flex items-start gap-2.5"> */}
       <img className="w-8 h-8 rounded-full" src="/docs/images/people/profile-picture-3.jpg" alt="Jese image" />
       <div className="flex flex-col gap-1 w-full max-w-[320px]">
           <div className="flex items-center space-x-2 rtl:space-x-reverse">

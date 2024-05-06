@@ -89,7 +89,7 @@ const SprintBoard = ({ projectID, latestSprint, tasks, webSocket }) => {
 
   return (
     <>
-      <div className='kanban-column flex flex-col align-center justify-center p-5 dark:text-white dark:bg-dark-secondary-bg bg-light-secondary-bg min-w-[340px] max-w-[430px] rounded-lg'>
+      <div className='kanban-column flex flex-col align-center p-5 dark:text-white dark:bg-dark-secondary-bg bg-light-secondary-bg min-w-[340px] max-w-[430px] rounded-lg'>
         <h3 className='font-subtitle font-bold text-2xl mb-5'>To-do</h3>
         <ul className='flex flex-col rounded-lg overflow-hidden h-full pr-5 gap-5 flex-1 overflow-y-scroll max-h-[calc(100vh-320px)]'>
           { 
@@ -109,7 +109,7 @@ const SprintBoard = ({ projectID, latestSprint, tasks, webSocket }) => {
         </span>
       </div>
 
-      <div className='kanban-column flex flex-col align-center justify-center p-5 dark:text-white dark:bg-dark-secondary-bg bg-light-secondary-bg min-w-[340px] max-w-[430px] rounded-lg'>
+      <div className='kanban-column flex flex-col align-center p-5 dark:text-white dark:bg-dark-secondary-bg bg-light-secondary-bg min-w-[340px] max-w-[430px] rounded-lg'>
         <h3 className='font-subtitle font-bold text-2xl mb-5'>Doing</h3>
         <ul className='flex flex-col rounded-lg overflow-hidden h-full pr-5 gap-5 flex-1 overflow-y-scroll max-h-[calc(100vh-320px)]'>
           { 
@@ -120,7 +120,7 @@ const SprintBoard = ({ projectID, latestSprint, tasks, webSocket }) => {
         </ul>
       </div>
 
-      <div className='kanban-column flex flex-col align-center justify-center p-5 dark:text-white dark:bg-dark-secondary-bg bg-light-secondary-bg min-w-[340px] max-w-[430px] rounded-lg'>
+      <div className='kanban-column flex flex-col align-center p-5 dark:text-white dark:bg-dark-secondary-bg bg-light-secondary-bg min-w-[340px] max-w-[430px] rounded-lg'>
         <h3 className='font-subtitle font-bold text-2xl mb-5'>Testing</h3>
         <ul className='flex flex-col rounded-lg overflow-hidden h-full pr-5 gap-5 flex-1 overflow-y-scroll max-h-[calc(100vh-320px)]'>
           { 
@@ -131,7 +131,7 @@ const SprintBoard = ({ projectID, latestSprint, tasks, webSocket }) => {
         </ul>
       </div>
 
-      <div className='kanban-column flex flex-col align-center justify-center p-5 dark:text-white dark:bg-dark-secondary-bg bg-light-secondary-bg min-w-[340px] max-w-[430px] rounded-lg'>
+      <div className='kanban-column flex flex-col align-center p-5 dark:text-white dark:bg-dark-secondary-bg bg-light-secondary-bg min-w-[340px] max-w-[430px] rounded-lg'>
         <h3 className='font-subtitle font-bold text-2xl mb-5'>Done</h3>
         <ul className='flex flex-col rounded-lg overflow-hidden h-full pr-5 gap-5 flex-1 overflow-y-scroll max-h-[calc(100vh-320px)]'>
           { 
