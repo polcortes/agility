@@ -3,15 +3,21 @@ import { useEffect, useState, useRef } from 'react';
 
 import TaskCard from '../project/TaskCard'
 import CreateTaskModal from '../project/CreateTaskModal'
+import EditTaskModal from './EditTaskModal';
 // import { dragAndDrop } from '@formkit/drag-and-drop/react'
 
-const SprintBoard = ({ projectID, latestSprint, tasks, webSocket }) => {
+const SprintBoard = ({ projectID, latestSprint, tasks, webSocket, usersInProject }) => {
   const [ isCreateTaskOpen, setIsCreateTaskOpen ] = useState(false)
+
+  const [ isEditTaskOpen, setIsEditTaskOpen ] = useState(false)
+
+  const [ taskToEdit, setTaskToEdit ] = useState({})
 
   const [ organizedTasks, setOrganizedTasks ] = useState({})
 
   useEffect(() => {
     console.log(latestSprint)
+    console.log("TASKS", tasks)
     const newOrganizedTasks = {
       todo: [],
       doing: [],
@@ -46,6 +52,15 @@ const SprintBoard = ({ projectID, latestSprint, tasks, webSocket }) => {
       newStatus: newStatus
     }))
   }
+
+  const openEditTaskModal = (taskName) => {
+    console.log("OPEN")
+    setIsEditTaskOpen(true)
+    console.log(taskName)
+    setTaskToEdit(tasks.find(task => task.name === taskName))
+  }
+
+  console.log("DOUBLECLICK BOARD", openEditTaskModal)
 
 
 
@@ -94,7 +109,7 @@ const SprintBoard = ({ projectID, latestSprint, tasks, webSocket }) => {
         <ul className='flex flex-col rounded-lg overflow-hidden h-full pr-5 gap-5 flex-1 overflow-y-scroll max-h-[calc(100vh-320px)]'>
           { 
             organizedTasks.todo
-              ? (organizedTasks.todo.map(task => <li key={task._id}><TaskCard text={task.name} /></li>))
+              ? (organizedTasks.todo.map(task => <li key={task._id}><TaskCard text={task.name} onDoubleClickEvent={openEditTaskModal}/></li>))
               : 'hola'
           }
         </ul>
@@ -114,7 +129,7 @@ const SprintBoard = ({ projectID, latestSprint, tasks, webSocket }) => {
         <ul className='flex flex-col rounded-lg overflow-hidden h-full pr-5 gap-5 flex-1 overflow-y-scroll max-h-[calc(100vh-320px)]'>
           { 
             organizedTasks.doing
-              ? (organizedTasks.doing.map(task => <li key={task._id}><TaskCard text={task.name} /></li>))
+              ? (organizedTasks.doing.map(task => <li key={task._id}><TaskCard text={task.name} onDoubleClickEvent={openEditTaskModal}/></li>))
               : 'hola'
           }
         </ul>
@@ -125,7 +140,7 @@ const SprintBoard = ({ projectID, latestSprint, tasks, webSocket }) => {
         <ul className='flex flex-col rounded-lg overflow-hidden h-full pr-5 gap-5 flex-1 overflow-y-scroll max-h-[calc(100vh-320px)]'>
           { 
             organizedTasks.testing
-              ? (organizedTasks.testing.map(task => <li key={task._id}><TaskCard text={task.name} /></li>) )
+              ? (organizedTasks.testing.map(task => <li key={task._id}><TaskCard text={task.name} onDoubleClickEvent={openEditTaskModal}/></li>) )
               : 'hola'
           }
         </ul>
@@ -136,7 +151,7 @@ const SprintBoard = ({ projectID, latestSprint, tasks, webSocket }) => {
         <ul className='flex flex-col rounded-lg overflow-hidden h-full pr-5 gap-5 flex-1 overflow-y-scroll max-h-[calc(100vh-320px)]'>
           { 
             organizedTasks.done
-              ? (organizedTasks.done.map(task => <li key={task._id}><TaskCard text={task.name} /></li>) )
+              ? (organizedTasks.done.map(task => <li key={task._id}><TaskCard text={task.name} onDoubleClickEvent={openEditTaskModal}/></li>) )
               : 'hola'
           }
         </ul>
@@ -145,6 +160,11 @@ const SprintBoard = ({ projectID, latestSprint, tasks, webSocket }) => {
       {
         isCreateTaskOpen
           && <CreateTaskModal projectID={ projectID } latestSprint={ latestSprint } isCreateTaskOpen={ isCreateTaskOpen } setIsCreateTaskOpen={ setIsCreateTaskOpen } webSocket={ webSocket } />
+      }
+
+      {
+        isEditTaskOpen
+          && <EditTaskModal projectID={ projectID } latestSprint={ latestSprint } isEditTaskOpen={ isEditTaskOpen } setIsEditTaskOpen={ setIsEditTaskOpen } task={ taskToEdit } webSocket={ webSocket } usersInProject={ usersInProject } />
       }
     </>
   )

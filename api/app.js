@@ -1145,6 +1145,19 @@ wss.on('connection', (ws) => {
       projects[messageAsObject.projectID].data.sprints[messageAsObject.newName].name = messageAsObject.newName
       delete projects[messageAsObject.projectID].data.sprints[messageAsObject.oldName]
       broadcastProjectChange(messageAsObject.projectID)
+    } else if (messageAsObject.type == "editTask") {
+      editTaskWs(messageAsObject.projectID, messageAsObject.sprintName, messageAsObject.oldName, messageAsObject.newName, messageAsObject.description, messageAsObject.assignedMember, messageAsObject.status)
+      projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName].tasks[messageAsObject.newName] = projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName].tasks[messageAsObject.oldName]
+      projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName].tasks[messageAsObject.newName].name = messageAsObject.newName
+      projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName].tasks[messageAsObject.newName].description = messageAsObject.description
+      projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName].tasks[messageAsObject.newName].assignedMember = messageAsObject.assignedMember
+      projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName].tasks[messageAsObject.newName].status = messageAsObject.status
+      delete projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName].tasks[messageAsObject.oldName]
+      broadcastProjectChange(messageAsObject.projectID)
+    } else if (messageAsObject.type == "deleteTask") {
+      deleteTaskWs(messageAsObject.projectID, messageAsObject.sprintName, messageAsObject.taskName)
+      delete projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName].tasks[messageAsObject.taskName]
+      broadcastProjectChange(messageAsObject.projectID)
     }
   })
 })
@@ -1273,6 +1286,45 @@ async function broadcast(obj) {
       client.send(messageAsString)
     }
   })
+}
+
+async function editTaskWs(projectID, sprintName, oldName, newName, description, assignedMember, status) {
+  const client = new MongoClient(uri)
+  await client.connect()
+  const db = client.db(databaseName)
+  let sprintCollection = db.collection('sprintBoards')
+  let sprintExists = await sprintCollection.findOne({ projectID: { $eq: projectID }, name: { $eq: sprintName } })
+  if (sprintExists) {
+    let sprintID = sprintExists._id.toString()
+    let taskCollection = db.collection('tasks')
+    let taskExists = await taskCollection.findOne({ sprintID: { $eq: sprintID }, name: { $eq: oldName } })
+    if (taskExists) {
+      let updateData = {
+        name: newName,
+        description: description,
+        assignedMember: assignedMember,
+        status: status
+      }
+      console.log("UPDATE", updateData)
+      taskCollection.updateOne({ sprintID: { $eq: sprintID }, name: { $eq: oldName } }, { $set: updateData })
+    }
+  }
+}
+
+async function deleteTaskWs(projectID, sprintName, taskName) {
+  const client = new MongoClient(uri)
+  await client.connect()
+  const db = client.db(databaseName)
+  let sprintCollection = db.collection('sprintBoards')
+  let sprintExists = await sprintCollection.findOne({ projectID: { $eq: projectID }, name: { $eq: sprintName } })
+  if (sprintExists) {
+    let sprintID = sprintExists._id.toString()
+    let taskCollection = db.collection('tasks')
+    let taskExists = await taskCollection.findOne({ sprintID: { $eq: sprintID }, name: { $eq: taskName } })
+    if (taskExists) {
+      taskCollection.deleteOne({ sprintID: { $eq: sprintID }, name: { $eq: taskName } })
+    }
+  }
 }
 /*
 // Get the list of database tables from mysql

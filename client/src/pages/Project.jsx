@@ -62,6 +62,8 @@ const Project = () => {
   const [ isUserMenuOpen, setIsUserMenuOpen ] = useState(false)
   const [ chat, setChat ] = useState([])
 
+  const [ usersInProject, setUsersInProject ] = useState([])
+
   const mainProjectContainerRef = useRef(null)
 
   const WS_URL = import.meta.env.VITE_WS_ROUTE
@@ -114,6 +116,7 @@ const Project = () => {
       console.log("THISUSER", currProject.users.find(user => user.token === localStorage.getItem('userToken')))
       setThisUser(currProject.users.find(user => user.token === localStorage.getItem('userToken')))
       setOtherUsers(currProject.users.filter(user => user.token !== localStorage.getItem('userToken')))
+      setUsersInProject([currProject.creator, ...currProject.invitedUsers])
       setChat(currProject.chat)
       let sprints = Object.values(currProject.sprints).sort((a, b) => a._id > b._id)
       setSprints(sprints)
@@ -502,7 +505,7 @@ const Project = () => {
             <section ref={ mainProjectContainerRef } id="main-project-container" className={`${section !== "TaskTable" && section !== "Chat" && "nice-gradient grid-cols-4"} ${section === 'Chat' && 'flex-col overflow-y-auto pb-[87px]'} dark:bg-dark-secondary-bg relative bg-light-secondary-bg rounded-lg overflow-hidden flex-row justify-between flex w-full max-h-screen content-between p-5`}> {/* grid */}
             {
                 section === "SprintBoard" 
-                  && <SprintBoard projectID={ projectID } latestSprint={ latestSprint } tasks={ tasks } webSocket={ ws } />
+                  && <SprintBoard projectID={ projectID } latestSprint={ latestSprint } tasks={ tasks } webSocket={ ws } usersInProject={ usersInProject } />
               }
               {
                 section === "TaskTable"
