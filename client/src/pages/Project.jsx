@@ -62,6 +62,8 @@ const Project = () => {
   const [ isUserMenuOpen, setIsUserMenuOpen ] = useState(false)
   const [ chat, setChat ] = useState([])
 
+  const [ usersInProject, setUsersInProject ] = useState([])
+
   const mainProjectContainerRef = useRef(null)
 
   const WS_URL = import.meta.env.VITE_WS_ROUTE
@@ -76,6 +78,7 @@ const Project = () => {
   }, [])
 
   useEffect(() => {
+    console.log("WS", ws)
     if (ws) {
       joinProject()
     }
@@ -113,6 +116,7 @@ const Project = () => {
       console.log("THISUSER", currProject.users.find(user => user.token === localStorage.getItem('userToken')))
       setThisUser(currProject.users.find(user => user.token === localStorage.getItem('userToken')))
       setOtherUsers(currProject.users.filter(user => user.token !== localStorage.getItem('userToken')))
+      setUsersInProject([currProject.creator, ...currProject.invitedUsers])
       setChat(currProject.chat)
       let sprints = Object.values(currProject.sprints).sort((a, b) => a._id > b._id)
       setSprints(sprints)
@@ -123,6 +127,7 @@ const Project = () => {
         setLatestSprint(currProject.sprints[latestSprint.name])
       }
     }
+    console.log("SPRINT", latestSprint)
   }, [currProject])
 
   useEffect(() => {
@@ -136,8 +141,12 @@ const Project = () => {
   }, [sprints, willChangeToSprintBoard])
 
   useEffect(() => {
+    console.log("LATEST", latestSprint)
     if (latestSprint && latestSprint.tasks) {
+      console.log("TASKS", Object.values(latestSprint.tasks))
       setTasks(Object.values(latestSprint.tasks))
+    } else if (latestSprint) {
+      setTasks([])
     }
   }, [latestSprint])
 
@@ -291,6 +300,7 @@ const Project = () => {
   const changeBoard = (e) => {
     if (section !== 'SprintBoard') setSection('SprintBoard')
     const targetSprint = sprints.filter(sprint => sprint._id === e.target.dataset.id)
+    console.log("TARGET", targetSprint)
 
     if (targetSprint.length > 0) {
       setLatestSprint(targetSprint[0])
@@ -298,17 +308,31 @@ const Project = () => {
   }
 
   const deleteSprintboard = (sprint) => {
-    ws.send(JSON.stringify({
-      type: 'deleteSprintBoard',
-      projectID: projectID,
-      sprintName: sprint
-    }))
-    // Cuando esté bien:
-    toast.success('S\'ha esborrat el tauler satisfactoriament.', {
-      duration: 3000,
-      position: 'bottom-right',
-      closeButton: true,
-    })
+    if (sprints.length === 1) {
+      toast.error('Hi ha d\'haver al menys un tauler al projecte.', {
+        duration: 3000,
+        position: 'bottom-right',
+        closeButton: true,
+      })
+    } else {
+      ws.send(JSON.stringify({
+        type: 'deleteSprintBoard',
+        projectID: projectID,
+        sprintName: sprint
+      }))
+      if (latestSprint.name === sprint) {
+        if (latestSprint === sprints[sprints.length-1])
+          setLatestSprint(sprints[sprints.length-2])
+        else
+          setLatestSprint(sprints[sprints.length-1])
+      }
+      // Cuando esté bien:
+      toast.success('S\'ha esborrat el tauler satisfactoriament.', {
+        duration: 3000,
+        position: 'bottom-right',
+        closeButton: true,
+      })
+    }
 
     // Si no:
     /*
@@ -481,7 +505,7 @@ const Project = () => {
             <section ref={ mainProjectContainerRef } id="main-project-container" className={`${section !== "TaskTable" && section !== "Chat" && "nice-gradient grid-cols-4"} ${section === 'Chat' && 'flex-col overflow-y-auto pb-[87px]'} dark:bg-dark-secondary-bg relative bg-light-secondary-bg rounded-lg overflow-hidden flex-row justify-between flex w-full max-h-screen content-between p-5`}> {/* grid */}
             {
                 section === "SprintBoard" 
-                  && <SprintBoard projectID={ projectID } latestSprint={ latestSprint } tasks={ tasks } webSocket={ ws } />
+                  && <SprintBoard projectID={ projectID } latestSprint={ latestSprint } tasks={ tasks } webSocket={ ws } usersInProject={ usersInProject } />
               }
               {
                 section === "TaskTable"
@@ -502,7 +526,7 @@ const Project = () => {
       }
       {
         isEditSprintBoardOpen
-          && <EditSprintBoardModal projectID={ projectID } sprintIsGonnaBeEdited={ sprintIsGonnaBeEdited } setIsEditSprintBoardOpen={ setIsEditSprintBoardOpen } isEditSprintBoardOpen={ isEditSprintBoardOpen } />
+          && <EditSprintBoardModal webSocket={ ws } projectID={ projectID } sprintIsGonnaBeEdited={ sprintIsGonnaBeEdited } setIsEditSprintBoardOpen={ setIsEditSprintBoardOpen } isEditSprintBoardOpen={ isEditSprintBoardOpen } latestSprint={latestSprint} setLatestSprint={setLatestSprint}/>
       }
       {
         isUserMenuOpen

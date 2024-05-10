@@ -1,11 +1,14 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import axios from 'axios'
 
-const EditSprintBoardModal = ({ projectID, sprintIsGonnaBeEdited, setIsEditSprintBoardOpen, isEditSprintBoardOpen }) => {
+const EditSprintBoardModal = ({ projectID, sprintIsGonnaBeEdited, setIsEditSprintBoardOpen, isEditSprintBoardOpen, webSocket, latestSprint, setLatestSprint }) => {
   const dialogRef = useRef()
 
   useEffect(() => {
+    console.log("EDITSPRINT", latestSprint)
+    console.log(sprintIsGonnaBeEdited.name)
+    console.log(latestSprint.name === sprintIsGonnaBeEdited.name)
     if (isEditSprintBoardOpen) {
       dialogRef.current.showModal()
       dialogRef.current.style.opacity = 1
@@ -16,6 +19,24 @@ const EditSprintBoardModal = ({ projectID, sprintIsGonnaBeEdited, setIsEditSprin
       setTimeout(() => dialogRef.current.close(), 200)
     }
   }, [isEditSprintBoardOpen])
+
+  useEffect(() => {
+    console.log(webSocket)
+  }, [webSocket])
+
+  const sendEditSprintBoard = () => {
+    if (latestSprint.name === sprintIsGonnaBeEdited.name) {
+      let sprint =  {...latestSprint, name: dialogRef.current.querySelector('input').value}
+      setLatestSprint(sprint)    
+    }
+    webSocket.send(JSON.stringify({
+      type: 'editSprintBoard',
+        projectID: projectID,
+        oldName: sprintIsGonnaBeEdited.name,
+        newName: dialogRef.current.querySelector('input').value
+    }))
+    setIsEditSprintBoardOpen(false)
+  }
 
   // TODO: En TODOS los "dialog" prevent default de pulsar la tecla de escape mientras estén activos.
 
@@ -35,6 +56,7 @@ const EditSprintBoardModal = ({ projectID, sprintIsGonnaBeEdited, setIsEditSprin
         </button>
         <h2>Edit sprintboard</h2>
         <input type="text" name="" id="" placeholder={ sprintIsGonnaBeEdited.name } />
+        <button onClick={ sendEditSprintBoard }>Edit</button>
         
     </dialog>
   )
