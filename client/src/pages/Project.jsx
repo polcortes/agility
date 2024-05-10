@@ -116,7 +116,11 @@ const Project = () => {
       console.log("THISUSER", currProject.users.find(user => user.token === localStorage.getItem('userToken')))
       setThisUser(currProject.users.find(user => user.token === localStorage.getItem('userToken')))
       setOtherUsers(currProject.users.filter(user => user.token !== localStorage.getItem('userToken')))
-      setUsersInProject([currProject.creator, ...currProject.invitedUsers])
+      if (currProject.invitedUsers) {
+        setUsersInProject([currProject.creator, ...currProject.invitedUsers])
+      } else {
+        setUsersInProject([currProject.creator])
+      }
       setChat(currProject.chat)
       let sprints = Object.values(currProject.sprints).sort((a, b) => a._id > b._id)
       setSprints(sprints)
