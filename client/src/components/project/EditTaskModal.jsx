@@ -1,6 +1,8 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useRef } from 'react'
 import axios from 'axios'
+import CircleCheck from '../../assets/icons/circle-check'
+import CircleX from '../../assets/icons/circle-x'
 
 const EditTaskModal = ({ projectID, latestSprint, setIsEditTaskOpen, isEditTaskOpen, webSocket, task, usersInProject }) => {
   const dialogRef = useRef()
@@ -98,7 +100,7 @@ const EditTaskModal = ({ projectID, latestSprint, setIsEditTaskOpen, isEditTaskO
         <textarea ref={ editTaskDescriptionRef } className=' font-body font-medium text-lg border-2 border-dark-primary-bg rounded-md outline-none' name="new-task-description" id="new-task-description" cols="30" rows="10"></textarea>
 
         <label className='flex gap-3 items-center font-subtitle font-bold text-2xl mt-3' htmlFor='assigned-user'>Usuari Assignat</label>
-        <select ref={ editTaskAssignedUserRef } className='font-body font-medium text-lg border-2 border-dark-primary-bg rounded-md outline-none'>
+        <select ref={ editTaskAssignedUserRef } className='font-body font-medium text-lg border-2 border-dark-primary-bg rounded-md outline-none p-1 w-full'>
           <option></option>
           {
             usersInProject.map(user => <option key={user}>{user}</option>)
@@ -106,19 +108,21 @@ const EditTaskModal = ({ projectID, latestSprint, setIsEditTaskOpen, isEditTaskO
         </select>
 
         <label className='flex gap-3 items-center font-subtitle font-bold text-2xl mt-3' htmlFor='assigned-user'>Estat</label>
-        <select ref={ editTaskStatusRef } className='font-body font-medium text-lg border-2 border-dark-primary-bg rounded-md outline-none'>
+        <select ref={ editTaskStatusRef } className='font-body font-medium text-lg border-2 border-dark-primary-bg rounded-md outline-none p-1 w-full'>
           <option value="TO DO">To-Do</option>
           <option value="DOING">Doing</option>
           <option value="TEST">Testing</option>
           <option value="DONE">Done</option>
         </select>
 
-        <div className='flex mx-auto'>
-          <button onClick={() => editTask()}>
+        <div className='flex mx-auto justify-around mt-5'>
+          <button onClick={() => editTask()} className='bg-the-accent-color text-white p-2 rounded-full flex gap-1'> 
+            <CircleCheck className="text-green-500"></CircleCheck>
             Desar dades
           </button>
 
-          <button onClick={() => deleteTask()}> 
+          <button onClick={() => deleteTask()} className='bg-the-accent-color text-white p-2 rounded-full flex gap-1'> 
+            <CircleX className="text-red-500"></CircleX>
             Eliminar tasca
           </button>
         </div>
