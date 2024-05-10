@@ -2,8 +2,7 @@
 import ChatBubble from "./ChatBubble"
 import { useState, useRef, useEffect } from "react"
 
-const Chat = ({ projectID, ws, chat, mainProjectContainerRef }) => {
-  const aDate = new Date()
+const Chat = ({ projectID, ws, chat, mainProjectContainerRef, thisUser, otherUsers }) => {
   const sectionInputRef = useRef(null)
   const [sortedChats, setSortedChats] = useState([])
 
@@ -60,8 +59,9 @@ const Chat = ({ projectID, ws, chat, mainProjectContainerRef }) => {
         {
           sortedChats && sortedChats.length > 0
             ? sortedChats.map((message, index) => {
+              console.log('message', message)
               return (
-                <ChatBubble key={ index } message={ message.message } sender={ message.username } timeWasSent={ new Date(message.date) } />
+                <ChatBubble key={ index } message={ message.message } sender={ message.email } timeWasSent={ new Date(message.date) } thisUser={ thisUser } otherUsers={ otherUsers } />
               )
             })
             : (

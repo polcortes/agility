@@ -17,7 +17,7 @@ const UserProfilePhoto = ({ username }) => {
   return (
     <>
       <div ref={ photoRef } className="size-8 rounded-full grid place-content-center border-2 border-black dark:text-white">
-        Gay sex
+        
       </div>
     </>
   )
