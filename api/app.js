@@ -310,11 +310,15 @@ async function createProject(req, res) {
         inviteCode: generateInviteCode(32),
         date: new Date().toDateString()
       }
-      let insertedObject = await projectCollection.insertOne(project)
-      insertedId = insertedObject.insertedId.toString()
-      let sprintCollection = db.collection('sprintBoards')
-      await insertSprintBoard(insertedId, "Backlog", sprintCollection)
-      result = { status: "OK", result: "PROJECT CREATED", projectID: insertedId }
+      if (projectCollection.findOne({ title: { $eq: receivedPOST.title }, creator: { $eq: user.email } })) {
+        result = { status: "KO", result: "PROJECT ALREADY EXISTS" }
+      } else {
+        let insertedObject = await projectCollection.insertOne(project)
+        insertedId = insertedObject.insertedId.toString()
+        let sprintCollection = db.collection('sprintBoards')
+        await insertSprintBoard(insertedId, "Backlog", sprintCollection)
+        result = { status: "OK", result: "PROJECT CREATED", projectID: insertedId }
+      }
     } else {
       result = { status: "KO", result: "TOKEN EXPIRED" }
     }
