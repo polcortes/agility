@@ -25,8 +25,12 @@ import ShareProjectModal from '../components/project/ShareProjectModal'
 import EditSprintBoardModal from '../components/project/EditSprintBoardModal'
 import UserMenu from '../components/UserMenu'
 
+import ThemeDetector from '../components/ThemeDetector'
+
 const Project = () => {
   const { projectID } = useParams();
+
+  const [ theme, setTheme ] = useState('dark')
 
   const [ section, setSection ] = useState("SprintBoard") // TODO: setSection para setear si estamos en SprintBoard o estamos en Table o Chat.
 
@@ -42,7 +46,6 @@ const Project = () => {
   const [ ws, setWs ] = useState(null)
   const asideRef = useRef(null)
   const [ tasks, setTasks ] = useState([])
-  const [ isEditingTitle, setIsEditingTitle ] = useState(false)
 
   const currentBoardTitleRef = useRef(null)
   const newBoardTitleInputRef = useRef(null)
@@ -57,7 +60,11 @@ const Project = () => {
   const [ otherUsers, setOtherUsers ] = useState([])
   
   const [ isUserMenuOpen, setIsUserMenuOpen ] = useState(false)
+  const [ chat, setChat ] = useState([])
 
+  const [ usersInProject, setUsersInProject ] = useState([])
+
+  const mainProjectContainerRef = useRef(null)
 
   const WS_URL = import.meta.env.VITE_WS_ROUTE
 
@@ -71,6 +78,7 @@ const Project = () => {
   }, [])
 
   useEffect(() => {
+    console.log("WS", ws)
     if (ws) {
       joinProject()
     }
@@ -108,6 +116,12 @@ const Project = () => {
       console.log("THISUSER", currProject.users.find(user => user.token === localStorage.getItem('userToken')))
       setThisUser(currProject.users.find(user => user.token === localStorage.getItem('userToken')))
       setOtherUsers(currProject.users.filter(user => user.token !== localStorage.getItem('userToken')))
+      if (currProject.invitedUsers) {
+        setUsersInProject([currProject.creator, ...currProject.invitedUsers])
+      } else {
+        setUsersInProject([currProject.creator])
+      }
+      setChat(currProject.chat)
       let sprints = Object.values(currProject.sprints).sort((a, b) => a._id > b._id)
       setSprints(sprints)
       let sprint = sprints.at(-1)
@@ -117,6 +131,7 @@ const Project = () => {
         setLatestSprint(currProject.sprints[latestSprint.name])
       }
     }
+    console.log("SPRINT", latestSprint)
   }, [currProject])
 
   useEffect(() => {
@@ -130,8 +145,12 @@ const Project = () => {
   }, [sprints, willChangeToSprintBoard])
 
   useEffect(() => {
+    console.log("LATEST", latestSprint)
     if (latestSprint && latestSprint.tasks) {
+      console.log("TASKS", Object.values(latestSprint.tasks))
       setTasks(Object.values(latestSprint.tasks))
+    } else if (latestSprint) {
+      setTasks([])
     }
   }, [latestSprint])
 
@@ -184,15 +203,6 @@ const Project = () => {
   }
   */
   const getLatestSprint = () => { // TODO(Pol): test it.
-    // const dates = []
-    // sprints.forEach(sprint => dates.push(new Date(sprint.date)))
-
-    // const max = new Date(Math.max.apply(null, dates))
-
-    // const latestSprint = sprints.find(sprint => sprint.date === max)
-
-    console.log("holaaaaaaaaaaaaaaaaaaa", sprints)
-
     setLatestSprint([...sprints][sprints.length - 1])
   }
 
@@ -240,15 +250,6 @@ const Project = () => {
       //getLatestSprint();
     }
   }, [sprints]);
-
-  const discardNewTitle = () => {
-    setIsEditingTitle(false)
-    newBoardTitleInputRef.current.value = ''
-  }
-
-  const acceptNewTitle = () => {
-    // TODO: acceptNewTitle function
-  }
 
   const [ isCreatingSprintBoard, setIsCreatingSprintBoard ] = useState(false)
   const createSprintTitleRef = useRef()
@@ -303,6 +304,7 @@ const Project = () => {
   const changeBoard = (e) => {
     if (section !== 'SprintBoard') setSection('SprintBoard')
     const targetSprint = sprints.filter(sprint => sprint._id === e.target.dataset.id)
+    console.log("TARGET", targetSprint)
 
     if (targetSprint.length > 0) {
       setLatestSprint(targetSprint[0])
@@ -310,17 +312,31 @@ const Project = () => {
   }
 
   const deleteSprintboard = (sprint) => {
-    ws.send(JSON.stringify({
-      type: 'deleteSprintBoard',
-      projectID: projectID,
-      sprintName: sprint
-    }))
-    // Cuando esté bien:
-    toast.success('S\'ha esborrat el tauler satisfactoriament.', {
-      duration: 3000,
-      position: 'bottom-right',
-      closeButton: true,
-    })
+    if (sprints.length === 1) {
+      toast.error('Hi ha d\'haver al menys un tauler al projecte.', {
+        duration: 3000,
+        position: 'bottom-right',
+        closeButton: true,
+      })
+    } else {
+      ws.send(JSON.stringify({
+        type: 'deleteSprintBoard',
+        projectID: projectID,
+        sprintName: sprint
+      }))
+      if (latestSprint.name === sprint) {
+        if (latestSprint === sprints[sprints.length-1])
+          setLatestSprint(sprints[sprints.length-2])
+        else
+          setLatestSprint(sprints[sprints.length-1])
+      }
+      // Cuando esté bien:
+      toast.success('S\'ha esborrat el tauler satisfactoriament.', {
+        duration: 3000,
+        position: 'bottom-right',
+        closeButton: true,
+      })
+    }
 
     // Si no:
     /*
@@ -365,13 +381,15 @@ const Project = () => {
       <Helmet>
           <title>{ currProject ? currProject.title : 'Cargando projecto...' } | Agility</title>
       </Helmet>
+      <ThemeDetector theme={ theme } setTheme={ setTheme } />
+
       { projectState === "404" && <PageNotFound /> }
       { projectState === "403" && <h1>403</h1> /* Hacer página de 403 y estilar la de 404!!! */ }
 
       { projectState === "200" && (
-        <section id='dashboard-section' className="bg-light-primary-bg dark:bg-dark-primary-bg p-2 gap-2 overflow-hidden max-h-screen">
+        <section id='dashboard-section' className="bg-light-primary-bg dark:bg-dark-primary-bg p-2 gap-2 overflow-hidden max-h-screen min-h-screen">
           <aside id='dashboard-aside' ref={asideRef} className="closed dark:text-white bg-light-secondary-bg dark:bg-dark-secondary-bg relative transition-all rounded-lg flex flex-col p-5 box-border">
-            <ArrowIcon onClick={() => setIsAsideOpen(!isAsideOpen)} className={`rounded-full bg-purple-800 absolute -right-[15px] top-1/2 bototm-1/2 -translate-y-1/2 transition-all hover:cursor-pointer ${isAsideOpen ? 'rotate-180' : ''}`} />
+            <ArrowIcon onClick={() => setIsAsideOpen(!isAsideOpen)} className={`z-50 rounded-full bg-purple-800 absolute -right-[15px] top-1/2 bototm-1/2 -translate-y-1/2 transition-all hover:cursor-pointer ${isAsideOpen ? 'rotate-180' : ''}`} />
 
             <section className='h-fit pb-[21px] border-b-2 flex overflow-hidden mb-3'>
               <span className="flex size-16 mr-5 bg-black row-span-2 rounded-md box-border">a</span>
@@ -439,44 +457,24 @@ const Project = () => {
               </button>
             </nav>
           </aside>
-          <main id='main-dashboard' className='gap-2 box-border transition-all rounded-lg'>
+          <main id='main-dashboard' className='overflow-hidden gap-2 box-border transition-all rounded-lg'>
             <header className='dark:bg-dark-secondary-bg bg-light-secondary-bg rounded-lg flex items-center justify-between p-5'>
               <h1 
                 ref={currentBoardTitleRef}
                 title='Double click to edit the title.'
-                onDoubleClick={() => setIsEditingTitle(true)}
-                className={`text-3xl font-bold dark:text-white text-black box-border dark:bg-dark-secondary-bg bg-light-secondary-bg rounded-lg hover:cursor-pointer hover:bg-light-primary-bg transition-all ${isEditingTitle ? 'hidden' : 'flex'}`}
+                className={`text-3xl font-bold dark:text-white text-black box-border dark:bg-dark-secondary-bg bg-light-secondary-bg rounded-lg`}
               >
                 { latestSprint ? latestSprint.name : "Título mal."}
               </h1>
 
-              <span className={`${isEditingTitle ? 'flex' : 'hidden'} gap-2`}>
-                <input 
-                  ref={newBoardTitleInputRef} 
-                  type='text' 
-                  className={`rounded-lg bg-light-secondary-bg border-2 border-black box-border transition-all ${isEditingTitle ? 'flex' : 'hidden'}`}
-                />
-                <button 
-                  className='py-2 px-4 bg-slate-500 rounded-lg'
-                  onClick={() => acceptNewTitle()}
-                >
-                  Save
-                </button>
-                <button 
-                  className='py-2 px-4 bg-slate-500 rounded-lg'
-                  onClick={() => discardNewTitle()}
-                >
-                  Discard
-                </button>
-              </span>
-
               <span className='flex items-center'>
                 <button
+                  id="share-butt"
                   className='bg-the-accent-color flex text-2xl mr-8 outline-none items-center justify-center rounded-md px-3 py-2 text-white font-medium hover:scale-105 transition-all gap-2'
                   onClick={() => setIsShareProjectModalOpen(true)}
                 >
                   <svg width="20" height="20" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.49991 0.876892C3.84222 0.876892 0.877075 3.84204 0.877075 7.49972C0.877075 11.1574 3.84222 14.1226 7.49991 14.1226C11.1576 14.1226 14.1227 11.1574 14.1227 7.49972C14.1227 3.84204 11.1576 0.876892 7.49991 0.876892ZM1.82707 7.49972C1.82707 4.36671 4.36689 1.82689 7.49991 1.82689C10.6329 1.82689 13.1727 4.36671 13.1727 7.49972C13.1727 10.6327 10.6329 13.1726 7.49991 13.1726C4.36689 13.1726 1.82707 10.6327 1.82707 7.49972ZM7.50003 4C7.77617 4 8.00003 4.22386 8.00003 4.5V7H10.5C10.7762 7 11 7.22386 11 7.5C11 7.77614 10.7762 8 10.5 8H8.00003V10.5C8.00003 10.7761 7.77617 11 7.50003 11C7.22389 11 7.00003 10.7761 7.00003 10.5V8H4.50003C4.22389 8 4.00003 7.77614 4.00003 7.5C4.00003 7.22386 4.22389 7 4.50003 7H7.00003V4.5C7.00003 4.22386 7.22389 4 7.50003 4Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path></svg>
-                  Compartir
+                  <span>Compartir</span>
                 </button>
 
                 { /* TODO: Tooltip encima del +3 para mostrar todos los usuarios en linea. */ }
@@ -503,15 +501,15 @@ const Project = () => {
 
                 <div className='flex w-0.5 bg-black h-[56px] mx-3'></div>
 
-                <button onClick={() => setIsUserMenuOpen(true)} className='size-14 flex items-center justify-center bg-slate-400 rounded-full text-xl ml-'>
+                <button id='user-butt' onClick={() => setIsUserMenuOpen(true)} className='size-14 flex items-center justify-center bg-slate-400 rounded-full text-xl ml-'>
                   { thisUser ? thisUser.username[0].toUpperCase() : "" }
                 </button>
               </span>
             </header>
-            <section id="main-project-container" className={`${section !== "TaskTable" && section !== "Chat" && "nice-gradient grid-cols-4"} ${section === 'Chat' && 'flex-col '} dark:bg-dark-secondary-bg bg-light-secondary-bg rounded-lg overflow-hidden flex-row justify-between flex w-full max-h-full content-between p-5`}> {/* grid */}
+            <section ref={ mainProjectContainerRef } id="main-project-container" className={`${section !== "TaskTable" && section !== "Chat" && "nice-gradient grid-cols-4"} ${section === 'Chat' && 'flex-col overflow-y-auto pb-[87px]'} dark:bg-dark-secondary-bg relative bg-light-secondary-bg rounded-lg overflow-hidden flex-row justify-between flex w-full max-h-screen content-between p-5`}> {/* grid */}
             {
                 section === "SprintBoard" 
-                  && <SprintBoard projectID={ projectID } latestSprint={ latestSprint } tasks={ tasks } webSocket={ ws } />
+                  && <SprintBoard projectID={ projectID } latestSprint={ latestSprint } tasks={ tasks } webSocket={ ws } usersInProject={ usersInProject } />
               }
               {
                 section === "TaskTable"
@@ -519,7 +517,7 @@ const Project = () => {
               }
               {
                 section === "Chat"
-                  && <Chat projectID={projectID} webSocket={ws} />
+                  && <Chat projectID={projectID} ws={ws} chat={chat} mainProjectContainerRef={mainProjectContainerRef} />
               }
             </section>
           </main>
@@ -532,15 +530,11 @@ const Project = () => {
       }
       {
         isEditSprintBoardOpen
-          && <EditSprintBoardModal projectID={ projectID } sprintIsGonnaBeEdited={ sprintIsGonnaBeEdited } setIsEditSprintBoardOpen={ setIsEditSprintBoardOpen } isEditSprintBoardOpen={ isEditSprintBoardOpen } />
+          && <EditSprintBoardModal webSocket={ ws } projectID={ projectID } sprintIsGonnaBeEdited={ sprintIsGonnaBeEdited } setIsEditSprintBoardOpen={ setIsEditSprintBoardOpen } isEditSprintBoardOpen={ isEditSprintBoardOpen } latestSprint={latestSprint} setLatestSprint={setLatestSprint}/>
       }
       {
         isUserMenuOpen
-          && <UserMenu setIsUserMenuOpen={ setIsUserMenuOpen } isUserMenuOpen={ isUserMenuOpen } />
-      }
-      {
-        isUserMenuOpen
-          && <UserMenu setIsUserMenuOpen={ setIsUserMenuOpen } isUserMenuOpen={ isUserMenuOpen } />
+          && <UserMenu theme={ theme } setTheme={ setTheme } setIsUserMenuOpen={ setIsUserMenuOpen } isUserMenuOpen={ isUserMenuOpen } />
       }
       <Toaster expand={ false } richColors position='bottom-right' />
     </>

@@ -11,10 +11,15 @@ import CreateProject from '../components/CreateProject'
 import SearchProjects from '../components/SearchProjects'
 import UserMenu from '../components/UserMenu'
 
+import ThemeDetector from '../components/ThemeDetector'
+
 import { useEffect, useRef, useState } from 'react'
 
 const Dashboard = () => {
   const createProjectRef = useRef(null)
+
+  const lightIconRef = useRef(null)
+  const darkIconRef = useRef(null)
 
   const [ isUserMenuOpen, setIsUserMenuOpen ] = useState(false)
   const [isCreateProjectShown, setIsCreateProjectShown] = useState(false);
@@ -91,6 +96,45 @@ const Dashboard = () => {
     }
   }, [projects])
 
+  const [rendered, setRendered] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      // Verificar si las referencias existen antes de intentar acceder a los elementos dentro de ellas
+      if (lightIconRef.current && darkIconRef.current) {
+        // Esperar a que el DOM se renderice completamente antes de acceder a los elementos internos
+        if (rendered) {
+          // Obtener las referencias a los elementos path dentro de los íconos
+          const lightIconPath = lightIconRef.current.querySelector('path:nth-of-type(2)');
+          const darkIconPath = darkIconRef.current.querySelector('path:nth-of-type(2)');
+          // Verificar si el ancho de la ventana es mayor que 768px y ocultar o mostrar el path según corresponda
+          if (width > 768) {
+            if (lightIconPath) lightIconPath.style.display = 'none';
+            if (darkIconPath) darkIconPath.style.display = 'none';
+          } else {
+            if (lightIconPath) lightIconPath.style.display = 'block';
+            if (darkIconPath) darkIconPath.style.display = 'block';
+          }
+        }
+      }
+    };
+
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [rendered]);
+
+  // Establecer el estado de renderizado como verdadero después de que el componente se haya montado
+  useEffect(() => {
+    if (window.innerWidth > 728) setRendered(true);
+    else setRendered(false);
+  }, []);
+
   const [ searchValue, setSearchValue ] = useState('')
 
   const [ results, setResults ] = useState([])
@@ -108,7 +152,7 @@ const Dashboard = () => {
         <title>Els teus projectes | Agility</title>
         <meta name="description" content="Projectes" />
       </Helmet>
-
+      <ThemeDetector theme={ theme } setTheme={ toggleTheme } />  
       <main 
         className="
           grid grid-rows-[82px_1fr] overflow-hidden gap-4 relative
@@ -123,11 +167,11 @@ const Dashboard = () => {
         >
           {
             theme === 'light'
-              && <LightIcon className={`w-64 h-auto`} />
+              && <LightIcon ref={ lightIconRef } className={`w-64 h-auto`} />
           }
           {
             theme === 'dark'
-              && <DarkIcon className={`w-64 h-auto`} />
+              && <DarkIcon ref={ darkIconRef } className={`w-64 h-auto`} />
           }
 
           <button
@@ -157,6 +201,7 @@ const Dashboard = () => {
           </span>
         </header>
         <section 
+          style={{ width: '100vw' }}
           className="
             p-5 rounded-md overflow-y-scroll
             flex flex-col items-center"
@@ -184,7 +229,7 @@ const Dashboard = () => {
 
         {
           isUserMenuOpen
-            && <UserMenu setIsUserMenuOpen={setIsUserMenuOpen} isUserMenuOpen={isUserMenuOpen} />
+            && <UserMenu theme={ theme } setTheme={ toggleTheme } setIsUserMenuOpen={setIsUserMenuOpen} isUserMenuOpen={isUserMenuOpen} />
         }
       </main>
     </>

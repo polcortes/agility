@@ -3,14 +3,21 @@ import { useEffect, useState, useRef } from 'react';
 
 import TaskCard from '../project/TaskCard'
 import CreateTaskModal from '../project/CreateTaskModal'
+import EditTaskModal from './EditTaskModal';
 // import { dragAndDrop } from '@formkit/drag-and-drop/react'
 
-const SprintBoard = ({ projectID, latestSprint, tasks, webSocket }) => {
+const SprintBoard = ({ projectID, latestSprint, tasks, webSocket, usersInProject }) => {
   const [ isCreateTaskOpen, setIsCreateTaskOpen ] = useState(false)
+
+  const [ isEditTaskOpen, setIsEditTaskOpen ] = useState(false)
+
+  const [ taskToEdit, setTaskToEdit ] = useState({})
 
   const [ organizedTasks, setOrganizedTasks ] = useState({})
 
   useEffect(() => {
+    console.log(latestSprint)
+    console.log("TASKS", tasks)
     const newOrganizedTasks = {
       todo: [],
       doing: [],
@@ -27,11 +34,13 @@ const SprintBoard = ({ projectID, latestSprint, tasks, webSocket }) => {
       else if (task.status === 'DONE') newOrganizedTasks.done.push(task)
     })
 
+    console.log("NEWORG", newOrganizedTasks)
+
     setOrganizedTasks(newOrganizedTasks)
-  }, [tasks])
+  }, [tasks, latestSprint])
 
   useEffect(() => {
-    console.log(organizedTasks)
+    console.log("ORG", organizedTasks)
   }, [organizedTasks])
 
   const moveTask = (taskName, newStatus) => {
@@ -43,6 +52,15 @@ const SprintBoard = ({ projectID, latestSprint, tasks, webSocket }) => {
       newStatus: newStatus
     }))
   }
+
+  const openEditTaskModal = (taskName) => {
+    console.log("OPEN")
+    setIsEditTaskOpen(true)
+    console.log(taskName)
+    setTaskToEdit(tasks.find(task => task.name === taskName))
+  }
+
+  console.log("DOUBLECLICK BOARD", openEditTaskModal)
 
 
 
@@ -86,12 +104,12 @@ const SprintBoard = ({ projectID, latestSprint, tasks, webSocket }) => {
 
   return (
     <>
-      <div className='kanban-column flex flex-col align-center justify-center p-5 dark:text-white dark:bg-dark-secondary-bg bg-light-secondary-bg min-w-[340px] max-w-[430px] rounded-lg'>
+      <div className='kanban-column flex flex-col align-center p-5 dark:text-white dark:bg-dark-secondary-bg bg-light-secondary-bg min-w-[340px] max-w-[430px] rounded-lg'>
         <h3 className='font-subtitle font-bold text-2xl mb-5'>To-do</h3>
         <ul className='flex flex-col rounded-lg overflow-hidden h-full pr-5 gap-5 flex-1 overflow-y-scroll max-h-[calc(100vh-320px)]'>
           { 
             organizedTasks.todo
-              ? (organizedTasks.todo.map(task => <li key={task._id}><TaskCard text={task.name} /></li>))
+              ? (organizedTasks.todo.map(task => <li key={task._id}><TaskCard text={task.name} onDoubleClickEvent={openEditTaskModal}/></li>))
               : 'hola'
           }
         </ul>
@@ -106,34 +124,34 @@ const SprintBoard = ({ projectID, latestSprint, tasks, webSocket }) => {
         </span>
       </div>
 
-      <div className='kanban-column flex flex-col align-center justify-center p-5 dark:text-white dark:bg-dark-secondary-bg bg-light-secondary-bg min-w-[340px] max-w-[430px] rounded-lg'>
+      <div className='kanban-column flex flex-col align-center p-5 dark:text-white dark:bg-dark-secondary-bg bg-light-secondary-bg min-w-[340px] max-w-[430px] rounded-lg'>
         <h3 className='font-subtitle font-bold text-2xl mb-5'>Doing</h3>
         <ul className='flex flex-col rounded-lg overflow-hidden h-full pr-5 gap-5 flex-1 overflow-y-scroll max-h-[calc(100vh-320px)]'>
           { 
             organizedTasks.doing
-              ? (organizedTasks.doing.map(task => <li key={task._id}><TaskCard text={task.name} /></li>))
+              ? (organizedTasks.doing.map(task => <li key={task._id}><TaskCard text={task.name} onDoubleClickEvent={openEditTaskModal}/></li>))
               : 'hola'
           }
         </ul>
       </div>
 
-      <div className='kanban-column flex flex-col align-center justify-center p-5 dark:text-white dark:bg-dark-secondary-bg bg-light-secondary-bg min-w-[340px] max-w-[430px] rounded-lg'>
+      <div className='kanban-column flex flex-col align-center p-5 dark:text-white dark:bg-dark-secondary-bg bg-light-secondary-bg min-w-[340px] max-w-[430px] rounded-lg'>
         <h3 className='font-subtitle font-bold text-2xl mb-5'>Testing</h3>
         <ul className='flex flex-col rounded-lg overflow-hidden h-full pr-5 gap-5 flex-1 overflow-y-scroll max-h-[calc(100vh-320px)]'>
           { 
             organizedTasks.testing
-              ? (organizedTasks.testing.map(task => <li key={task._id}><TaskCard text={task.name} /></li>) )
+              ? (organizedTasks.testing.map(task => <li key={task._id}><TaskCard text={task.name} onDoubleClickEvent={openEditTaskModal}/></li>) )
               : 'hola'
           }
         </ul>
       </div>
 
-      <div className='kanban-column flex flex-col align-center justify-center p-5 dark:text-white dark:bg-dark-secondary-bg bg-light-secondary-bg min-w-[340px] max-w-[430px] rounded-lg'>
+      <div className='kanban-column flex flex-col align-center p-5 dark:text-white dark:bg-dark-secondary-bg bg-light-secondary-bg min-w-[340px] max-w-[430px] rounded-lg'>
         <h3 className='font-subtitle font-bold text-2xl mb-5'>Done</h3>
         <ul className='flex flex-col rounded-lg overflow-hidden h-full pr-5 gap-5 flex-1 overflow-y-scroll max-h-[calc(100vh-320px)]'>
           { 
             organizedTasks.done
-              ? (organizedTasks.done.map(task => <li key={task._id}><TaskCard text={task.name} /></li>) )
+              ? (organizedTasks.done.map(task => <li key={task._id}><TaskCard text={task.name} onDoubleClickEvent={openEditTaskModal}/></li>) )
               : 'hola'
           }
         </ul>
@@ -142,6 +160,11 @@ const SprintBoard = ({ projectID, latestSprint, tasks, webSocket }) => {
       {
         isCreateTaskOpen
           && <CreateTaskModal projectID={ projectID } latestSprint={ latestSprint } isCreateTaskOpen={ isCreateTaskOpen } setIsCreateTaskOpen={ setIsCreateTaskOpen } webSocket={ webSocket } />
+      }
+
+      {
+        isEditTaskOpen
+          && <EditTaskModal projectID={ projectID } latestSprint={ latestSprint } isEditTaskOpen={ isEditTaskOpen } setIsEditTaskOpen={ setIsEditTaskOpen } task={ taskToEdit } webSocket={ webSocket } usersInProject={ usersInProject } />
       }
     </>
   )
