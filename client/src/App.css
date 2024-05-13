@@ -5,6 +5,20 @@
     stroke-dashoffset: 4300;
     animation: dash 1s ease-in forwards;
   }
+
+  #light-icon-no-text, #light-icon-no-text * {
+    fill-opacity: 0;
+    stroke-dasharray: 4300;
+    stroke-dashoffset: 4300;
+    animation: dash-no-fill 1.75s cubic-bezier(.47,0,.8,.59) alternate infinite;
+  }
+
+  @keyframes dash-no-fill {
+  
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
   
   @keyframes dash {
     40% {

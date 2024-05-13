@@ -18,6 +18,7 @@ import useOnScreen from '../customHooks/useOnScreen'
 import { useTranslation } from 'react-i18next'
 
 import Error403 from './403'
+import Loader from '../components/Loader'
 
 const Dashboard = () => {
   const createProjectRef = useRef(null)
@@ -30,6 +31,8 @@ const Dashboard = () => {
   const [ user, setUser ] = useState(false)
   const [ isUserMenuOpen, setIsUserMenuOpen ] = useState(false)
   const [isCreateProjectShown, setIsCreateProjectShown] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleCloseCreateProject = () => {
     setIsCreateProjectShown(false);
@@ -100,6 +103,7 @@ const Dashboard = () => {
         .then(res => {
           res = res.data
           console.log(res.result)
+          setIsLoading(false)
           if (res.status === "OK") setProjects(res.result)
         })
     }
@@ -189,6 +193,10 @@ const Dashboard = () => {
         <meta property="og:url" content="permalink" />
       </Helmet>
       <ThemeDetector theme={ theme } setTheme={ toggleTheme } />  
+      {
+        isLoading
+        && <Loader />
+      }
       <main 
         className="
           grid grid-rows-[82px_1fr] overflow-hidden gap-4 relative
@@ -232,7 +240,7 @@ const Dashboard = () => {
             />
             <div className='w-[1px] h-full border-l-2 border-black dark:border-white/80 mx-6'></div>
             <button ref={ userBtnRef } onClick={() => setIsUserMenuOpen(true)} className="bg-[#d7d7d7] size-12 flex items-center justify-center rounded-full overflow-hidden">
-              {user.username.charAt(0).toUpperCase()}
+              {user.username?.charAt(0).toUpperCase()}
             </button>
           </span>
         </header>

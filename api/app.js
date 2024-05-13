@@ -241,7 +241,7 @@ async function getProjects(req, res) {
 
     await client.close()
   }
-
+  await new Promise(resolve => setTimeout(resolve, 900000))
   res.writeHead(200, { 'Content-Type': 'application/json' })
   res.end(JSON.stringify(result))
 }

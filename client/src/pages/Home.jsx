@@ -24,7 +24,7 @@ const Home = () => {
   const email = useRef(null)
   const username = useRef(null)
   const password = useRef(null)
-  const repeatPassword = useRef(null)
+  const password2 = useRef(null)
 
   useEffect(() => {
     // TODO: Implementar el observer para el cambio de tema
@@ -84,6 +84,21 @@ const Home = () => {
     }
     if (password.current.value == "") {
       setError({field: 'passwordRegister', message: 'Inserte una contraseña'})
+      return
+    } else if (password.current.value.length < 8) {
+      setError({field: 'passwordRegister', message: 'La contraseña debe tener al menos 8 caracteres'})
+      return
+    } else if (!/[A-Z]/.test(password.current.value)) {
+      setError({field: 'passwordRegister', message: 'La contraseña debe tener al menos una letra mayúscula'})
+      return
+    } else if (!/[a-z]/.test(password.current.value)) {
+      setError({field: 'passwordRegister', message: 'La contraseña debe tener al menos una letra minúscula'})
+      return
+    } else if (!/[0-9]/.test(password.current.value)) {
+      setError({field: 'passwordRegister', message: 'La contraseña debe tener al menos un número'})
+      return
+    } else if (!/[!@#$%^&*]/.test(password.current.value)) {
+      setError({field: 'passwordRegister', message: 'La contraseña debe tener al menos un caracter especial'})
       return
     }
     if (password2.current.value == "") {
@@ -220,22 +235,22 @@ const Home = () => {
               <h1 className='text-3xl font-bold font-subtitle'>{ t("home.registerMessage") }</h1>
               <div className="form-group w-8/12 mt-6">
                 <label htmlFor="username" className='text-lg'>{ t("home.registerUsername") }</label>
-                <input ref={username} type="text" id="username" className='w-full p-2 border-2 border-black dark:border-white rounded-md bg-transparent' />
+                <input ref={username} maxLength={20} type="text" id="username" className='w-full p-2 border-2 border-black dark:border-white rounded-md bg-transparent' />
                 <span className={`block w-full p-2 text-sm font-extrabold h-8 ${error.field === "usernameRegister" ? "text-red-500" : "text-transparent"}`}> {(error.field === "usernameRegister" ? error.message : "")}</span>
               </div>
               <div className="form-group w-8/12 mt-1">
                 <label htmlFor="email" className='text-lg'>{ t("home.registerEmail") }</label>
-                <input ref={email} type="email" id="email" className='w-full p-2 border-2 border-black dark:border-white rounded-md bg-transparent' />
+                <input ref={email} maxLength={100} type="email" id="email" className='w-full p-2 border-2 border-black dark:border-white rounded-md bg-transparent' />
                 <span className={`block w-full p-2 text-sm font-extrabold h-8 ${error.field === "emailRegister" ? "text-red-500" : "text-transparent"}`}> {(error.field === "emailRegister" ? error.message : "")}</span>
               </div>
               <div className="form-group w-8/12 mt-1">
                 <label htmlFor="password" className='text-lg'>{ t("home.registerPassword") }</label>
-                <input ref={password} type="password" id="password" className='w-full p-2 border-2 border-black dark:border-white rounded-md bg-transparent' />
+                <input ref={password} maxLength={20} type="password" id="password" className='w-full p-2 border-2 border-black dark:border-white rounded-md bg-transparent' />
                 <span className={`block w-full p-2 text-sm font-extrabold h-8 ${error.field === "passwordRegister" ? "text-red-500" : "text-transparent"}`}> {(error.field === "passwordRegister" ? error.message : "")}</span>
               </div>
               <div className="form-group w-8/12 mt-1">
                 <label htmlFor="repeat-password" className='text-lg'>{ t("home.registerRepeatPassword") }</label>
-                <input ref={repeatPassword} type="password" id="repeat-password" className='w-full p-2 border-2 border-black dark:border-white rounded-md bg-transparent' />
+                <input ref={password2} maxLength={20} type="password" id="repeat-password" className='w-full p-2 border-2 border-black dark:border-white rounded-md bg-transparent' />
                 <span className={`block w-full p-2 text-sm font-extrabold h-8 ${error.field === "password2" ? "text-red-500" : "text-red"}`}> {(error.field === "password2" ? error.message : "")}</span>
               </div>
               <div className="w-8/12 flex justify-between">
