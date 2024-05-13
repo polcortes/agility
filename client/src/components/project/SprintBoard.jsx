@@ -159,7 +159,7 @@ const SprintBoard = ({ projectID, latestSprint, tasks, webSocket, usersInProject
 
       {
         isCreateTaskOpen
-          && <CreateTaskModal projectID={ projectID } latestSprint={ latestSprint } isCreateTaskOpen={ isCreateTaskOpen } setIsCreateTaskOpen={ setIsCreateTaskOpen } webSocket={ webSocket } />
+          && <CreateTaskModal projectID={ projectID } latestSprint={ latestSprint } isCreateTaskOpen={ isCreateTaskOpen } setIsCreateTaskOpen={ setIsCreateTaskOpen } webSocket={ webSocket } usersInProject={usersInProject}/>
       }
 
       {

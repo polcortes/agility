@@ -112,8 +112,8 @@ async function getUsers(req, res) {
 
 }
 
-app.post('/googleLogin', testGoogle)
-async function testGoogle(req, res) {
+app.post('/googleLogin', googleLogin)
+async function googleLogin(req, res) {
   let receivedPOST = await post.getPostData(req)
   let result = {}
 
@@ -310,11 +310,15 @@ async function createProject(req, res) {
         inviteCode: generateInviteCode(32),
         date: new Date().toDateString()
       }
-      let insertedObject = await projectCollection.insertOne(project)
-      insertedId = insertedObject.insertedId.toString()
-      let sprintCollection = db.collection('sprintBoards')
-      await insertSprintBoard(insertedId, "Backlog", sprintCollection)
-      result = { status: "OK", result: "PROJECT CREATED", projectID: insertedId }
+      if (projectCollection.findOne({ title: { $eq: receivedPOST.title }, creator: { $eq: user.email } })) {
+        result = { status: "KO", result: "PROJECT ALREADY EXISTS" }
+      } else {
+        let insertedObject = await projectCollection.insertOne(project)
+        insertedId = insertedObject.insertedId.toString()
+        let sprintCollection = db.collection('sprintBoards')
+        await insertSprintBoard(insertedId, "Backlog", sprintCollection)
+        result = { status: "OK", result: "PROJECT CREATED", projectID: insertedId }
+      }
     } else {
       result = { status: "KO", result: "TOKEN EXPIRED" }
     }
@@ -1152,12 +1156,19 @@ wss.on('connection', (ws) => {
       projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName].tasks[messageAsObject.newName].description = messageAsObject.description
       projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName].tasks[messageAsObject.newName].assignedMember = messageAsObject.assignedMember
       projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName].tasks[messageAsObject.newName].status = messageAsObject.status
-      delete projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName].tasks[messageAsObject.oldName]
+      if (messageAsObject.oldName != messageAsObject.newName) {
+        delete projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName].tasks[messageAsObject.oldName]
+      }
+      console.log("PROJECTS", projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName])
       broadcastProjectChange(messageAsObject.projectID)
     } else if (messageAsObject.type == "deleteTask") {
       deleteTaskWs(messageAsObject.projectID, messageAsObject.sprintName, messageAsObject.taskName)
       delete projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName].tasks[messageAsObject.taskName]
       broadcastProjectChange(messageAsObject.projectID)
+    } else if (messageAsObject.type == "inviteUser") {
+      projects[messageAsObject.projectID].data.invitedUsers.push(messageAsObject.email)
+      broadcastProjectChange(messageAsObject.projectID)
+      
     }
   })
 })

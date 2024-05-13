@@ -26,7 +26,13 @@ const SearchProjects = ({ onClose, projects }) => {
   }, [isOutsideClicked, onClose]);
 
   return (
-    <div id="search-projects-container" className="absolute top-28 bg-white right-32 p-5 flex flex-col border-2 border-black rounded-lg max-h-96 dark:bg-dark-secondary-bg">
+    <div 
+      id="search-projects-container" 
+      className="
+        absolute top-40 left-1/2 -translate-x-1/2 md:left-[initial] md:-translate-x-0 md:top-28 md:right-32 
+        max-w-64 p-5 bg-white flex flex-col border-2 border-black rounded-lg max-h-96 dark:bg-dark-secondary-bg
+      "
+    >
       <h2
         className='font-subtitle text-2xl mb-5 text-black dark:text-white'
       >
