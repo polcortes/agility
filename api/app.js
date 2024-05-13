@@ -1163,7 +1163,7 @@ wss.on('connection', (ws) => {
         projects[messageAsObject.projectID].data.chat.push({ 
           message: messageAsObject.message,
           token: messageAsObject.token, 
-          username: user.username,
+          email: user.email,
           date: new Date()
         })
 

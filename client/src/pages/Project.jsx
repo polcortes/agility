@@ -517,7 +517,7 @@ const Project = () => {
               }
               {
                 section === "Chat"
-                  && <Chat projectID={projectID} ws={ws} chat={chat} mainProjectContainerRef={mainProjectContainerRef} />
+                  && <Chat projectID={projectID} ws={ws} chat={chat} mainProjectContainerRef={mainProjectContainerRef} thisUser={ thisUser } otherUsers={ otherUsers } />
               }
             </section>
           </main>

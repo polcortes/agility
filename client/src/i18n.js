@@ -23,10 +23,42 @@ i18n
 
             description1: 'Manage your Scrum projects',
             description2: 'faster than ever',
-            accessAccount: 'Log in or sign up!'
+            loginMessage: 'Log in',
+            loginUsername: 'Username or email',
+            loginPassword: 'Password',
+            loginButton: 'Log in',
+            registerLink: 'Create a new account',
+
+            registerMessage: 'Register',
+            registerUsername: 'Username',
+            registerEmail: 'Email',
+            registerPassword: 'Password',
+            registerRepeatPassword: 'Confirm your password',
+            registerButton: 'Register',
+            loginLink: 'Log in',
+
+            googleButton: 'Sign in with Google',
+          },
+          dashboard: {
+            seoTitle: 'Your projects | Agility',
+            seoDescription: 'Manage your Scrum projects with Agility.',
+
+            title: 'Projects',
+            createProjectBtn: 'Create project',
+            createProjectTitle: 'Project title',
+            createProjectTitlePlaceholder: 'Example title...',
+            createProjectCreateBtn: 'Create',
+            searchProjects: 'Search projects',
+            searchResults: 'Search results',
+
+            projectOwner: 'By: '
           },
           404: {
             title: '404 - Page Not Found',
+            link: "Go back to home 🏠"
+          },
+          403: {
+            title: '403 - Forbidden',
             link: "Go back to home 🏠"
           }
         }
@@ -39,7 +71,35 @@ i18n
 
             description1: 'Gestiona tus proyectos de Scrum',
             description2: 'más rápido que nunca',
-            accessAccount: '¡Inicia sesión o regístrate!'
+            loginMessage: 'Iniciar sesión',
+            loginUsername: 'Nombre de usuario o correo electrónico',
+            loginPassword: 'Contraseña',
+            loginButton: 'Iniciar sesión',
+            registerLink: 'Crear una cuenta nueva',
+
+            registerMessage: 'Regístrate',
+            registerUsername: 'Nombre de usuario',
+            registerEmail: 'Correo electrónico',
+            registerPassword: 'Contraseña',
+            registerRepeatPassword: 'Confirma tu contraseña',
+            registerButton: 'Registrarse',
+            loginLink: 'Iniciar sesión',
+
+            googleButton: 'Entrar con Google',
+          },
+          dashboard: {
+            seoTitle: 'Tus proyectos | Agility',
+            seoDescription: 'Gestiona tus proyectos de Scrum con Agility.',
+
+            title: 'Proyectos',
+            createProjectBtn: 'Crear proyecto',
+            createProjectTitle: 'Título del proyecto',
+            createProjectTitlePlaceholder: 'Título de ejemplo...',
+            createProjectCreateBtn: 'Crear',
+            searchProjects: 'Buscar proyectos',
+            searchResults: 'Resultados de la búsqueda',
+
+            projectOwner: 'De: '
           },
           404: {
             title: '404 - Página no encontrada',
@@ -70,6 +130,20 @@ i18n
             loginLink: 'Inicia sessió',
 
             googleButton: 'Entra amb Google',
+          },
+          dashboard: {
+            seoTitle: 'Els teus projectes | Agility',
+            seoDescription: 'Gestiona els teus projectes de Scrum amb Agility.',
+
+            title: 'Projectes',
+            createProjectBtn: 'Crear projecte',
+            createProjectTitle: 'Títol del projecte',
+            createProjectTitlePlaceholder: 'Títol d\'exemple...',
+            createProjectCreateBtn: 'Crear',
+            searchProjects: 'Cerca projectes',
+            searchResults: 'Resultats de la cerca',
+
+            projectOwner: 'De: '
           },
           404: {
             title: '404 - Pàgina no trobada',

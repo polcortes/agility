@@ -2,8 +2,7 @@
 import ChatBubble from "./ChatBubble"
 import { useState, useRef, useEffect } from "react"
 
-const Chat = ({ projectID, ws, chat, mainProjectContainerRef }) => {
-  const aDate = new Date()
+const Chat = ({ projectID, ws, chat, mainProjectContainerRef, thisUser, otherUsers }) => {
   const sectionInputRef = useRef(null)
   const [sortedChats, setSortedChats] = useState([])
 
@@ -56,12 +55,12 @@ const Chat = ({ projectID, ws, chat, mainProjectContainerRef }) => {
   return (
     <>
       <section className="flex flex-col justify-end w-full">
-        {/* <ChatBubble message="Hola, ¿cómo estás?" sender="Jese" timeWasSent={ aDate } userIsSender={ () => checkUserIsSender(message) } /> */}
         {
           sortedChats && sortedChats.length > 0
             ? sortedChats.map((message, index) => {
+              console.log('message', message)
               return (
-                <ChatBubble key={ index } message={ message.message } sender={ message.username } timeWasSent={ new Date(message.date) } />
+                <ChatBubble key={ index } message={ message.message } sender={ message.email } timeWasSent={ new Date(message.date) } thisUser={ thisUser } otherUsers={ otherUsers } />
               )
             })
             : (
@@ -70,11 +69,7 @@ const Chat = ({ projectID, ws, chat, mainProjectContainerRef }) => {
         }
       </section>
       <section ref={ sectionInputRef } onClick={ handleSectionInputClick } className="sender-section hover:cursor-text flex items-center fixed bottom-8 w-full pl-6 h-auto min-h-[54px] max-h-24 dark:bg-dark-tertiary-bg bg-light-tertiary-bg rounded-[30px]">
-        { /*
-          TODO: Se rompe por todos lados. https://codepen.io/chriscoyier/pen/XWbqpzP   https://css-tricks.com/auto-growing-inputs-textareas/ */}
-        <span contentEditable role="textbox" id="chat-input" type="text" className="block overflow-y-scroll overflow-hidden dark:empty:before:text-gray-300 dark:text-white empty:before:text-gray-500 empty:before:content-['Escriu_un_missatge...'] max-w-full w-full h-fit max-h-32 resize-none bg-transparent outline-none">
-          
-        </span>
+        <span contentEditable role="textbox" id="chat-input" type="text" className="block overflow-y-scroll overflow-hidden dark:empty:before:text-gray-300 dark:text-white empty:before:text-gray-500 empty:before:content-['Escriu_un_missatge...'] max-w-full w-full h-fit max-h-32 resize-none bg-transparent outline-none"></span>
       </section>
 
       <button 

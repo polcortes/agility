@@ -193,7 +193,7 @@ const Home = () => {
         </section>
         <aside className="relative bg-light-secondary-bg dark:bg-dark-secondary-bg/80 px-6 py-14 flex flex-col items-center justify-center rounded-none xl:rounded-md">
           <ThemeToggler theme={ theme } setTheme={ toggleTheme } className={theme === 'dark' ? "from-transparent to-white" : "from-the-accent-color"} onClick={() => toggleTheme(theme)}/>
-          {/* <LanguageChanger className={`hidden xl:flex`} /> */}
+          <LanguageChanger className={`hidden xl:flex`} />
           {formType === 'login' && (
             <>
               <h1 className='text-3xl font-bold font-subtitle'>{ t("home.loginMessage") }</h1>
