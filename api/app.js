@@ -1156,7 +1156,10 @@ wss.on('connection', (ws) => {
       projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName].tasks[messageAsObject.newName].description = messageAsObject.description
       projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName].tasks[messageAsObject.newName].assignedMember = messageAsObject.assignedMember
       projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName].tasks[messageAsObject.newName].status = messageAsObject.status
-      delete projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName].tasks[messageAsObject.oldName]
+      if (messageAsObject.oldName != messageAsObject.newName) {
+        delete projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName].tasks[messageAsObject.oldName]
+      }
+      console.log("PROJECTS", projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName])
       broadcastProjectChange(messageAsObject.projectID)
     } else if (messageAsObject.type == "deleteTask") {
       deleteTaskWs(messageAsObject.projectID, messageAsObject.sprintName, messageAsObject.taskName)

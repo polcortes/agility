@@ -14,6 +14,7 @@ import UserMenu from '../components/UserMenu'
 import ThemeDetector from '../components/ThemeDetector'
 
 import { useEffect, useRef, useState } from 'react'
+import useOnScreen from '../customHooks/useOnScreen'
 
 const Dashboard = () => {
   const createProjectRef = useRef(null)
@@ -97,25 +98,29 @@ const Dashboard = () => {
   }, [projects])
 
   const [rendered, setRendered] = useState(false);
+  // const darkIconRef = useRef(null);
+  // const lightIconRef = useRef(null);
+
+  const isDarkRendered = useOnScreen(darkIconRef);
+  const isLightRendered = useOnScreen(lightIconRef);
+
+  useEffect(() => {
+    setRendered(isDarkRendered || isLightRendered);
+  }, [isDarkRendered, isLightRendered]);
 
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
-      // Verificar si las referencias existen antes de intentar acceder a los elementos dentro de ellas
-      if (lightIconRef.current && darkIconRef.current) {
-        // Esperar a que el DOM se renderice completamente antes de acceder a los elementos internos
-        if (rendered) {
-          // Obtener las referencias a los elementos path dentro de los íconos
-          const lightIconPath = lightIconRef.current.querySelector('path:nth-of-type(2)');
-          const darkIconPath = darkIconRef.current.querySelector('path:nth-of-type(2)');
-          // Verificar si el ancho de la ventana es mayor que 768px y ocultar o mostrar el path según corresponda
-          if (width > 768) {
-            if (lightIconPath) lightIconPath.style.display = 'none';
-            if (darkIconPath) darkIconPath.style.display = 'none';
-          } else {
-            if (lightIconPath) lightIconPath.style.display = 'block';
-            if (darkIconPath) darkIconPath.style.display = 'block';
-          }
+      if (lightIconRef.current || darkIconRef.current) {
+        const lightIconPath = lightIconRef.current?.querySelector('path:nth-of-type(2)');
+        const darkIconPath = darkIconRef.current?.querySelector('path:nth-of-type(2)');
+
+        if (width < 768) {
+          if (lightIconPath) lightIconPath.style.display = 'none';
+          if (darkIconPath) darkIconPath.style.display = 'none';
+        } else {
+          if (lightIconPath) lightIconPath.style.display = 'block';
+          if (darkIconPath) darkIconPath.style.display = 'block';
         }
       }
     };
@@ -127,13 +132,35 @@ const Dashboard = () => {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [rendered]);
+  }, [darkIconRef, lightIconRef]);
 
-  // Establecer el estado de renderizado como verdadero después de que el componente se haya montado
-  useEffect(() => {
-    if (window.innerWidth > 728) setRendered(true);
-    else setRendered(false);
-  }, []);
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     const width = window.innerWidth;
+  //     console.log("RENDERED: ", rendered, "WIDTH: ", width)
+  //     // Verificar si las referencias existen antes de intentar acceder a los elementos dentro de ellas
+  //     if (lightIconRef.current && darkIconRef.current) {
+  //       const lightIconPath = lightIconRef.current.querySelector('path:nth-of-type(2)');
+  //       const darkIconPath = darkIconRef.current.querySelector('path:nth-of-type(2)');
+  //       // Verificar si el ancho de la ventana es mayor que 768px y ocultar o mostrar el path según corresponda
+  //       if (width > 768) {
+  //         if (lightIconPath) lightIconPath.style.display = 'none';
+  //         if (darkIconPath) darkIconPath.style.display = 'none';
+  //       } else {
+  //         if (lightIconPath) lightIconPath.style.display = 'block';
+  //         if (darkIconPath) darkIconPath.style.display = 'block';
+  //       }
+  //     }
+  //   };
+
+  //   handleResize();
+
+  //   window.addEventListener('resize', handleResize);
+
+  //   return () => {
+  //     window.removeEventListener('resize', handleResize);
+  //   };
+  // }, [ isIntersecting ]);
 
   const [ searchValue, setSearchValue ] = useState('')
 
@@ -161,7 +188,7 @@ const Dashboard = () => {
       >
         <header 
           className='
-            p-5 rounded-md relative 
+            p-5 xl:mr-8 rounded-md relative 
             flex items-center justify-between
             bg-light-secondary-bg dark:bg-dark-secondary-bg'
         >
@@ -180,15 +207,15 @@ const Dashboard = () => {
             onClick={() => setIsCreateProjectShown(!isCreateProjectShown)}
           >
             <svg width="20" height="20" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.49991 0.876892C3.84222 0.876892 0.877075 3.84204 0.877075 7.49972C0.877075 11.1574 3.84222 14.1226 7.49991 14.1226C11.1576 14.1226 14.1227 11.1574 14.1227 7.49972C14.1227 3.84204 11.1576 0.876892 7.49991 0.876892ZM1.82707 7.49972C1.82707 4.36671 4.36689 1.82689 7.49991 1.82689C10.6329 1.82689 13.1727 4.36671 13.1727 7.49972C13.1727 10.6327 10.6329 13.1726 7.49991 13.1726C4.36689 13.1726 1.82707 10.6327 1.82707 7.49972ZM7.50003 4C7.77617 4 8.00003 4.22386 8.00003 4.5V7H10.5C10.7762 7 11 7.22386 11 7.5C11 7.77614 10.7762 8 10.5 8H8.00003V10.5C8.00003 10.7761 7.77617 11 7.50003 11C7.22389 11 7.00003 10.7761 7.00003 10.5V8H4.50003C4.22389 8 4.00003 7.77614 4.00003 7.5C4.00003 7.22386 4.22389 7 4.50003 7H7.00003V4.5C7.00003 4.22386 7.22389 4 7.50003 4Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path></svg>
-            Crear projecte
+            <span className='hidden md:block'>Crear projecte</span>
           </button>
 
           <span className="flex h-full relative">
-            <svg className='absolute top-1/2 -translate-y-1/2 left-4' width="20" height="20" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 6.5C10 8.433 8.433 10 6.5 10C4.567 10 3 8.433 3 6.5C3 4.567 4.567 3 6.5 3C8.433 3 10 4.567 10 6.5ZM9.30884 10.0159C8.53901 10.6318 7.56251 11 6.5 11C4.01472 11 2 8.98528 2 6.5C2 4.01472 4.01472 2 6.5 2C8.98528 2 11 4.01472 11 6.5C11 7.56251 10.6318 8.53901 10.0159 9.30884L12.8536 12.1464C13.0488 12.3417 13.0488 12.6583 12.8536 12.8536C12.6583 13.0488 12.3417 13.0488 12.1464 12.8536L9.30884 10.0159Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path></svg>
+            <svg className='hidden md:block absolute top-1/2 -translate-y-1/2 left-4' width="20" height="20" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 6.5C10 8.433 8.433 10 6.5 10C4.567 10 3 8.433 3 6.5C3 4.567 4.567 3 6.5 3C8.433 3 10 4.567 10 6.5ZM9.30884 10.0159C8.53901 10.6318 7.56251 11 6.5 11C4.01472 11 2 8.98528 2 6.5C2 4.01472 4.01472 2 6.5 2C8.98528 2 11 4.01472 11 6.5C11 7.56251 10.6318 8.53901 10.0159 9.30884L12.8536 12.1464C13.0488 12.3417 13.0488 12.6583 12.8536 12.8536C12.6583 13.0488 12.3417 13.0488 12.1464 12.8536L9.30884 10.0159Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path></svg>
             <input 
               onFocus={() => setIsSearchProjectsShown(true)}
               onChange={(e) => setSearchValue(e.target.value)}
-              className="bg-light-tertiary-bg rounded-md h-fit px-3 py-2 pl-12 outline-none flex items-center" 
+              className="bg-light-tertiary-bg rounded-md h-fit px-3 py-2 pl-12 outline-none hidden md:flex items-center" 
               type="search" 
               name="search-in-projects" 
               id="search-in-projects" 
@@ -206,6 +233,18 @@ const Dashboard = () => {
             p-5 rounded-md overflow-y-scroll
             flex flex-col items-center"
         >
+          <span className='relative flex md:hidden mb-4'>
+            <svg className='block absolute top-1/2 -translate-y-1/2 left-4' width="20" height="20" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 6.5C10 8.433 8.433 10 6.5 10C4.567 10 3 8.433 3 6.5C3 4.567 4.567 3 6.5 3C8.433 3 10 4.567 10 6.5ZM9.30884 10.0159C8.53901 10.6318 7.56251 11 6.5 11C4.01472 11 2 8.98528 2 6.5C2 4.01472 4.01472 2 6.5 2C8.98528 2 11 4.01472 11 6.5C11 7.56251 10.6318 8.53901 10.0159 9.30884L12.8536 12.1464C13.0488 12.3417 13.0488 12.6583 12.8536 12.8536C12.6583 13.0488 12.3417 13.0488 12.1464 12.8536L9.30884 10.0159Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path></svg>
+            <input 
+              onFocus={() => setIsSearchProjectsShown(true)}
+              onChange={(e) => setSearchValue(e.target.value)}
+              className="bg-light-tertiary-bg rounded-md h-fit px-3 py-2 pl-12 outline-none flex items-center" 
+              type="search" 
+              name="search-in-projects" 
+              id="search-in-projects" 
+              placeholder='Search' 
+            />
+          </span>
           <h1 className="font-title font-extrabold text-5xl mb-8 text-black dark:text-white">Projectes</h1>
 
           <section className='grid lg:grid-cols-3 w-full gap-8 md:px-24 px-6 sm:grid-cols-2 grid-cols-1'>
