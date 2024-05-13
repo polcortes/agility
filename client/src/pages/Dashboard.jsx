@@ -16,12 +16,15 @@ import ThemeDetector from '../components/ThemeDetector'
 import { useEffect, useRef, useState } from 'react'
 import useOnScreen from '../customHooks/useOnScreen'
 
+import Error403 from './403'
+
 const Dashboard = () => {
   const createProjectRef = useRef(null)
 
   const lightIconRef = useRef(null)
   const darkIconRef = useRef(null)
 
+  const [ user, setUser ] = useState(false)
   const [ isUserMenuOpen, setIsUserMenuOpen ] = useState(false)
   const [isCreateProjectShown, setIsCreateProjectShown] = useState(false);
 
@@ -96,6 +99,21 @@ const Dashboard = () => {
         })
     }
   }, [projects])
+
+  useEffect(() => {
+    console.log("USER: ", user == {})
+    if (!user) {
+      axios
+        .post(`${import.meta.env.VITE_API_ROUTE}/getUser`, {
+          token: localStorage.getItem("userToken"), // localStorage.getItem('token')
+        })
+        .then(res => {
+          res = res.data
+          console.log(res.result)
+          if (res.status === "OK") setUser(res.result)
+        })
+    }
+  }, [user])
 
   const [rendered, setRendered] = useState(false);
   // const darkIconRef = useRef(null);
@@ -173,6 +191,7 @@ const Dashboard = () => {
     else setResults(newResults)
   }, [searchValue, projects])
 
+  if (localStorage.getItem('userToken') === null) return <Error403 />
   return (
     <>
       <Helmet>
@@ -223,7 +242,7 @@ const Dashboard = () => {
             />
             <div className='w-[1px] h-full border-l-2 border-black dark:border-white/80 mx-6'></div>
             <button onClick={() => setIsUserMenuOpen(true)} className="bg-[#d7d7d7] size-12 flex items-center justify-center rounded-full overflow-hidden">
-              pfp<br />icon
+              {user.username.charAt(0).toUpperCase()}
             </button>
           </span>
         </header>
