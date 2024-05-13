@@ -24,7 +24,7 @@ const ThemeToggler = ({theme, setTheme}) => {
 	}
 
 	return (
-		<div className={`${path === '/' ? 'absolute top-6 left-6' : 'mt-2 mx-[25%]'} flex gap-4 `}>
+		<div className={`${path === '/' ? 'absolute top-6 left-6' : 'mt-2 mx-[25%] mb-5'} flex gap-4 `}>
 			<input type="checkbox" id="theme-toggler" className="hidden" onClick={() => toggleTheme()}/>
 			<label htmlFor="theme-toggler" className={`
 			flex items-center justify-between align-center 

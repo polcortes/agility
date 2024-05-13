@@ -15,12 +15,15 @@ import ThemeDetector from '../components/ThemeDetector'
 
 import { useEffect, useRef, useState } from 'react'
 import useOnScreen from '../customHooks/useOnScreen'
+import { useTranslation } from 'react-i18next'
 
 const Dashboard = () => {
   const createProjectRef = useRef(null)
-
+  const userBtnRef = useRef(null)
   const lightIconRef = useRef(null)
   const darkIconRef = useRef(null)
+
+  const { t } = useTranslation()
 
   const [ isUserMenuOpen, setIsUserMenuOpen ] = useState(false)
   const [isCreateProjectShown, setIsCreateProjectShown] = useState(false);
@@ -39,6 +42,8 @@ const Dashboard = () => {
 
   const [ theme, toggleTheme ] = useState('dark')
   useEffect(() => {
+    handleResize()
+
     // TODO: Implementar el observer para el cambio de tema
     const themeObserver = new MutationObserver((event) => {
       event.forEach((mutation) => {
@@ -108,22 +113,23 @@ const Dashboard = () => {
     setRendered(isDarkRendered || isLightRendered);
   }, [isDarkRendered, isLightRendered]);
 
-  useEffect(() => {
-    const handleResize = () => {
-      const width = window.innerWidth;
-      if (lightIconRef.current || darkIconRef.current) {
-        const lightIconPath = lightIconRef.current?.querySelector('path:nth-of-type(2)');
-        const darkIconPath = darkIconRef.current?.querySelector('path:nth-of-type(2)');
+  function handleResize() {
+    const width = window.innerWidth;
+    if (lightIconRef.current || darkIconRef.current) {
+      const lightIconPath = lightIconRef.current?.querySelector('path:nth-of-type(2)');
+      const darkIconPath = darkIconRef.current?.querySelector('path:nth-of-type(2)');
 
-        if (width < 768) {
-          if (lightIconPath) lightIconPath.style.display = 'none';
-          if (darkIconPath) darkIconPath.style.display = 'none';
-        } else {
-          if (lightIconPath) lightIconPath.style.display = 'block';
-          if (darkIconPath) darkIconPath.style.display = 'block';
-        }
+      if (width < 768) {
+        if (lightIconPath) lightIconPath.style.display = 'none';
+        if (darkIconPath) darkIconPath.style.display = 'none';
+      } else {
+        if (lightIconPath) lightIconPath.style.display = 'block';
+        if (darkIconPath) darkIconPath.style.display = 'block';
       }
-    };
+    }
+  };
+
+  useEffect(() => {
 
     handleResize();
 
@@ -133,34 +139,6 @@ const Dashboard = () => {
       window.removeEventListener('resize', handleResize);
     };
   }, [darkIconRef, lightIconRef]);
-
-  // useEffect(() => {
-  //   const handleResize = () => {
-  //     const width = window.innerWidth;
-  //     console.log("RENDERED: ", rendered, "WIDTH: ", width)
-  //     // Verificar si las referencias existen antes de intentar acceder a los elementos dentro de ellas
-  //     if (lightIconRef.current && darkIconRef.current) {
-  //       const lightIconPath = lightIconRef.current.querySelector('path:nth-of-type(2)');
-  //       const darkIconPath = darkIconRef.current.querySelector('path:nth-of-type(2)');
-  //       // Verificar si el ancho de la ventana es mayor que 768px y ocultar o mostrar el path según corresponda
-  //       if (width > 768) {
-  //         if (lightIconPath) lightIconPath.style.display = 'none';
-  //         if (darkIconPath) darkIconPath.style.display = 'none';
-  //       } else {
-  //         if (lightIconPath) lightIconPath.style.display = 'block';
-  //         if (darkIconPath) darkIconPath.style.display = 'block';
-  //       }
-  //     }
-  //   };
-
-  //   handleResize();
-
-  //   window.addEventListener('resize', handleResize);
-
-  //   return () => {
-  //     window.removeEventListener('resize', handleResize);
-  //   };
-  // }, [ isIntersecting ]);
 
   const [ searchValue, setSearchValue ] = useState('')
 
@@ -176,8 +154,20 @@ const Dashboard = () => {
   return (
     <>
       <Helmet>
-        <title>Els teus projectes | Agility</title>
-        <meta name="description" content="Projectes" />
+        <title>{ t('dashboard.seoTitle') }</title>
+        <meta name="description" content={ t('dashboard.seoDescription') } />
+        <link rel="canonical" href="https://agility.ieti.site/dashboard" />
+        <meta name="theme-color" content="#4F46E5" />
+
+        <meta property="og:type" content="website" />
+
+        <meta property="og:title" content={ t('dashboard.seoTitle') } />
+
+        <meta property="og:description" content={ t('dashboard.seoDescription') } />
+
+        <meta property="og:image" content="/src/assets/official/agility.webp" />
+
+        <meta property="og:url" content="permalink" />
       </Helmet>
       <ThemeDetector theme={ theme } setTheme={ toggleTheme } />  
       <main 
@@ -207,7 +197,7 @@ const Dashboard = () => {
             onClick={() => setIsCreateProjectShown(!isCreateProjectShown)}
           >
             <svg width="20" height="20" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.49991 0.876892C3.84222 0.876892 0.877075 3.84204 0.877075 7.49972C0.877075 11.1574 3.84222 14.1226 7.49991 14.1226C11.1576 14.1226 14.1227 11.1574 14.1227 7.49972C14.1227 3.84204 11.1576 0.876892 7.49991 0.876892ZM1.82707 7.49972C1.82707 4.36671 4.36689 1.82689 7.49991 1.82689C10.6329 1.82689 13.1727 4.36671 13.1727 7.49972C13.1727 10.6327 10.6329 13.1726 7.49991 13.1726C4.36689 13.1726 1.82707 10.6327 1.82707 7.49972ZM7.50003 4C7.77617 4 8.00003 4.22386 8.00003 4.5V7H10.5C10.7762 7 11 7.22386 11 7.5C11 7.77614 10.7762 8 10.5 8H8.00003V10.5C8.00003 10.7761 7.77617 11 7.50003 11C7.22389 11 7.00003 10.7761 7.00003 10.5V8H4.50003C4.22389 8 4.00003 7.77614 4.00003 7.5C4.00003 7.22386 4.22389 7 4.50003 7H7.00003V4.5C7.00003 4.22386 7.22389 4 7.50003 4Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path></svg>
-            <span className='hidden md:block'>Crear projecte</span>
+            <span className='hidden lg:block'>Crear projecte</span>
           </button>
 
           <span className="flex h-full relative">
@@ -222,7 +212,7 @@ const Dashboard = () => {
               placeholder='Search' 
             />
             <div className='w-[1px] h-full border-l-2 border-black dark:border-white/80 mx-6'></div>
-            <button onClick={() => setIsUserMenuOpen(true)} className="bg-[#d7d7d7] size-12 flex items-center justify-center rounded-full overflow-hidden">
+            <button ref={ userBtnRef } onClick={() => setIsUserMenuOpen(true)} className="bg-[#d7d7d7] size-12 flex items-center justify-center rounded-full overflow-hidden">
               pfp<br />icon
             </button>
           </span>
@@ -238,7 +228,7 @@ const Dashboard = () => {
             <input 
               onFocus={() => setIsSearchProjectsShown(true)}
               onChange={(e) => setSearchValue(e.target.value)}
-              className="bg-light-tertiary-bg rounded-md h-fit px-3 py-2 pl-12 outline-none flex items-center" 
+              className="bg-light-tertiary-bg border-2 border-black dark:border-transparent rounded-md h-fit px-3 py-2 pl-12 outline-none flex items-center" 
               type="search" 
               name="search-in-projects" 
               id="search-in-projects" 

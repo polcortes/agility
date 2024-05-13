@@ -36,11 +36,7 @@ const ChatBubble = ({ message, sender, timeWasSent, thisUser, otherUsers }) => {
   }
 
   const getUserData = (email, otherUsers, thisUser) => {
-    console.log(thisUser)
-    console.log(otherUsers)
-    console.log(isTheSenderThisUser)
     if (sender === thisUser.email) {
-      console.log("AAAAAAAAAAAAAAAAAAAAAAAAAa")
       setSenderObject(thisUser)}
     else {
       setSenderObject(otherUsers.find(user => user.email === email))
@@ -50,13 +46,10 @@ const ChatBubble = ({ message, sender, timeWasSent, thisUser, otherUsers }) => {
   useEffect(() => {
     checkIfSenderIsThisUser()
     getUserData(sender, otherUsers, thisUser)
-
-    console.log('sender: ', sender)
-    console.log('senderObject: ', senderObject)
   }, [])
 
   useEffect(() => {
-    console.log(senderObject)
+    console.log('senderObject', senderObject)
   }, [senderObject])
 
   const timeWasSentString = getNiceFormattedDate(timeWasSent);
@@ -66,7 +59,7 @@ const ChatBubble = ({ message, sender, timeWasSent, thisUser, otherUsers }) => {
     {/* <div className="flex items-start gap-2.5"> */}
       {/* <img className="w-8 h-8 rounded-full" src="/docs/images/people/profile-picture-3.jpg" alt="Jese image" /> */}
       {/* sender === username!! */}
-      <UserProfilePhoto username={ senderObject.username ?? '' } />
+      <UserProfilePhoto username={ senderObject.username || '' } />
       <div className="flex flex-col gap-1 w-full max-w-[320px]">
           <div className="flex items-center space-x-2 rtl:space-x-reverse">
             <span className="text-md font-subtitle font-semibold dark:text-gray-100 text-gray-900">{ senderObject.username ?? '' }</span>

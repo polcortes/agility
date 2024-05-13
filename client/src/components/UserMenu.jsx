@@ -3,6 +3,7 @@ import { useRef, useEffect } from 'react'
 
 import ThemeDetector from './ThemeDetector'
 import ThemeToggler from './ThemeToggler'
+import LanguageChanger from './LanguageChanger'
 
 const UserMenuDialog = ({ setIsUserMenuOpen, isUserMenuOpen, theme, setTheme }) => {
   const dialogRef = useRef()
@@ -48,6 +49,9 @@ const UserMenuDialog = ({ setIsUserMenuOpen, isUserMenuOpen, theme, setTheme }) 
         <h2 className='font-title dark:text-white font-bold text-3xl mb-5'>Configuració</h2>
         <label className='font-lg dark:text-white pb-6' htmlFor="">Tema de l&apos;aplicació:</label>
         <ThemeToggler className='w-20' theme={ theme } setTheme={ setTheme } />
+
+        <label className='font-lg dark:text-white pb-6'>Idioma de l&apos;aplicació:</label>
+        <LanguageChanger extraStyles={`mx-auto`} />
 
         <button
           onClick={() => logout()}

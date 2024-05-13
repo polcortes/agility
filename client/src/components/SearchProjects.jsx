@@ -53,7 +53,7 @@ const SearchProjects = ({ onClose, projects }) => {
       }
 
       { projects[0] === "No s'han trobat resultats" 
-        && <li className="mb-2 w-full hover:bg-light-tertiary-bg p-2 rounded-md">
+        && <li className="dark:text-white mb-2 w-full hover:bg-light-tertiary-bg p-2 rounded-md">
             <h3 className="font-title text-xl">{projects[0]}</h3>
         </li>
         
