@@ -172,7 +172,6 @@ const Dashboard = () => {
     if (newResults.length === 0) setResults(["No s'han trobat resultats"])
     else setResults(newResults)
   }, [searchValue, projects])
-
   if (localStorage.getItem('userToken') === null) return <Error403 />
   return (
     <>
@@ -195,7 +194,7 @@ const Dashboard = () => {
       <ThemeDetector theme={ theme } setTheme={ toggleTheme } />  
       {
         isLoading
-        && <Loader />
+        && <Loader theme={ theme } />
       }
       <main 
         className="
