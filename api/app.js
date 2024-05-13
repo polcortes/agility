@@ -112,8 +112,8 @@ async function getUsers(req, res) {
 
 }
 
-app.post('/googleLogin', testGoogle)
-async function testGoogle(req, res) {
+app.post('/googleLogin', googleLogin)
+async function googleLogin(req, res) {
   let receivedPOST = await post.getPostData(req)
   let result = {}
 
@@ -1165,6 +1165,10 @@ wss.on('connection', (ws) => {
       deleteTaskWs(messageAsObject.projectID, messageAsObject.sprintName, messageAsObject.taskName)
       delete projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName].tasks[messageAsObject.taskName]
       broadcastProjectChange(messageAsObject.projectID)
+    } else if (messageAsObject.type == "inviteUser") {
+      projects[messageAsObject.projectID].data.invitedUsers.push(messageAsObject.email)
+      broadcastProjectChange(messageAsObject.projectID)
+      
     }
   })
 })

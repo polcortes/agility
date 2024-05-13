@@ -2,7 +2,7 @@
 import { useEffect, useRef } from 'react'
 import axios from 'axios'
 
-const ShareProjectModal = ({ project, setIsShareProjectModalOpen, isShareProjectModalOpen }) => {
+const ShareProjectModal = ({ project, setIsShareProjectModalOpen, isShareProjectModalOpen, webSocket }) => {
   const dialogRef = useRef()
   const emailRef = useRef(null)
 
@@ -28,10 +28,14 @@ const ShareProjectModal = ({ project, setIsShareProjectModalOpen, isShareProject
   }
 
   const sendInvite = () => {
+    webSocket.send(JSON.stringify({
+      type: 'inviteUser',
+      projectID: project._id,
+      email: emailRef.current.value
+    }))
     const email = emailRef.current.value
     console.log(email)
     console.log(project)
-    /*
     axios.post(`${import.meta.env.VITE_API_ROUTE}/sendInviteEmail`, {
       projectID: project._id,
       email: email,
@@ -42,7 +46,7 @@ const ShareProjectModal = ({ project, setIsShareProjectModalOpen, isShareProject
     })
     .catch(err => {
       console.log(err)
-    })*/
+    })
     
   }
 

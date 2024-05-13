@@ -85,6 +85,8 @@ const EditTaskModal = ({ projectID, latestSprint, setIsEditTaskOpen, isEditTaskO
     }
   }
 
+  console.log(task)
+
   return (
     <dialog onClick={ handleOutsideClick } onKeyDown={ manageEsc } className="shadow-xl dark:shadow-the-accent-color relative z-50 flex flex-col overflow-hidden rounded-xl" ref={ dialogRef }>
       <div className='relative w-full h-full p-10'>
@@ -113,10 +115,19 @@ const EditTaskModal = ({ projectID, latestSprint, setIsEditTaskOpen, isEditTaskO
 
         <label className='flex gap-3 items-center font-subtitle font-bold text-2xl mt-3' htmlFor='assigned-user'>Estat</label>
         <select ref={ editTaskStatusRef } className='font-body font-medium text-lg border-2 border-dark-primary-bg rounded-md outline-none p-1 w-full'>
-          <option value="TO DO">To-Do</option>
-          <option value="DOING">Doing</option>
-          <option value="TEST">Testing</option>
-          <option value="DONE">Done</option>
+          { task.status == "TO DO"
+            ? <option value="TO DO" selected>To-Do</option>
+            : <option value="TO DO">To-Do</option>
+          }
+          { task.status == "DOING"
+            ? <option value="DOING" selected>Doing</option>
+            : <option value="DOING">Doing</option>}
+          { task.status == "TESTING"
+            ? <option value="TEST" selected>Testing</option>
+            : <option value="TEST">Testing</option>}
+          { task.status == "DONE"
+            ? <option value="DONE" selected>Done</option>
+            : <option value="DONE">Done</option>}
         </select>
 
         <div className='flex mx-auto justify-around mt-5'>

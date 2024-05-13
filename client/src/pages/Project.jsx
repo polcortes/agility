@@ -526,7 +526,7 @@ const Project = () => {
 
       {
         isShareProjectModalOpen 
-          && <ShareProjectModal project={ currProject } setIsShareProjectModalOpen={ setIsShareProjectModalOpen } isShareProjectModalOpen={ isShareProjectModalOpen } />
+          && <ShareProjectModal project={ currProject } setIsShareProjectModalOpen={ setIsShareProjectModalOpen } isShareProjectModalOpen={ isShareProjectModalOpen } webSocket={ws}/>
       }
       {
         isEditSprintBoardOpen
