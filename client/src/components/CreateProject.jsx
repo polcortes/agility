@@ -40,9 +40,7 @@ const CreateProject = ({ onClose }) => {
         res = res.data
         console.log(res.result)
         if (res.status === "OK") {
-          // TODO(Erik y Pol): Que se pueda obtener el id de un proyecto y redirigir al proyecto creado.
-          console.log('Project created successfully')
-          
+          window.location.href = `/project/${res.projectID}`
         }
       })
   }

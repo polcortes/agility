@@ -31,31 +31,39 @@ const ShareProjectModal = ({ project, setIsShareProjectModalOpen, isShareProject
   }
 
   const sendInvite = () => {
-    webSocket.send(JSON.stringify({
-      type: 'inviteUser',
-      projectID: project._id,
-      email: emailRef.current.value
-    }))
-    const email = emailRef.current.value
-    console.log(email)
-    console.log(project)
-    axios.post(`${import.meta.env.VITE_API_ROUTE}/sendInviteEmail`, {
-      projectID: project._id,
-      email: email,
-      token: localStorage.getItem('userToken')
-    })
-    .then(res => {
-      toast.success(t('project.shareNotificationOk'), {
+    if (project.invitedUsers && project.invitedUsers.includes(emailRef.current.value)) {
+      toast.error('Aquest usuari ja ha estat invitat.', {
         duration: 3000,
         position: 'bottom-right',
         closeButton: true,
       })
-      console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",res.data)
-    })
-    .catch(err => {
-      console.log(err)
-    })
-    
+      return
+    } else {
+      webSocket.send(JSON.stringify({
+        type: 'inviteUser',
+        projectID: project._id,
+        email: emailRef.current.value
+      }))
+      const email = emailRef.current.value
+      console.log(email)
+      console.log(project)
+      axios.post(`${import.meta.env.VITE_API_ROUTE}/sendInviteEmail`, {
+        projectID: project._id,
+        email: email,
+        token: localStorage.getItem('userToken')
+      })
+      .then(res => {
+        toast.success('Invitació enviada correctament.', {
+          duration: 3000,
+          position: 'bottom-right',
+          closeButton: true,
+        })
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    }
+    emailRef.current.value = ""
   }
 
   // Llamada al back para compartir.
@@ -70,6 +78,9 @@ const ShareProjectModal = ({ project, setIsShareProjectModalOpen, isShareProject
       <div className='w-full inline-flex gap-2'>
         <input className='w-full px-3 border-2 border-black rounded-md font-body bg-transparent text-black dark:text-white dark:border-white outline-none font-medium' ref={emailRef} type="email" name="share-project-email" id="share-project-email" placeholder='Direcció de correu electrònic' />
         <button 
+            onKeyDown={(ev) => {
+              if (ev.key === 'Enter') sendInvite()
+            }}
             onClick={() => sendInvite()}
             className='bg-the-accent-color flex items-center justify-center rounded-md px-3 py-2 text-white font-medium hover:scale-105 transition-all gap-2 font-body'
         >
