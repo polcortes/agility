@@ -1195,6 +1195,9 @@ wss.on('connection', (ws) => {
       delete projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName].tasks[messageAsObject.taskName]
       broadcastProjectChange(messageAsObject.projectID)
     } else if (messageAsObject.type == "inviteUser") {
+      if (!projects[messageAsObject.projectID].data.invitedUsers) {
+        projects[messageAsObject.projectID].data.invitedUsers = []
+      }
       projects[messageAsObject.projectID].data.invitedUsers.push(messageAsObject.email)
       broadcastProjectChange(messageAsObject.projectID)
       
