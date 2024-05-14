@@ -173,6 +173,19 @@ i18n
 
             projectOwner: 'De: '
           },
+          project: {
+            seoDescription: 'Gestiona el teu projecte de Scrum amb Agility.',
+
+            tableAside: 'Taula',
+            chatAside: 'Xat', 
+            shareBtn: 'Compartir',
+
+            shareTitle: 'Compartir',
+            sharePlaceholder: 'Direcció de correu electrònic',
+            shareCreator: 'Creador',
+            shareInvited: 'Convidat',
+            shareNotificationOk: 'Invitació enviada correctament.',
+          },
           404: {
             title: '404 - Pàgina no trobada',
             link: "Tornar a la pàgina principal 🏠"

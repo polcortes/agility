@@ -464,7 +464,7 @@ const Project = () => {
                 title='Double click to edit the title.'
                 className={`text-3xl font-bold dark:text-white text-black box-border dark:bg-dark-secondary-bg bg-light-secondary-bg rounded-lg`}
               >
-                { latestSprint ? latestSprint.name : "Título mal."}
+                { latestSprint ? latestSprint.name : "Carregant projecte..."}
               </h1>
 
               <span className='flex items-center'>
@@ -517,7 +517,7 @@ const Project = () => {
               }
               {
                 section === "Chat"
-                  && <Chat projectID={projectID} ws={ws} chat={chat} mainProjectContainerRef={mainProjectContainerRef} thisUser={ thisUser } otherUsers={ otherUsers } />
+                  && <Chat projectID={projectID} ws={ws} chat={chat} mainProjectContainerRef={mainProjectContainerRef} thisUser={ thisUser } otherUsers={ usersInProject } />
               }
             </section>
           </main>

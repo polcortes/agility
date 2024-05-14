@@ -1,11 +1,13 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import axios from 'axios'
 import { toast } from 'sonner'
 
 const ShareProjectModal = ({ project, setIsShareProjectModalOpen, isShareProjectModalOpen, webSocket }) => {
   const dialogRef = useRef()
   const emailRef = useRef(null)
+  const { t } = useTranslation()
 
   useEffect(() => {
     if (isShareProjectModalOpen) {
@@ -43,7 +45,7 @@ const ShareProjectModal = ({ project, setIsShareProjectModalOpen, isShareProject
       token: localStorage.getItem('userToken')
     })
     .then(res => {
-      toast.success('Invitació enviada correctament.', {
+      toast.success(t('project.shareNotificationOk'), {
         duration: 3000,
         position: 'bottom-right',
         closeButton: true,
