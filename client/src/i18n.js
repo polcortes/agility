@@ -93,6 +93,7 @@ i18n
             addTaskStateLabel: 'State',
             addTaskCreateBtn: 'Create',
 
+            editTaskTitle: 'Edit task',
             editTaskSaveBtn: 'Save data',
             editTaskDeleteBtn: 'Delete task',
 
@@ -186,6 +187,7 @@ i18n
             addTaskStateLabel: 'Estado',
             addTaskCreateBtn: 'Crear',
 
+            editTaskTitle: 'Editar tarea',
             editTaskSaveBtn: 'Guardar datos',
             editTaskDeleteBtn: 'Eliminar tarea',
           },
@@ -277,6 +279,7 @@ i18n
             addTaskStateLabel: 'Estat',
             addTaskCreateBtn: 'Crear',
 
+            editTaskTitle: 'Editar tasca',
             editTaskSaveBtn: 'Desar dades',
             editTaskDeleteBtn: 'Eliminar tasca',
           },
