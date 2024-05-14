@@ -49,6 +49,7 @@ const Project = () => {
 
   const currentBoardTitleRef = useRef(null)
   const newBoardTitleInputRef = useRef(null)
+  const sprintBoardListRef = useRef(null)
 
   const [ sprints, setSprints ] = useState([])
 
@@ -360,6 +361,12 @@ const Project = () => {
     */
   }
 
+  useEffect(() => {
+    if (isCreatingSprintBoard) {
+      sprintBoardListRef.current.scrollTop = sprintBoardListRef.current.scrollHeight
+    }
+  }, [isCreatingSprintBoard])
+
   const [ sprintIsGonnaBeEdited, setSprintIsGonnaBeEdited ] = useState(null)
 
   const openSprintBoardEditor = (sprintID) => {
@@ -422,7 +429,7 @@ const Project = () => {
                 Sprints
               </span>
 
-              <ul className='relative flex flex-col gap-3 box-border overflow-hidden flex-1 mt-4 pr-4 max-h-[calc(100vh-388px)] overflow-y-auto'>
+              <ul ref={ sprintBoardListRef } className='relative scroll-smooth flex flex-col gap-3 box-border overflow-hidden flex-1 mt-4 pr-4 max-h-[calc(100vh-388px)] overflow-y-auto'>
                 {sprints.map(sprint => (
                   <li className='group relative w-full dark:bg-dark-tertiary-bg hover:dark:bg-dark-tertiary-bg/60 bg-light-tertiary-bg dark:text-white text-black rounded-lg' key={sprint._id}>
                     <button
@@ -492,7 +499,7 @@ const Project = () => {
                   otherUsers.length > 2 &&
                   (
                   <span className='size-8 mr-2 flex items-center justify-center bg-slate-400 rounded-full ml-'>
-                    +3
+                    +
                   </span>
                   )
                 }
