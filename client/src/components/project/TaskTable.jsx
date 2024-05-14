@@ -10,6 +10,7 @@ const TaskTable = ({ project }) => {
   useEffect(() => {
     let newTasks = []
     Object.keys(project.sprints).forEach(sprintID => {
+      if (!project.sprints[sprintID].tasks) project.sprints[sprintID].tasks = {}
       Object.keys(project.sprints[sprintID].tasks).forEach(taskID => {
         newTasks.push(project.sprints[sprintID].tasks[taskID])
         newTasks[newTasks.length - 1].sprintName = sprintID
@@ -25,24 +26,28 @@ const TaskTable = ({ project }) => {
 
   return (
     <>
-      <table>
-        <thead className='border-b-2'>
-            <tr>
-                <th className="text-left">Tarea</th>
-                <th className="text-left">Sprint</th>
-                <th className="text-left">Miembro Asignado</th>
-            </tr>
-        </thead>
-        <tbody>
-            {tasks.map (task => (
-                <tr key={task._id}>
-                    <td>{task.name}</td>
-                    <td>{task.sprintName}</td>
-                    <td>{task.member}</td>
-                </tr>
-            ))}
-        </tbody>
-      </table>
+      <div className='w-full'>
+        <table className='w-full'>
+          <thead className='border-b-2'>
+              <tr>
+                  <th className="text-left text-black dark:text-white text-xl py-1 px-3">Tarea</th>
+                  <th className="text-left text-black dark:text-white text-xl py-1 px-3">Sprint</th>
+                  <th className='text-left text-black dark:text-white text-xl py-1 px-3'>Estado</th>
+                  <th className="text-left text-black dark:text-white text-xl py-1 px-3">Miembro Asignado</th>
+              </tr>
+          </thead>
+          <tbody>
+              {tasks?.map((task, index) => (
+                  <tr key={task._id} className={index % 2 == 0 ? 'bg-light-primary-bg dark:bg-dark-tertiary-bg' : 'bg-light-secondary-bg dark:bg-dark-tertiary-bg/40'}>
+                      <td className='text-black dark:text-white text-lg py-1 px-3'>{task.name}</td>
+                      <td className='text-black dark:text-white text-lg py-1 px-3'>{task.sprintName}</td>
+                      <td className='text-black dark:text-white text-lg py-1 px-3'>{task.status}</td>
+                      <td className='text-black dark:text-white text-lg py-1 px-3'>{task.assignedMember || ''}</td>
+                  </tr>
+              ))}
+          </tbody>
+        </table>
+      </div>
     </>
   )
 }
