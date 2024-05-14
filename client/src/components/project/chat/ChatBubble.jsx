@@ -5,12 +5,7 @@ import { useState, useEffect } from "react"
 const ChatBubble = ({ message, sender, timeWasSent, thisUser, otherUsers }) => {
   const [ isTheSenderThisUser, setIsTheSenderThisUser ] = useState(false)
   const [ senderObject, setSenderObject ] = useState('')
-  console.log(otherUsers)
-  console.log("SENDER", sender)
-  /**
-   * 
-   * @param {dateTime} timeWasSent 
-   */
+
   const getNiceFormattedDate = (timeWasSent) => {
     let finalDateString = ''
     if (timeWasSent.getDay() === new Date().getDay()
@@ -30,8 +25,6 @@ const ChatBubble = ({ message, sender, timeWasSent, thisUser, otherUsers }) => {
     return finalDateString;
   }
 
-  console.log(`Sender: ${sender}\nthisUser: ${thisUser}`)
-
   const checkIfSenderIsThisUser = () => {
     if (sender === thisUser.email) setIsTheSenderThisUser(true)
     else setIsTheSenderThisUser(false)
@@ -41,21 +34,18 @@ const ChatBubble = ({ message, sender, timeWasSent, thisUser, otherUsers }) => {
     if (sender === thisUser.email) {
       setSenderObject(thisUser.email)}
     else {
-      console.log("otherUsers", otherUsers)
       setSenderObject(otherUsers.find(user => user.email === email))
-      console.log("newSenderObject", senderObject)
     }
   }
 
   useEffect(() => {
     checkIfSenderIsThisUser()
     getUserData(sender, otherUsers, thisUser)
-    console.log("message", message);
   }, [])
 
-  useEffect(() => {
-    console.log('senderObject', senderObject)
-  }, [senderObject])
+  // useEffect(() => {
+  //   console.log('senderObject', senderObject)
+  // }, [senderObject])
 
   const timeWasSentString = getNiceFormattedDate(timeWasSent);
   
