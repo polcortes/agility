@@ -105,6 +105,9 @@ const Dashboard = () => {
           console.log(res.result)
           setIsLoading(false)
           if (res.status === "OK") setProjects(res.result)
+          else if (res.result === "TOKEN EXPIRED") {
+            window.location.href = '/'
+          }
         })
     }
   }, [projects])
@@ -120,6 +123,9 @@ const Dashboard = () => {
           res = res.data
           console.log(res.result)
           if (res.status === "OK") setUser(res.result)
+          else if (res.result === "TOKEN EXPIRED") {
+              window.location.href = '/'
+            }
         })
     }
   }, [user])

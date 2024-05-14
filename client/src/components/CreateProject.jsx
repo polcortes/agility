@@ -41,6 +41,8 @@ const CreateProject = ({ onClose }) => {
         console.log(res.result)
         if (res.status === "OK") {
           window.location.href = `/project/${res.projectID}`
+        } else if (res.result === "TOKEN EXPIRED") {
+          window.location.href = '/'
         }
       })
   }

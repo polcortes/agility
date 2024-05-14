@@ -101,6 +101,8 @@ const Project = () => {
       setCurrProject(data.project)
     } else if (data.type == "setLatestSprint") {
       setWillChangeToSprintBoard(true)
+    } else if (data.type == "error" && data.message == "TOKEN EXPIRED") {
+      window.location.href = '/'
     }
   }
 

@@ -160,7 +160,7 @@ dialog::-ms-backdrop {
   max-height: inherit;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 768px) {
   .sender-section {
     width: calc(100% - 425px) !important;
   }
@@ -168,11 +168,6 @@ dialog::-ms-backdrop {
   #dashboard-section:has(aside.closed) .sender-section {
     width: calc(100vw - 124px) !important;
   }
-}
-@media (min-width: 768px) {
-  .sender-section {
-    width: calc(100% - 425px) !important;
-  } 
 }
 
 #main-project-container {
@@ -192,5 +187,13 @@ dialog::-ms-backdrop {
 
   #share-butt > span {
     display: none;
+  }
+
+  .sender-section {
+    width: calc(100% - 425px) !important;
+  }
+
+  #dashboard-section:has(aside.closed) .sender-section {
+    width: calc(100vw - 124px) !important;
   }
 }

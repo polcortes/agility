@@ -1114,24 +1114,33 @@ wss.on('connection', (ws) => {
       if (!project) {
         getProjectData(messageAsObject.projectID).then((project) => {
           getUserDataWs(messageAsObject.token).then((user) => {
-            if (!project.users) {
-              project.users = []
+            if (!user) {
+              ws.send(JSON.stringify({ type: "error", message: "TOKEN EXPIRED" }))
+            } else {
+              console.log("USER", user)
+              if (!project.users) {
+                project.users = []
+              }
+              project.users.push(user)
+              projects[messageAsObject.projectID] = {data: project, users: usersInProject}
+              broadcastProjectChange(messageAsObject.projectID)
             }
-            project.users.push(user)
-            projects[messageAsObject.projectID] = {data: project, users: usersInProject}
-            broadcastProjectChange(messageAsObject.projectID)
           })
         })
       } else {
         getUserDataWs(messageAsObject.token).then((user) => {
-          if (!project.data.users) {
-            project.data.users = []
+          if (!user) {
+            ws.send(JSON.stringify({ type: "error", message: "TOKEN EXPIRED" }))
+          } else {
+            if (!project.data.users) {
+              project.data.users = []
+            }
+            if (project.data.users.indexOf(user) == -1) {
+              project.data.users.push(user)
+            }
+            projects[messageAsObject.projectID] = project
+            broadcastProjectChange(messageAsObject.projectID)
           }
-          if (project.data.users.indexOf(user) == -1) {
-            project.data.users.push(user)
-          }
-          projects[messageAsObject.projectID] = project
-          broadcastProjectChange(messageAsObject.projectID)
         })
       }
     } else if (messageAsObject.type == "moveTask") {
@@ -1216,6 +1225,8 @@ async function getUserDataWs(token) {
   let user = await userCollection.findOne({ token: { $eq: token } })
   if (user) {
     return user
+  } else {
+    return false
   }
 }
 async function moveTask(projectID, sprintName, taskName, newStatus) {
