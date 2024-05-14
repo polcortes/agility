@@ -263,7 +263,7 @@ const Project = () => {
   const createSprintBoard = () => {
     if (createSprintTitleRef.current.value !== '') {
       if (Object.keys(sprints).includes(createSprintTitleRef.current.value)) {
-        toast.error('Aquest sprint ja existeix.', {
+        toast.error(t('project.createSprintboardAlreadyExists'), {
           duration: 3000,
           position: 'bottom-right',
           closeButton: true,
