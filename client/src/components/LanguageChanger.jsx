@@ -13,8 +13,15 @@ const LanguageChanger = ( props ) => {
   const selectRef = useRef(null)
 
   useEffect(() => {
-    const currentLanguage = i18n.language
-    selectRef.current.value = currentLanguage
+    // if (navigator.language.includes('es')) i18n.changeLanguage('es')
+    // if (selectRef.current.value === '') i18n.changeLanguage(navigator.language.slice(0, 2))
+    // console.log('navigator preferred lang', navigator.language)
+  }, [])
+
+  useEffect(() => {
+    let currentLanguage = i18n.language
+    if (currentLanguage.search('-') === -1) selectRef.current.value = currentLanguage
+    else selectRef.current.value = currentLanguage.slice(0, 2)
   })
 
   const changeLanguage = () => {
