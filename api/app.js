@@ -1068,17 +1068,20 @@ wss.on('connection', (ws) => {
 
   // What to do when a client is disconnected
   ws.on("close", () => {
-    const projectID = socketsClients.get(ws).projectID
-    console.log("USERSSSS", projects[projectID].users)
-    console.log("USER TO DELETE", projects[projectID].data.users.filter((user) => user.token == socketsClients.get(ws).token))
-    projects[projectID].data.users.splice(projects[projectID].data.users.indexOf(projects[projectID].data.users.filter((user) => user.token == socketsClients.get(ws).token)[0]), 1)
-    projects[projectID].users.splice(projects[projectID].users.indexOf(ws), 1)
-    if (projects[projectID].users.length == 0) {
-      //delete projects[projectID]
-    }
-    console.log("TOKEN", socketsClients.get(ws).token)
-    delete projects[projectID].users.filter((user) => user.token == socketsClients.get(ws).token)
-    socketsClients.delete(ws)
+    try {
+      const projectID = socketsClients.get(ws).projectID
+      console.log("USERSSSS", projects[projectID].users)
+      console.log("USER TO DELETE", projects[projectID].data.users.filter((user) => user.token == socketsClients.get(ws).token))
+      projects[projectID].data.users.splice(projects[projectID].data.users.indexOf(projects[projectID].data.users.filter((user) => user.token == socketsClients.get(ws).token)[0]), 1)
+      projects[projectID].users.splice(projects[projectID].users.indexOf(ws), 1)
+      if (projects[projectID].users.length == 0) {
+        //delete projects[projectID]
+      }
+      console.log("TOKEN", socketsClients.get(ws).token)
+      delete projects[projectID].users.filter((user) => user.token == socketsClients.get(ws).token)
+      socketsClients.delete(ws)
+    } catch (e) { console.log("Error deleting user") }
+
   })
 
   // What to do when a client message is received
@@ -1148,7 +1151,7 @@ wss.on('connection', (ws) => {
       moveTask(messageAsObject.projectID, messageAsObject.sprintName, messageAsObject.taskName, messageAsObject.newStatus);
       broadcastProjectChange(messageAsObject.projectID)
     } else if (messageAsObject.type == "createTask") {
-      createTaskWs(messageAsObject.projectID, messageAsObject.sprintName, messageAsObject.taskName).then(result => {
+      createTaskWs(messageAsObject.projectID, messageAsObject.sprintName, messageAsObject.taskName, messageAsObject.assignedMember, messageAsObject.description, messageAsObject.status).then(result => {
         projects[messageAsObject.projectID].data.sprints[messageAsObject.sprintName].tasks[messageAsObject.taskName] = result
         console.log("result", result)
         broadcastProjectChange(messageAsObject.projectID)
@@ -1251,7 +1254,7 @@ async function moveTask(projectID, sprintName, taskName, newStatus) {
     }
 }
 
-async function createTaskWs(projectID, sprintName, taskName) {
+async function createTaskWs(projectID, sprintName, taskName, assignedMember, description, status) {
   const client = new MongoClient(uri)
   await client.connect()
   const db = client.db(databaseName)
@@ -1268,7 +1271,10 @@ async function createTaskWs(projectID, sprintName, taskName) {
       let task = {
         sprintID: sprintID,
         name: taskName,
-        status: "TO DO"
+        status: "TO DO",
+        description: description,
+        assignedMember: assignedMember,
+        status: status
       }
       let insertedObject = await taskCollection.insertOne(task)
       insertedId = insertedObject.insertedId

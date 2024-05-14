@@ -56,6 +56,11 @@ const UserMenuDialog = ({ setIsUserMenuOpen, isUserMenuOpen, theme, setTheme }) 
         <LanguageChanger extraStyles={`mx-auto`} />
 
         <button
+          onClick={() => {window.location.href = '/dashboard'}}
+          className='border-2 border-black dark:border-white  mx-[5%] rounded-md w-fit px-4 py-2 text-black dark:text-white font-semibold hover:border-the-accent-color hover:bg-the-accent-color hover:text-white dark:hover:bg-white dark:hover:text-black dark:hover:border-white transition-colors mt-5'
+        >{ t('userMenu.returnToDashboard') }</button>
+
+        <button
           onClick={() => logout()}
           className='border-2 border-red-500 mx-[20%] rounded-md w-fit px-4 py-2 text-red-500 font-semibold hover:bg-red-500 hover:text-white transition-colors mt-5'
         >{ t('userMenu.logout') }</button>

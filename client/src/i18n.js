@@ -21,7 +21,8 @@ i18n
             title: 'Settings',
             theme: 'App theme:',
             language: 'App language:',
-            logout: 'Log out'
+            logout: 'Log out',
+            returnToDashboard: 'Return to dashboard',
           },
           home: {
             seoTitle: 'Agility - Your Scrum projects manager',
@@ -97,6 +98,8 @@ i18n
             editTaskSaveBtn: 'Save data',
             editTaskDeleteBtn: 'Delete task',
 
+            createTaskAlreadyExists: 'This task already exists.',
+
             chatMessagePlaceholder: 'Type a message...',
           },
           404: {
@@ -115,7 +118,8 @@ i18n
             title: 'Configuración',
             theme: 'Tema de la aplicación:',
             language: 'Idioma de la aplicación:',
-            logout: 'Cerrar sesión'
+            logout: 'Cerrar sesión',
+            returnToDashboard: 'Volver a la página principal',
           },
           home: {
             seoTitle: 'Agility - Tu gestor de proyectos Scrum',
@@ -190,6 +194,7 @@ i18n
             editTaskTitle: 'Editar tarea',
             editTaskSaveBtn: 'Guardar datos',
             editTaskDeleteBtn: 'Eliminar tarea',
+            createTaskAlreadyExists: 'Esta tarea ya existe.',
           },
           404: {
             title: '404 - Página no encontrada',
@@ -207,6 +212,7 @@ i18n
             title: 'Configuració',
             theme: 'Tema de l\'aplicació:',
             language: 'Idioma de l\'aplicació:',
+            returnToDashboard: 'Tornar a la pàgina principal',
             logout: 'Tancar sessió'
           },
           home: {
@@ -282,6 +288,8 @@ i18n
             editTaskTitle: 'Editar tasca',
             editTaskSaveBtn: 'Desar dades',
             editTaskDeleteBtn: 'Eliminar tasca',
+
+            createTaskAlreadyExists: 'Aquesta tasca ja existeix.',
           },
           404: {
             title: '404 - Pàgina no trobada',

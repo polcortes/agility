@@ -3,13 +3,14 @@ import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import axios from 'axios'
 import CircleCheck from '../../assets/icons/circle-check'
+import { toast } from 'sonner'
 
 const CreateTaskModal = ({ projectID, latestSprint, setIsCreateTaskOpen, isCreateTaskOpen, webSocket, usersInProject }) => {
   const dialogRef = useRef()
   const newTaskNameRef = useRef()
   const newTaskDescriptionRef = useRef()
   const newTaskAssignedUserRef = useRef()
-  const newTaskStatusRef = useRef()
+  const newTaskStatusRef = useRef("TO DO")
   const { t } = useTranslation()
 
   useEffect(() => {
@@ -25,13 +26,20 @@ const CreateTaskModal = ({ projectID, latestSprint, setIsCreateTaskOpen, isCreat
   }, [isCreateTaskOpen])
 
   const createTask = () => {
-    webSocket.send(JSON.stringify({
-      type: 'createTask',
-      projectID: projectID,
-      sprintName: latestSprint.name,
-      taskName: newTaskNameRef.current.value,
-    }))
-    setIsCreateTaskOpen(false)
+    if (Object.keys(latestSprint.tasks).includes(newTaskNameRef.current.value)) {
+      toast.error( t('project.createTaskAlreadyExists') )
+    } else {
+      webSocket.send(JSON.stringify({
+        type: 'createTask',
+        projectID: projectID,
+        sprintName: latestSprint.name,
+        taskName: newTaskNameRef.current.value,
+        description: newTaskDescriptionRef.current.value,
+        assignedMember: newTaskAssignedUserRef.current.value,
+        status: newTaskStatusRef.current.value
+      }))
+      setIsCreateTaskOpen(false)
+    }
     /*
     axios
       .post(`http://localhost:3000/createTask/`, {
@@ -89,7 +97,7 @@ const CreateTaskModal = ({ projectID, latestSprint, setIsCreateTaskOpen, isCreat
         <select ref={ newTaskStatusRef } className='font-body font-medium text-lg border-2 border-dark-primary-bg rounded-md outline-none p-1 w-full'>
           <option value="TO DO">To-Do</option>
           <option value="DOING">Doing</option>
-          <option value="TEST">Testing</option>
+          <option value="TESTING">Testing</option>
           <option value="DONE">Done</option>
         </select>
 

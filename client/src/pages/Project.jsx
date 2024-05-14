@@ -27,6 +27,8 @@ import UserMenu from '../components/UserMenu'
 
 import ThemeDetector from '../components/ThemeDetector'
 
+import Loader from '../components/Loader'
+
 const Project = () => {
   const { projectID } = useParams();
 
@@ -393,7 +395,6 @@ const Project = () => {
     })
     */
   }
-
   return (
     <>
       <Helmet>
@@ -403,7 +404,7 @@ const Project = () => {
 
       { projectState === "404" && <PageNotFound /> }
       { projectState === "403" && <h1>403</h1> /* Hacer página de 403 y estilar la de 404!!! */ }
-
+      { !currProject && <Loader theme={theme}/> }
       { projectState === "200" && (
         <section id='dashboard-section' className="bg-light-primary-bg dark:bg-dark-primary-bg p-2 gap-2 overflow-hidden max-h-screen min-h-screen">
           <aside id='dashboard-aside' ref={asideRef} className="closed dark:text-white bg-light-secondary-bg dark:bg-dark-secondary-bg relative transition-all rounded-lg flex flex-col p-5 box-border">
