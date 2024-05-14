@@ -262,12 +262,20 @@ const Project = () => {
 
   const createSprintBoard = () => {
     if (createSprintTitleRef.current.value !== '') {
-      setWillChangeToSprintBoard(true)
-      ws.send(JSON.stringify({
-        type: 'createSprintBoard',
-        projectID: projectID,
-        sprintName: createSprintTitleRef.current.value
-      }))
+      if (Object.keys(sprints).includes(createSprintTitleRef.current.value)) {
+        toast.error('Aquest sprint ja existeix.', {
+          duration: 3000,
+          position: 'bottom-right',
+          closeButton: true,
+        })
+      } else {
+        setWillChangeToSprintBoard(true)
+        ws.send(JSON.stringify({
+          type: 'createSprintBoard',
+          projectID: projectID,
+          sprintName: createSprintTitleRef.current.value
+        }))
+      }
       /*
       axios
         .post('http://localhost:3000/createSprintBoard', {
@@ -412,7 +420,7 @@ const Project = () => {
                 Sprints
               </span>
 
-              <ul className='relative flex flex-col gap-3 box-border overflow-hidden overflow-y-scroll flex-1 mt-4 pr-4'>
+              <ul className='relative flex flex-col gap-3 box-border overflow-hidden flex-1 mt-4 pr-4 max-h-[calc(100vh-388px)] overflow-y-auto'>
                 {sprints.map(sprint => (
                   <li className='group relative w-full dark:bg-dark-tertiary-bg hover:dark:bg-dark-tertiary-bg/60 bg-light-tertiary-bg dark:text-white text-black rounded-lg' key={sprint._id}>
                     <button
@@ -423,7 +431,7 @@ const Project = () => {
                     </button>
                     <button 
                       onClick={() => openSprintBoardEditor(sprint._id)}
-                      className='items-center justify-center absolute top-1.5 right-5 translate-y-1/2 transition-all bg-tertiary-bg rounded-full hidden group-hover:flex hover:bg-light-secondary-bg'
+                      className='items-center justify-center absolute top-1.5 right-5 translate-y-1/2 transition-all bg-tertiary-bg rounded-full hidden group-hover:flex hover:bg-light-secondary-bg dark:hover:bg-dark-secondary-bg'
                     >
                       <svg width="25" height="25" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.8536 1.14645C11.6583 0.951184 11.3417 0.951184 11.1465 1.14645L3.71455 8.57836C3.62459 8.66832 3.55263 8.77461 3.50251 8.89155L2.04044 12.303C1.9599 12.491 2.00189 12.709 2.14646 12.8536C2.29103 12.9981 2.50905 13.0401 2.69697 12.9596L6.10847 11.4975C6.2254 11.4474 6.3317 11.3754 6.42166 11.2855L13.8536 3.85355C14.0488 3.65829 14.0488 3.34171 13.8536 3.14645L11.8536 1.14645ZM4.42166 9.28547L11.5 2.20711L12.7929 3.5L5.71455 10.5784L4.21924 11.2192L3.78081 10.7808L4.42166 9.28547Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path></svg>
                     </button>
@@ -530,7 +538,7 @@ const Project = () => {
       }
       {
         isEditSprintBoardOpen
-          && <EditSprintBoardModal webSocket={ ws } projectID={ projectID } sprintIsGonnaBeEdited={ sprintIsGonnaBeEdited } setIsEditSprintBoardOpen={ setIsEditSprintBoardOpen } isEditSprintBoardOpen={ isEditSprintBoardOpen } latestSprint={latestSprint} setLatestSprint={setLatestSprint}/>
+          && <EditSprintBoardModal webSocket={ ws } projectID={ projectID } sprintIsGonnaBeEdited={ sprintIsGonnaBeEdited } setIsEditSprintBoardOpen={ setIsEditSprintBoardOpen } isEditSprintBoardOpen={ isEditSprintBoardOpen } latestSprint={latestSprint} setLatestSprint={setLatestSprint} sprintsList={Object.keys(currProject.sprints)}/>
       }
       {
         isUserMenuOpen

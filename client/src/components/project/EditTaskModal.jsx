@@ -125,8 +125,8 @@ const EditTaskModal = ({ projectID, latestSprint, setIsEditTaskOpen, isEditTaskO
             ? <option value="DOING" selected>Doing</option>
             : <option value="DOING">Doing</option>}
           { task.status == "TESTING"
-            ? <option value="TEST" selected>Testing</option>
-            : <option value="TEST">Testing</option>}
+            ? <option value="TESTING" selected>Testing</option>
+            : <option value="TESTING">Testing</option>}
           { task.status == "DONE"
             ? <option value="DONE" selected>Done</option>
             : <option value="DONE">Done</option>}

@@ -160,8 +160,19 @@ dialog::-ms-backdrop {
   max-height: inherit;
 }
 
-.sender-section {
-  width: calc(100% - 425px) !important;
+@media (max-width: 768px) {
+  .sender-section {
+    width: calc(100% - 425px) !important;
+  }
+
+  #dashboard-section:has(aside.closed) .sender-section {
+    width: calc(100vw - 124px) !important;
+  }
+}
+@media (min-width: 768px) {
+  .sender-section {
+    width: calc(100% - 425px) !important;
+  } 
 }
 
 #main-project-container {
