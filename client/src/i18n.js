@@ -17,6 +17,12 @@ i18n
     resources: {
       en: {
         translation: {
+          userMenu: {
+            title: 'Settings',
+            theme: 'App theme:',
+            language: 'App language:',
+            logout: 'Log out'
+          },
           home: {
             seoTitle: 'Agility - Your Scrum projects manager',
             seoDescription: 'Agility is a Scrum project manager that allows you to manage your projects faster than ever.',
@@ -48,8 +54,10 @@ i18n
             createProjectTitle: 'Project title',
             createProjectTitlePlaceholder: 'Example title...',
             createProjectCreateBtn: 'Create',
+            createProjectError: 'The title is not valid.',
             searchProjects: 'Search projects',
             searchResults: 'Search results',
+            searchNoResults: 'No results found',
 
             projectOwner: 'By: '
           },
@@ -65,6 +73,12 @@ i18n
       },
       es: {
         translation: {
+          userMenu: {
+            title: 'Configuración',
+            theme: 'Tema de la aplicación:',
+            language: 'Idioma de la aplicación:',
+            logout: 'Cerrar sesión'
+          },
           home: {
             seoTitle: 'Agility - Tu gestor de proyectos Scrum',
             seoDescription: 'Agility es un gestor de proyectos Scrum que te permite gestionar tus proyectos más rápido que nunca.',
@@ -96,19 +110,31 @@ i18n
             createProjectTitle: 'Título del proyecto',
             createProjectTitlePlaceholder: 'Título de ejemplo...',
             createProjectCreateBtn: 'Crear',
+            createProjectError: 'El título no es válido.',
             searchProjects: 'Buscar proyectos',
             searchResults: 'Resultados de la búsqueda',
+            searchNoResults: 'No se han encontrado resultados',
 
             projectOwner: 'De: '
           },
           404: {
             title: '404 - Página no encontrada',
             link: "Volver a la página principal 🏠"
+          },
+          403: {
+            title: '403 - Prohibido',
+            link: "Volver a la página principal 🏠"
           }
         }
       },
       ca: {
         translation: {
+          userMenu: {
+            title: 'Configuració',
+            theme: 'Tema de l\'aplicació:',
+            language: 'Idioma de l\'aplicació:',
+            logout: 'Tancar sessió'
+          },
           home: {
             seoTitle: 'Agility - El teu gestor de projectes Scrum',
             seoDescription: 'Agility és un gestor de projectes Scrum que et permet gestionar els teus projectes més ràpid que mai.',
@@ -140,13 +166,19 @@ i18n
             createProjectTitle: 'Títol del projecte',
             createProjectTitlePlaceholder: 'Títol d\'exemple...',
             createProjectCreateBtn: 'Crear',
+            createProjectError: 'El títol no es vàlid.',
             searchProjects: 'Cerca projectes',
             searchResults: 'Resultats de la cerca',
+            searchNoResults: 'No s\'han trobat resultats',
 
             projectOwner: 'De: '
           },
           404: {
             title: '404 - Pàgina no trobada',
+            link: "Tornar a la pàgina principal 🏠"
+          },
+          403: {
+            title: '403 - Prohibit',
             link: "Tornar a la pàgina principal 🏠"
           }
         }

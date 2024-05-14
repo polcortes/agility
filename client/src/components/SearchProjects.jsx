@@ -1,9 +1,10 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const SearchProjects = ({ onClose, projects }) => {
   const [isOutsideClicked, setIsOutsideClicked] = useState(false);
-//   const [filteredProjects, setFilteredProjects] = useState([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -36,7 +37,7 @@ const SearchProjects = ({ onClose, projects }) => {
       <h2
         className='font-subtitle text-2xl mb-5 text-black dark:text-white'
       >
-        Resultats de la cerca:
+        { t('dashboard.searchResults') }
       </h2>
 
       <ul className='pr-2 overflow-y-scroll'>
@@ -53,8 +54,8 @@ const SearchProjects = ({ onClose, projects }) => {
       }
 
       { projects[0] === "No s'han trobat resultats" 
-        && <li className="dark:text-white mb-2 w-full hover:bg-light-tertiary-bg p-2 rounded-md">
-            <h3 className="font-title text-xl">{projects[0]}</h3>
+        && <li className="dark:text-white mb-2 w-full p-2 rounded-md">
+            <h3 className="font-title text-xl">{ t('dashboard.searchNoResults') }</h3>
         </li>
         
       }
