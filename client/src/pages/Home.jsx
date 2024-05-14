@@ -211,7 +211,7 @@ const Home = () => {
           <LanguageChanger className={`hidden xl:flex`} />
           {formType === 'login' && (
             <>
-              <h1 className='text-3xl font-bold font-subtitle'>{ t("home.loginMessage") }</h1>
+              <h1 className='text-3xl font-bold font-subtitle mt-12'>{ t("home.loginMessage") }</h1>
               <div className="form-group w-8/12 mt-6">
                 <label htmlFor="email" className='text-lg'>{ t("home.loginUsername") }</label>
                 <input ref={email} type="email" id="email" className='w-full p-2 border-2 border-black dark:border-white rounded-md bg-transparent' />

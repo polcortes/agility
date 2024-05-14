@@ -3,12 +3,9 @@ import UserProfilePhoto from "../../UserProfilePhoto"
 import { useState, useEffect } from "react"
 
 const ChatBubble = ({ message, sender, timeWasSent, thisUser, otherUsers }) => {
-  const [ isTheSenderThisUser, setIsTheSenderThisUser ] = useState(false);
-  const [ senderObject, setSenderObject ] = useState({})
-  /**
-   * 
-   * @param {dateTime} timeWasSent 
-   */
+  const [ isTheSenderThisUser, setIsTheSenderThisUser ] = useState(false)
+  const [ senderObject, setSenderObject ] = useState('')
+
   const getNiceFormattedDate = (timeWasSent) => {
     let finalDateString = ''
     if (timeWasSent.getDay() === new Date().getDay()
@@ -28,8 +25,6 @@ const ChatBubble = ({ message, sender, timeWasSent, thisUser, otherUsers }) => {
     return finalDateString;
   }
 
-  console.log(`Sender: ${sender}\nthisUser: ${thisUser}`)
-
   const checkIfSenderIsThisUser = () => {
     if (sender === thisUser.email) setIsTheSenderThisUser(true)
     else setIsTheSenderThisUser(false)
@@ -37,7 +32,7 @@ const ChatBubble = ({ message, sender, timeWasSent, thisUser, otherUsers }) => {
 
   const getUserData = (email, otherUsers, thisUser) => {
     if (sender === thisUser.email) {
-      setSenderObject(thisUser)}
+      setSenderObject(thisUser.email)}
     else {
       setSenderObject(otherUsers.find(user => user.email === email))
     }
@@ -48,9 +43,9 @@ const ChatBubble = ({ message, sender, timeWasSent, thisUser, otherUsers }) => {
     getUserData(sender, otherUsers, thisUser)
   }, [])
 
-  useEffect(() => {
-    console.log('senderObject', senderObject)
-  }, [senderObject])
+  // useEffect(() => {
+  //   console.log('senderObject', senderObject)
+  // }, [senderObject])
 
   const timeWasSentString = getNiceFormattedDate(timeWasSent);
   
@@ -59,10 +54,10 @@ const ChatBubble = ({ message, sender, timeWasSent, thisUser, otherUsers }) => {
     {/* <div className="flex items-start gap-2.5"> */}
       {/* <img className="w-8 h-8 rounded-full" src="/docs/images/people/profile-picture-3.jpg" alt="Jese image" /> */}
       {/* sender === username!! */}
-      <UserProfilePhoto username={ senderObject.username || '' } />
+      <UserProfilePhoto username={ sender } />
       <div className="flex flex-col gap-1 w-full max-w-[320px]">
           <div className="flex items-center space-x-2 rtl:space-x-reverse">
-            <span className="text-md font-subtitle font-semibold dark:text-gray-100 text-gray-900">{ senderObject.username ?? '' }</span>
+            <span className="text-md font-subtitle font-semibold dark:text-gray-100 text-gray-900">{ sender }</span>
             <time dateTime={ timeWasSent.toLocaleString("es-ES") } className="text-sm font-normal text-gray-500">
               { timeWasSentString }
             </time>

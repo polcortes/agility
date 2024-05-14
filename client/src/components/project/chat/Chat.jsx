@@ -54,7 +54,7 @@ const Chat = ({ projectID, ws, chat, mainProjectContainerRef, thisUser, otherUse
 
   return (
     <>
-      <section className="flex flex-col justify-end w-full">
+      <section className="flex flex-col justify-end w-full gap-6">
         {
           sortedChats && sortedChats.length > 0
             ? sortedChats.map((message, index) => {

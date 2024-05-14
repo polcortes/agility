@@ -94,6 +94,10 @@
   transition: grid-template-columns .2s linear;
 }
 
+option {
+  color: black !important;
+}
+
 #main-dashboard {
   display: grid;
   grid-template-rows: 100px auto;
