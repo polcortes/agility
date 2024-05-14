@@ -221,12 +221,12 @@ const Home = () => {
                 <input ref={password} type="password" id="password" className='w-full p-2 border-2 border-black dark:border-white rounded-md bg-transparent' />
                 <span className={`block w-full p-2 text-sm font-extrabold h-8 ${error.field === "passwordLogin" ? "text-red-500" : "text-transparent"}`}> {(error.field === "passwordLogin" ? error.message : "")}</span>
               </div>
+              <div className="w-8/12 flex justify-end">
+                <span onClick={toggleFormType} className="underline cursor-pointer text-sm text-[#1686D7] dark:text-[#52B3F9] font-semibold">{t("home.registerLink")}</span>
+              </div>
               <button onClick={login} className='bg-the-accent-color text-white dark:bg-white py-2 px-4 mt-6 dark:text-black font-semibold cursor-pointer rounded-full hover:bg-indigo-800 dark:hover:bg-slate-100/70 transition-colors'>
                 {t("home.loginButton")}
               </button>
-              <div className="w-8/12 flex justify-center">
-                <span onClick={toggleFormType} className="underline cursor-pointer text-sm text-the-accent-color">{t("home.registerLink")}</span>
-              </div>
             </>
           )}
           {formType === 'register' && (
@@ -254,7 +254,7 @@ const Home = () => {
               </div>
               <div className="w-8/12 flex justify-between">
                 <span></span>
-                <span onClick={toggleFormType} className="underline cursor-pointer text-sm text-the-accent-color">{t("home.registerLink")}</span>
+                <span onClick={toggleFormType} className="underline cursor-pointer text-sm text-[#1686D7] dark:text-[#52B3F9] font-semibold">{t("home.loginLink")}</span>
               </div>
               <button onClick={register} className='bg-the-accent-color text-white dark:bg-white py-2 px-4 mt-6 dark:text-black font-semibold cursor-pointer rounded-full hover:bg-indigo-800 dark:hover:bg-slate-100/70 transition-colors'>
                 {t("home.registerButton")}
