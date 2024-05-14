@@ -28,6 +28,7 @@ import UserMenu from '../components/UserMenu'
 import ThemeDetector from '../components/ThemeDetector'
 
 import Loader from '../components/Loader'
+import Error403 from '../pages/403'
 
 const Project = () => {
   const { projectID } = useParams();
@@ -161,7 +162,7 @@ const Project = () => {
   }, [latestSprint])
 
   useEffect(() => {
-    asideRef.current.classList.toggle('closed')
+    asideRef.current?.classList.toggle('closed')
   }, [isAsideOpen])
   /*
   const getProject = () => {
@@ -395,6 +396,9 @@ const Project = () => {
     })
     */
   }
+  if (!(thisUser && (thisUser.email == currProject.creator || currProject.invitedUsers?.includes(thisUser.email))) ) {
+    return (<Error403 />)
+  }
   return (
     <>
       <Helmet>
@@ -403,7 +407,6 @@ const Project = () => {
       <ThemeDetector theme={ theme } setTheme={ setTheme } />
 
       { projectState === "404" && <PageNotFound /> }
-      { projectState === "403" && <h1>403</h1> /* Hacer página de 403 y estilar la de 404!!! */ }
       { !currProject && <Loader theme={theme}/> }
       { projectState === "200" && (
         <section id='dashboard-section' className="bg-light-primary-bg dark:bg-dark-primary-bg p-2 gap-2 overflow-hidden max-h-screen min-h-screen">

@@ -31,7 +31,7 @@ i18n
             description1: 'Manage your Scrum projects',
             description2: 'faster than ever',
             loginMessage: 'Log in',
-            loginUsername: 'Username or email',
+            loginUsername: 'Email',
             loginPassword: 'Password',
             loginButton: 'Log in',
             registerLink: 'Create a new account',
@@ -45,6 +45,23 @@ i18n
             loginLink: 'Log in',
 
             googleButton: 'Sign in with Google',
+
+            wrongUser: 'User not found',
+            wrongPassword: 'Wrong password',
+            googleRegister: 'This user has already been registered with Google.',
+
+            emptyUsername: 'The username cannot be empty.',
+            emptyEmail: 'The email cannot be empty.',
+            emptyPassword: 'The password cannot be empty.',
+            passwordMinLength: 'The password must be at least 8 characters long.',
+            passwordMustHaveUpper: 'The password must have at least one uppercase letter.',
+            passwordMustHaveLower: 'The password must have at least one lowercase letter.',
+            passwordMustHaveNumber: 'The password must have at least one number.',
+            passwordMustHaveSpecial: 'The password must have at least one special character.',
+            passwordConfirm: 'Confirm your password.',
+            passwordsDontMatch: 'The passwords do not match.',
+
+            userExists: 'This user already exists.',
           },
           dashboard: {
             seoTitle: 'Your projects | Agility',
@@ -128,7 +145,7 @@ i18n
             description1: 'Gestiona tus proyectos de Scrum',
             description2: 'más rápido que nunca',
             loginMessage: 'Iniciar sesión',
-            loginUsername: 'Nombre de usuario o correo electrónico',
+            loginUsername: 'Correo electrónico',
             loginPassword: 'Contraseña',
             loginButton: 'Iniciar sesión',
             registerLink: 'Crear una cuenta nueva',
@@ -142,6 +159,23 @@ i18n
             loginLink: 'Iniciar sesión',
 
             googleButton: 'Entrar con Google',
+
+            wrongUser: 'Usuario no encontrado',
+            wrongPassword: 'Contraseña incorrecta',
+            googleRegister: 'Este usuario ya ha sido registrado con Google.',
+
+            emptyUsername: 'El nombre de usuario no puede estar vacío.',
+            emptyEmail: 'El correo electrónico no puede estar vacío.',
+            emptyPassword: 'La contraseña no puede estar vacía.',
+            passwordMinLength: 'La contraseña debe tener al menos 8 caracteres.',
+            passwordMustHaveUpper: 'La contraseña debe tener al menos una letra mayúscula.',
+            passwordMustHaveLower: 'La contraseña debe tener al menos una letra minúscula.',
+            passwordMustHaveNumber: 'La contraseña debe tener al menos un número.',
+            passwordMustHaveSpecial: 'La contraseña debe tener al menos un carácter especial.',
+            passwordConfirm: 'Confirma tu contraseña.',
+            passwordsDontMatch: 'Las contraseñas no coinciden.',
+
+            userExists: 'Este usuario ya existe.',
           },
           dashboard: {
             seoTitle: 'Tus proyectos | Agility',
@@ -222,7 +256,7 @@ i18n
             description1: 'Gestiona els teus projectes de Scrum',
             description2: 'més ràpid que mai',
             loginMessage: 'Inicia sessió',
-            loginUsername: 'Nom d\'usuari o correu electrònic',
+            loginUsername: 'Correu electrònic',
             loginPassword: 'Contrasenya',
             loginButton: 'Iniciar sessió',
             registerLink: 'Crear un compte nou',
@@ -236,6 +270,23 @@ i18n
             loginLink: 'Inicia sessió',
 
             googleButton: 'Entra amb Google',
+
+            wrongUser: 'Usuari no trobat',
+            wrongPassword: 'Contrasenya incorrecta',
+            googleRegister: 'Aquest usuari ja ha estat registrat amb Google.',
+
+            emptyUsername: 'El nom d\'usuari no pot estar buit.',
+            emptyEmail: 'El correu electrònic no pot estar buit.',
+            emptyPassword: 'La contrasenya no pot estar buida.',
+            passwordMinLength: 'La contrasenya ha de tenir com a mínim 8 caràcters.',
+            passwordMustHaveUpper: 'La contrasenya ha de tenir com a mínim una lletra majúscula.',
+            passwordMustHaveLower: 'La contrasenya ha de tenir com a mínim una lletra minúscula.',
+            passwordMustHaveNumber: 'La contrasenya ha de tenir com a mínim un número.',
+            passwordMustHaveSpecial: 'La contrasenya ha de tenir com a mínim un caràcter especial.',
+            passwordConfirm: 'Confirma la teva contrasenya.',
+            passwordsDontMatch: 'Les contrasenyes no coincideixen.',
+
+            userExists: 'Aquest usuari ja existeix.',
           },
           dashboard: {
             seoTitle: 'Els teus projectes | Agility',

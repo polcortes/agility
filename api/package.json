@@ -6,6 +6,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "argon2": "^0.40.1",
     "cors": "^2.8.5",
     "express": "latest",
     "express-session": "^1.18.0",

@@ -62,51 +62,50 @@ const Home = () => {
         } else {
           console.log(res)
           if (res.result == "WRONG USER") {
-            setError({field: 'emailLogin', message: 'Usuario no encontrado'})
+            setError({field: 'emailLogin', message: t("home.wrongUser")})
           } else if (res.result == "WRONG PASSWORD") {
-            setError({field: 'passwordLogin', message: 'Contraseña incorrecta'})
+            setError({field: 'passwordLogin', message: t("home.wrongPassword")})
           } else if (res.result == "GOOGLE REGISTER") {
-            setError({field: 'passwordLogin', message: 'Este usuario se registró con Google, inicia sesión con Google'})
+            setError({field: 'passwordLogin', message: t("home.googleRegister")})
           }
         }
-        console.log(error)
       })
   }
 
   const register = () => {
     if (username.current.value == "") {
-      setError({field: 'usernameRegister', message: 'Inserte un nombre de usuario'})
+      setError({field: 'usernameRegister', message: t("home.emptyUsername")})
       return
     }
     if (email.current.value == "") {
-      setError({field: 'emailRegister', message: 'Inserte una dirección de correo electrónico'})
+      setError({field: 'emailRegister', message: t("home.emptyEmail")})
       return
     }
     if (password.current.value == "") {
-      setError({field: 'passwordRegister', message: 'Inserte una contraseña'})
+      setError({field: 'passwordRegister', message: t("home.emptyPassword")})
       return
     } else if (password.current.value.length < 8) {
-      setError({field: 'passwordRegister', message: 'La contraseña debe tener al menos 8 caracteres'})
+      setError({field: 'passwordRegister', message: t("home.passwordMinLength")})
       return
     } else if (!/[A-Z]/.test(password.current.value)) {
-      setError({field: 'passwordRegister', message: 'La contraseña debe tener al menos una letra mayúscula'})
+      setError({field: 'passwordRegister', message: t("home.passwordMustHaveUpper")})
       return
     } else if (!/[a-z]/.test(password.current.value)) {
-      setError({field: 'passwordRegister', message: 'La contraseña debe tener al menos una letra minúscula'})
+      setError({field: 'passwordRegister', message: t("home.passwordMustHaveLower")})
       return
     } else if (!/[0-9]/.test(password.current.value)) {
-      setError({field: 'passwordRegister', message: 'La contraseña debe tener al menos un número'})
+      setError({field: 'passwordRegister', message: t("home.passwordMustHaveNumber")})
       return
     } else if (!/[!@#$%^&*]/.test(password.current.value)) {
-      setError({field: 'passwordRegister', message: 'La contraseña debe tener al menos un caracter especial'})
+      setError({field: 'passwordRegister', message: t("home.passwordMustHaveSpecial")})
       return
     }
     if (password2.current.value == "") {
-      setError({field: 'repeatPassword', message: 'Confirme su contraseña'})
+      setError({field: 'repeatPassword', message: t("home.passwordConfirm")})
       return
     }
     if (password.current.value != password2.current.value) {
-      setError({field: 'repeatPassword', message: 'Las contraseñas no coinciden'})
+      setError({field: 'repeatPassword', message: t("home.passwordsDontMatch")})
       return
     }
     axios
@@ -122,7 +121,7 @@ const Home = () => {
           window.location.href = '/dashboard'
         } else {
           if (res.result == "USER EXISTS") {
-            setError({field: 'emailRegister', message: 'Este correo electrónico ya está registrado'})
+            setError({field: 'emailRegister', message: t("home.userExists")})
           }
         }
       })

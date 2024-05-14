@@ -10,6 +10,7 @@ const cors = require('cors')
 const session = require('express-session')
 const nodemailer = require('nodemailer');
 const projects = {}
+const argon2 = require('argon2')
 
 const messageExpireTime = 2592000000 // 30 days in ms
 const sessionTokenExpireTime = 3000
@@ -168,7 +169,7 @@ async function login(req, res) {
       if (userData.type == "google") {
         result = { status: "KO", result: "GOOGLE REGISTER" }
       } else {
-        if (userData.password != receivedPOST.password) {
+        if (await argon2.verify(userData.password, receivedPOST.password)) {
           result = { status: "KO", result: "WRONG PASSWORD" }
         } else {
           await collection.updateOne({ email: { $eq: receivedPOST.email } }, { $set: { token: req.session.id } })
@@ -204,6 +205,7 @@ async function register(req, res) {
       result = { status: "KO", result: "USER EXISTS" }
     } else {
       let userData = receivedPOST
+      userData.password = await argon2.hash(userData.password);
       receivedPOST.token = req.session.id
       await collection.insertOne(userData)
       result = { status: "OK", result: "Usuari registrat", token: req.session.id }
@@ -1074,13 +1076,16 @@ wss.on('connection', (ws) => {
       console.log("USER TO DELETE", projects[projectID].data.users.filter((user) => user.token == socketsClients.get(ws).token))
       projects[projectID].data.users.splice(projects[projectID].data.users.indexOf(projects[projectID].data.users.filter((user) => user.token == socketsClients.get(ws).token)[0]), 1)
       projects[projectID].users.splice(projects[projectID].users.indexOf(ws), 1)
-      if (projects[projectID].users.length == 0) {
-        //delete projects[projectID]
+      delete projects[projectID].users.filter((user) => user.token == socketsClients.get(ws).token)
+      if (projects[projectID] && (!projects[projectID].users || projects[projectID].users.length == 0)) {
+        delete projects[projectID]
       }
       console.log("TOKEN", socketsClients.get(ws).token)
-      delete projects[projectID].users.filter((user) => user.token == socketsClients.get(ws).token)
       socketsClients.delete(ws)
-    } catch (e) { console.log("Error deleting user") }
+    } catch (e) {
+       console.log("Error deleting user") 
+       console.log(e)
+      }
 
   })
 
