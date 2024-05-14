@@ -241,6 +241,31 @@ async function getProjects(req, res) {
 
     await client.close()
   }
+  res.writeHead(200, { 'Content-Type': 'application/json' })
+  res.end(JSON.stringify(result))
+}
+
+app.post('/getUser', getUser)
+async function getUser(req, res) {
+  let receivedPOST = await post.getPostData(req)
+  let result = {}
+
+  if (receivedPOST) {
+    result = {}
+    let client = new MongoClient(uri)
+    await client.connect()
+    const db = client.db(databaseName)
+
+    let userCollection = db.collection('users')
+    let user = await userCollection.findOne({ token: { $eq: receivedPOST.token } })
+    if (user) {
+      result = { status: "OK", result: user }
+    } else {
+      result = { status: "KO", result: "TOKEN EXPIRED" }
+    }
+
+    await client.close()
+  }
 
   res.writeHead(200, { 'Content-Type': 'application/json' })
   res.end(JSON.stringify(result))
@@ -983,7 +1008,11 @@ async function sendInviteEmail(req, res) {
             console.log('Email sent: ' + info.response);
           }
         });
+
+        result = { status: "OK", result: "EMAIL SENT" }
     }}
+    res.writeHead(200, { 'Content-Type': 'application/json' })
+  res.end(JSON.stringify(result))
 }
 }
 

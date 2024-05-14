@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useRef } from 'react'
 import axios from 'axios'
+import { toast } from 'sonner'
 
 const ShareProjectModal = ({ project, setIsShareProjectModalOpen, isShareProjectModalOpen, webSocket }) => {
   const dialogRef = useRef()
@@ -42,7 +43,12 @@ const ShareProjectModal = ({ project, setIsShareProjectModalOpen, isShareProject
       token: localStorage.getItem('userToken')
     })
     .then(res => {
-      console.log(res.data)
+      toast.success('Invitació enviada correctament.', {
+        duration: 3000,
+        position: 'bottom-right',
+        closeButton: true,
+      })
+      console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",res.data)
     })
     .catch(err => {
       console.log(err)
