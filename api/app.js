@@ -241,6 +241,8 @@ async function getProjects(req, res) {
 
     await client.close()
   }
+
+  await new Promise(resolve => setTimeout(resolve, 5000))
   res.writeHead(200, { 'Content-Type': 'application/json' })
   res.end(JSON.stringify(result))
 }
@@ -335,14 +337,16 @@ async function createProject(req, res) {
         inviteCode: generateInviteCode(32),
         date: new Date().toDateString()
       }
-      if (projectCollection.findOne({ title: { $eq: receivedPOST.title }, creator: { $eq: user.email } })) {
+      if (await projectCollection.findOne({ title: { $eq: receivedPOST.title }, creator: { $eq: user.email } })) {
         result = { status: "KO", result: "PROJECT ALREADY EXISTS" }
       } else {
         let insertedObject = await projectCollection.insertOne(project)
         insertedId = insertedObject.insertedId.toString()
+        console.log("INSRTED ID: " + insertedId)
+        result = { status: "OK", result: "PROJECT CREATED", projectID: insertedId }
         let sprintCollection = db.collection('sprintBoards')
         await insertSprintBoard(insertedId, "Backlog", sprintCollection)
-        result = { status: "OK", result: "PROJECT CREATED", projectID: insertedId }
+        console.log(result)
       }
     } else {
       result = { status: "KO", result: "TOKEN EXPIRED" }
