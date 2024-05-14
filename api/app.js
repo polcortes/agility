@@ -792,7 +792,7 @@ async function sendInviteEmail(req, res) {
         var mailOptions = {
           from: '"AGILITY" agility@iesesteveterradas.cat',
           to: receivedPOST.email,
-          subject: 'Sending Email using Node.js',
+          subject: 'You have been invited to a project',
           html: `
           <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
           <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
@@ -952,7 +952,7 @@ async function sendInviteEmail(req, res) {
           <!--[if !mso]><!--><td class="t5" style="width:480px;">
           <!--<![endif]-->
           <!--[if mso]><td class="t5" style="width:480px;"><![endif]-->
-          <h2 class="t3" style="margin:0;Margin:0;font-family:Source Sans 3,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:30px;font-weight:700;font-style:normal;font-size:22px;text-decoration:none;text-transform:none;direction:ltr;color:#333333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px;">${user.username} te ha invitado a colaborar en el proyecto ${project.title}</h2></td>
+          <h2 class="t3" style="margin:0;Margin:0;font-family:Source Sans 3,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:30px;font-weight:700;font-style:normal;font-size:22px;text-decoration:none;text-transform:none;direction:ltr;color:#333333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px;">${user.username} invited you to collaborate in a project</h2></td>
           </tr></table>
           </td></tr><tr><td><div class="t16" style="mso-line-height-rule:exactly;mso-line-height-alt:10px;line-height:10px;font-size:1px;display:block;">&nbsp;</div></td></tr><tr><td>
           <table class="t18" role="presentation" cellpadding="0" cellspacing="0" align="center"><tr>
@@ -969,14 +969,14 @@ async function sendInviteEmail(req, res) {
           <!--[if !mso]><!--><td class="t8" style="width:480px;">
           <!--<![endif]-->
           <!--[if mso]><td class="t8" style="width:480px;"><![endif]-->
-          <p class="t7" style="margin:0;Margin:0;font-family:Montserrat,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:22px;font-weight:400;font-style:normal;font-size:16px;text-decoration:none;text-transform:none;direction:ltr;color:#333333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px;">${user.username} (${user.email}) te ha invitado a colaborar en el proyecto ${project.name} en Agility:</p></td>
+          <p class="t7" style="margin:0;Margin:0;font-family:Montserrat,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:22px;font-weight:400;font-style:normal;font-size:16px;text-decoration:none;text-transform:none;direction:ltr;color:#333333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px;">${user.username} (${user.email}) has invited you to collaborate in: ${project.name}</p></td>
           </tr></table>
           </td></tr><tr><td><div class="t11" style="mso-line-height-rule:exactly;mso-line-height-alt:10px;line-height:10px;font-size:1px;display:block;">&nbsp;</div></td></tr><tr><td>
           <table class="t13" role="presentation" cellpadding="0" cellspacing="0" align="center"><tr>
           <!--[if !mso]><!--><td class="t12" style="background-color:#4F46E5;overflow:hidden;width:380px;text-align:center;line-height:24px;mso-line-height-rule:exactly;mso-text-raise:2px;padding:10px 10px 10px 10px;border-radius:4px 4px 4px 4px;">
           <!--<![endif]-->
           <!--[if mso]><td class="t12" style="background-color:#4F46E5;overflow:hidden;width:400px;text-align:center;line-height:24px;mso-line-height-rule:exactly;mso-text-raise:2px;padding:10px 10px 10px 10px;border-radius:4px 4px 4px 4px;"><![endif]-->
-          <a href="http://localhost:5173/project/${receivedPOST.projectID}"><span class="t10" style="display:block;margin:0;Margin:0;font-family:Montserrat,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:24px;font-weight:700;font-style:normal;font-size:16px;text-decoration:none;direction:ltr;color:#FFFFFF;text-align:center;mso-line-height-rule:exactly;mso-text-raise:2px;">Abrir Proyecto</span></a></td>
+          <a href="http://localhost:5173/project/${receivedPOST.projectID}"><span class="t10" style="display:block;margin:0;Margin:0;font-family:Montserrat,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:24px;font-weight:700;font-style:normal;font-size:16px;text-decoration:none;direction:ltr;color:#FFFFFF;text-align:center;mso-line-height-rule:exactly;mso-text-raise:2px;">Open Project</span></a></td>
           </tr></table>
           </td></tr></table></td>
           </tr></table>
@@ -987,14 +987,12 @@ async function sendInviteEmail(req, res) {
           <!--[if !mso]><!--><td class="t22" style="width:480px;">
           <!--<![endif]-->
           <!--[if mso]><td class="t22" style="width:480px;"><![endif]-->
-          <p class="t20" style="margin:0;Margin:0;font-family:Montserrat,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:22px;font-weight:400;font-style:normal;font-size:14px;text-decoration:none;text-transform:none;direction:ltr;color:#333333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px;"><span class="t19" style="margin:0;Margin:0;font-weight:700;mso-line-height-rule:exactly;">Si te aparece un error 404 o 403</span>, asegúrate de haber iniciado sesión como [Your Username]</p></td>
           </tr></table>
           </td></tr><tr><td><div class="t26" style="mso-line-height-rule:exactly;mso-line-height-alt:10px;line-height:10px;font-size:1px;display:block;">&nbsp;</div></td></tr><tr><td>
           <table class="t28" role="presentation" cellpadding="0" cellspacing="0" align="center"><tr>
           <!--[if !mso]><!--><td class="t27" style="width:480px;">
           <!--<![endif]-->
           <!--[if mso]><td class="t27" style="width:480px;"><![endif]-->
-          <p class="t25" style="margin:0;Margin:0;font-family:Montserrat,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:22px;font-weight:400;font-style:normal;font-size:14px;text-decoration:none;text-transform:none;direction:ltr;color:#333333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px;"><span class="t24" style="margin:0;Margin:0;font-weight:700;mso-line-height-rule:exactly;">Si no funciona el botón</span>, prueba a acceder a la siguiente URL: [URL]</p></td>
           </tr></table>
           </td></tr></table></td>
           </tr></table>

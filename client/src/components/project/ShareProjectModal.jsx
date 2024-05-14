@@ -107,7 +107,7 @@ const ShareProjectModal = ({ project, setIsShareProjectModalOpen, isShareProject
                 </span>
 
                 <span className='flex flex-col w-full'>
-                  <h3>{user}</h3>
+                  <h3 className='max-w-[170px] overflow-hidden text-ellipsis'>{user}</h3>
                 </span>
 
                 <span>Invitado</span>
