@@ -1072,8 +1072,12 @@ wss.on('connection', (ws) => {
   ws.on("close", () => {
     try {
       const projectID = socketsClients.get(ws).projectID
-      projects[projectID].data.users.splice(projects[projectID].data.users.indexOf(projects[projectID].data.users.filter((user) => user.token == socketsClients.get(ws).token)[0]), 1)
-      projects[projectID].users.splice(projects[projectID].users.indexOf(ws), 1)
+      if (projects[projectID] && projects[projectID].users) {
+        projects[projectID].users.splice(projects[projectID].users.indexOf(ws), 1)
+      }
+      if (projects[projectID] && projects[projectID].data && projects[projectID].data.users) {
+        projects[projectID].data.users.splice(projects[projectID].data.users.indexOf(projects[projectID].data.users.filter((user) => user.token == socketsClients.get(ws).token)[0]), 1)
+      }
       delete projects[projectID].users.filter((user) => user.token == socketsClients.get(ws).token)
       if (projects[projectID] && (!projects[projectID].users || projects[projectID].users.length == 0)) {
         delete projects[projectID]
