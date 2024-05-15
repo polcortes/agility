@@ -411,7 +411,7 @@ const Project = () => {
       { projectState === "200" && (
         <section id='dashboard-section' className="bg-light-primary-bg dark:bg-dark-primary-bg p-2 gap-2 overflow-hidden max-h-screen min-h-screen">
           <aside id='dashboard-aside' ref={asideRef} className="closed dark:text-white bg-light-secondary-bg dark:bg-dark-secondary-bg relative transition-all rounded-lg flex flex-col p-5 box-border">
-            <ArrowIcon onClick={() => setIsAsideOpen(!isAsideOpen)} className={`z-50 rounded-full bg-purple-800 absolute -right-[15px] top-1/2 bototm-1/2 -translate-y-1/2 transition-all hover:cursor-pointer ${isAsideOpen ? 'rotate-180' : ''}`} />
+            <ArrowIcon onClick={() => setIsAsideOpen(!isAsideOpen)} className={`z-40 rounded-full bg-purple-800 absolute -right-[15px] top-1/2 bototm-1/2 -translate-y-1/2 transition-all hover:cursor-pointer ${isAsideOpen ? '' : 'rotate-180'}`} />
 
             <section className='h-fit pb-[21px] border-b-2 flex overflow-hidden mb-3'>
               <span className="flex size-16 mr-5 bg-black row-span-2 rounded-md box-border text-transparent dark:text-transparent">a</span>
