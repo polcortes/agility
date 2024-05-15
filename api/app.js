@@ -1072,8 +1072,6 @@ wss.on('connection', (ws) => {
   ws.on("close", () => {
     try {
       const projectID = socketsClients.get(ws).projectID
-      console.log("USERSSSS", projects[projectID].users)
-      console.log("USER TO DELETE", projects[projectID].data.users.filter((user) => user.token == socketsClients.get(ws).token))
       projects[projectID].data.users.splice(projects[projectID].data.users.indexOf(projects[projectID].data.users.filter((user) => user.token == socketsClients.get(ws).token)[0]), 1)
       projects[projectID].users.splice(projects[projectID].users.indexOf(ws), 1)
       delete projects[projectID].users.filter((user) => user.token == socketsClients.get(ws).token)
