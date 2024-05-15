@@ -1083,6 +1083,10 @@ wss.on('connection', (ws) => {
         delete projects[projectID]
       }
       console.log("TOKEN", socketsClients.get(ws).token)
+      projects[projectID].userCont--
+      if (projects[projectID].userCont == 0) {
+        delete projects[projectID]
+      }
       socketsClients.delete(ws)
     } catch (e) {
        console.log("Error deleting user") 
@@ -1133,6 +1137,10 @@ wss.on('connection', (ws) => {
               }
               project.users.push(user)
               projects[messageAsObject.projectID] = {data: project, users: usersInProject}
+              if (!project.userCont) {
+                project.userCont = 0
+              }
+              project.userCont++
               broadcastProjectChange(messageAsObject.projectID)
             }
           })
@@ -1149,6 +1157,10 @@ wss.on('connection', (ws) => {
               project.data.users.push(user)
             }
             projects[messageAsObject.projectID] = project
+            if (!project.userCont) {
+              project.userCont = 0
+            }
+            project.userCont++
             broadcastProjectChange(messageAsObject.projectID)
           }
         })
